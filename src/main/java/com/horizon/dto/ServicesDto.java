@@ -2,7 +2,7 @@ package com.horizon.dto;
 
 import java.sql.Timestamp;
 
-public class ServiceDto {
+public class ServicesDto {
     private Integer id;
     private Integer roomTypeId;
     private String description;
