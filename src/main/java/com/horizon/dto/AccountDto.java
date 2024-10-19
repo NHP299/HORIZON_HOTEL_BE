@@ -1,7 +1,7 @@
 package com.horizon.dto;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class AccountDto {
     private Integer id;
