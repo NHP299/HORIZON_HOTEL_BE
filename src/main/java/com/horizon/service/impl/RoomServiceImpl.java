@@ -22,35 +22,35 @@ public class RoomServiceImpl implements RoomService {
 
     private RoomRepository roomRepository;
     private RoomTypeRepository roomTypeRepository;
-
+    private RoomMapper roomMapper;
 
     @Override
     public Page<RoomDto> getAllRooms(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
-        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
+        return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
     public RoomDto createRoom(RoomDto roomDto) {
-        Room room = RoomMapper.INSTANCE.toRoom(roomDto);
+        Room room = roomMapper.toRoom(roomDto);
         room.setIsActivated(true);
         room.setStatus(true);
         Room saveRoom = roomRepository.save(room);
-        return RoomMapper.INSTANCE.toRoomDto(saveRoom);
+        return roomMapper.toRoomDto(saveRoom);
     }
 
     @Override
     public RoomDto getRoomById(Integer id) {
         return Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id))
-                .map(RoomMapper.INSTANCE::toRoomDto)
+                .map(roomMapper::toRoomDto)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
     }
 
     @Override
     public Page<RoomDto> findRoomByName(String name, Pageable pageable) {
         Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(name, pageable);
-        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
+        return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
@@ -59,23 +59,23 @@ public class RoomServiceImpl implements RoomService {
             Integer id = Integer.valueOf(input);
             Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));
             if (room.isPresent()) {
-                return new PageImpl<>(Collections.singletonList(RoomMapper.INSTANCE.toRoomDto(room.get())), pageable,
+                return new PageImpl<>(Collections.singletonList(roomMapper.toRoomDto(room.get())), pageable,
                         1);
             }
         } catch (NumberFormatException e) {
         }
         Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(input, pageable);
-        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
+        return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
     public RoomDto updateRoom(Integer roomId, RoomDto roomDto) {
         Room updatedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
                 .map(existingRoom -> {
-                    existingRoom = RoomMapper.INSTANCE.toRoom(roomDto);
+                    existingRoom = roomMapper.toRoom(roomDto);
                     return roomRepository.save(existingRoom);
                 }).orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
-        return RoomMapper.INSTANCE.toRoomDto(updatedRoom);
+        return roomMapper.toRoomDto(updatedRoom);
     }
 
     @Override

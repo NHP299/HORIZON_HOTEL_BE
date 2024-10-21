@@ -8,12 +8,11 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface RoomMapper {
-    RoomMapper INSTANCE = Mappers.getMapper(RoomMapper.class);
+//    RoomMapper INSTANCE = Mappers.getMapper(RoomMapper.class);
 
-    @Mapping(source = "roomType.room_type_id", target = "roomTypeId")
+//    @Mapping(source = "roomType.id", target = "roomTypeId")
     RoomDto toRoomDto(Room room);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(source = "roomTypeId", target = "roomType.room_type_id")
+//    @Mapping(source = "roomTypeId", target = "roomType.id")
     Room toRoom(RoomDto roomDto);
 }
