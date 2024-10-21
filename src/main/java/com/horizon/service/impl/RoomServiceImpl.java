@@ -82,6 +82,7 @@ public class RoomServiceImpl implements RoomService {
     public void deleteRoom(Integer roomId) {
         Room deletedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
+        deletedRoom.setStatus(false);
         deletedRoom.setIsActivated(false);
         roomRepository.save(deletedRoom);
     }

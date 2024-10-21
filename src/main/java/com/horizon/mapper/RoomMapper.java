@@ -10,10 +10,10 @@ import org.mapstruct.factory.Mappers;
 public interface RoomMapper {
     RoomMapper INSTANCE = Mappers.getMapper(RoomMapper.class);
 
-    @Mapping(source = "roomType.id", target = "roomTypeId")
+    @Mapping(source = "roomType.room_type_id", target = "roomTypeId")
     RoomDto toRoomDto(Room room);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "roomTypeId", target = "roomType.id")
+    @Mapping(source = "roomTypeId", target = "roomType.room_type_id")
     Room toRoom(RoomDto roomDto);
 }
