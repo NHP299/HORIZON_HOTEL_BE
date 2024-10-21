@@ -1,4 +1,4 @@
-package com.horizon.controller;
+package com.horizon.controller.admin;
 
 import com.horizon.dto.ServicesDto;
 import com.horizon.service.ServicesService;
@@ -33,13 +33,13 @@ public class ServiceController {
         return ResponseEntity.ok(listServices);
     }
 
-    @PutMapping("id")
+    @PutMapping("{id}")
     public ResponseEntity<ServicesDto> updateServices(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
         ServicesDto servicesDto = servicesService.updateServices(servicesId, updateServices);
         return ResponseEntity.ok(servicesDto);
     }
 
-    @DeleteMapping("id")
+    @DeleteMapping("{id}")
     public ResponseEntity<String> deleteServices(@PathVariable("id") Integer servicesId) {
         servicesService.deleteServices(servicesId);
         return new ResponseEntity<>("Services deleted successfully", HttpStatus.OK);
