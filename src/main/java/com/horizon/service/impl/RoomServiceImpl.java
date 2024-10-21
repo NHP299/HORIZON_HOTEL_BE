@@ -1,184 +1,89 @@
 package com.horizon.service.impl;
 
 import com.horizon.domain.Room;
+import com.horizon.domain.RoomType;
+import com.horizon.dto.RoomDto;
+import com.horizon.exception.ResourceNotFoundException;
+import com.horizon.mapper.RoomMapper;
 import com.horizon.repository.RoomRepository;
+import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
+@AllArgsConstructor
 public class RoomServiceImpl implements RoomService {
-    private final RoomRepository roomRepository;
 
-    @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
+    private RoomRepository roomRepository;
+    private RoomTypeRepository roomTypeRepository;
+
+
+    @Override
+    public Page<RoomDto> getAllRooms(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
+        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-        roomRepository.deleteAllByIdInBatch(integers);
+    public RoomDto createRoom(RoomDto roomDto) {
+        Room room = RoomMapper.INSTANCE.toRoom(roomDto);
+        room.setIsActivated(true);
+        room.setStatus(true);
+        Room saveRoom = roomRepository.save(room);
+        return RoomMapper.INSTANCE.toRoomDto(saveRoom);
     }
 
     @Override
-    public <S extends Room, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-        return roomRepository.findBy(example, queryFunction);
+    public RoomDto getRoomById(Integer id) {
+        return Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id))
+                .map(RoomMapper.INSTANCE::toRoomDto)
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Room> entities) {
-        roomRepository.deleteAll(entities);
+    public Page<RoomDto> findRoomByName(String name, Pageable pageable) {
+        Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(name, pageable);
+        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
     }
 
     @Override
-    public List<Room> findAll(Sort sort) {
-        return roomRepository.findAll(sort);
+    public Page<RoomDto> findRoom(String input, Pageable pageable) {
+        try {
+            Integer id = Integer.valueOf(input);
+            Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));
+            if (room.isPresent()) {
+                return new PageImpl<>(Collections.singletonList(RoomMapper.INSTANCE.toRoomDto(room.get())), pageable,
+                        1);
+            }
+        } catch (NumberFormatException e) {
+        }
+        Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(input, pageable);
+        return rooms.map(RoomMapper.INSTANCE::toRoomDto);
     }
 
     @Override
-    public <S extends Room> Optional<S> findOne(Example<S> example) {
-        return roomRepository.findOne(example);
+    public RoomDto updateRoom(Integer roomId, RoomDto roomDto) {
+        Room updatedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
+                .map(existingRoom -> {
+                    existingRoom = RoomMapper.INSTANCE.toRoom(roomDto);
+                    return roomRepository.save(existingRoom);
+                }).orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
+        return RoomMapper.INSTANCE.toRoomDto(updatedRoom);
     }
 
     @Override
-    public <S extends Room> boolean exists(Example<S> example) {
-        return roomRepository.exists(example);
+    public void deleteRoom(Integer roomId) {
+        Room deletedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
+        deletedRoom.setIsActivated(false);
+        roomRepository.save(deletedRoom);
     }
 
-    @Override
-    public <S extends Room> S save(S entity) {
-        return roomRepository.save(entity);
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends Integer> integers) {
-        roomRepository.deleteAllById(integers);
-    }
-
-    @Override
-    public void deleteAllInBatch() {
-        roomRepository.deleteAllInBatch();
-    }
-
-    @Override
-    public Optional<Room> findById(Integer integer) {
-        return roomRepository.findById(integer);
-    }
-
-    @Override
-    @Deprecated
-    public Room getOne(Integer integer) {
-        return roomRepository.getOne(integer);
-    }
-
-    @Override
-    public void deleteAll() {
-        roomRepository.deleteAll();
-    }
-
-    @Override
-    @Deprecated
-    public Room getById(Integer integer) {
-        return roomRepository.getById(integer);
-    }
-
-    @Override
-    public void flush() {
-        roomRepository.flush();
-    }
-
-    @Override
-    public Page<Room> findAll(Pageable pageable) {
-        return roomRepository.findAll(pageable);
-    }
-
-    @Override
-    public <S extends Room> S saveAndFlush(S entity) {
-        return roomRepository.saveAndFlush(entity);
-    }
-
-    @Override
-    public List<Room> findAllById(Iterable<Integer> integers) {
-        return roomRepository.findAllById(integers);
-    }
-
-    @Override
-    public <S extends Room> List<S> findAll(Example<S> example) {
-        return roomRepository.findAll(example);
-    }
-
-    @Override
-    public Room getReferenceById(Integer integer) {
-        return roomRepository.getReferenceById(integer);
-    }
-
-    @Override
-    public <S extends Room> Page<S> findAll(Example<S> example, Pageable pageable) {
-        return roomRepository.findAll(example, pageable);
-    }
-
-    @Override
-    public boolean existsById(Integer integer) {
-        return roomRepository.existsById(integer);
-    }
-
-    @Override
-    public <S extends Room> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return roomRepository.saveAllAndFlush(entities);
-    }
-
-    @Override
-    public List<Room> findAll() {
-        return roomRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer integer) {
-        roomRepository.deleteById(integer);
-    }
-
-    @Override
-    public <S extends Room> List<S> findAll(Example<S> example, Sort sort) {
-        return roomRepository.findAll(example, sort);
-    }
-
-    @Override
-    public void delete(Room entity) {
-        roomRepository.delete(entity);
-    }
-
-    @Override
-    @Deprecated
-    public void deleteInBatch(Iterable<Room> entities) {
-        roomRepository.deleteInBatch(entities);
-    }
-
-    @Override
-    public <S extends Room> List<S> saveAll(Iterable<S> entities) {
-        return roomRepository.saveAll(entities);
-    }
-
-    @Override
-    public long count() {
-        return roomRepository.count();
-    }
-
-    @Override
-    public void deleteAllInBatch(Iterable<Room> entities) {
-        roomRepository.deleteAllInBatch(entities);
-    }
-
-    @Override
-    public <S extends Room> long count(Example<S> example) {
-        return roomRepository.count(example);
-    }
 }
