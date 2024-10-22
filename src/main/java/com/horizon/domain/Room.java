@@ -24,6 +24,8 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
+
+
     private String name;
     private Boolean status;
     private Integer floor;

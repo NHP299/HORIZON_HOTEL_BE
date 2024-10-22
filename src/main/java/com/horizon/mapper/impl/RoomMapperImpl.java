@@ -5,7 +5,9 @@ import com.horizon.domain.RoomType;
 import com.horizon.dto.RoomDto;
 import com.horizon.mapper.RoomMapper;
 import com.horizon.repository.RoomTypeRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RoomMapperImpl implements RoomMapper {
 
     private RoomTypeRepository roomTypeRepository;
