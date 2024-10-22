@@ -8,6 +8,7 @@ import com.horizon.mapper.RoomMapper;
 import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
+import com.horizon.validation.RoomInputValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
+    private final RoomInputValidator roomInputValidator;
     private RoomRepository roomRepository;
     private RoomTypeRepository roomTypeRepository;
     private RoomMapper roomMapper;
@@ -55,6 +57,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Page<RoomDto> findRoom(String input, Pageable pageable) {
+        roomInputValidator.validate(input);
         try {
             Integer id = Integer.valueOf(input);
             Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));

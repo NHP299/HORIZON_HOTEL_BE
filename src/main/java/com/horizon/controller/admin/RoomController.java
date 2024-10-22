@@ -21,12 +21,9 @@ public class RoomController {
 
     private RoomService roomService;
 
-    private RoomInputValidator roomInputValidator;
-
     @PostMapping
     public ResponseEntity<RoomDto> createEmployee(@RequestBody RoomDto roomDto) {
-        RoomDto saveRoom = roomService.createRoom(roomDto);
-        return new ResponseEntity<>(saveRoom, HttpStatus.CREATED);
+        return new ResponseEntity<>(roomService.createRoom(roomDto), HttpStatus.CREATED);
     }
 
     @GetMapping(params = {"page", "size"})
@@ -43,15 +40,12 @@ public class RoomController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<RoomDto>> searchRooms(@RequestParam String input, Pageable pageable) {
-        roomInputValidator.validate(input);
         return ResponseEntity.ok(roomService.findRoom(input, pageable));
     }
 
     @PutMapping({"{id}"})
     public ResponseEntity<RoomDto> updateRoom(@PathVariable("id") Integer roomId,@RequestBody  RoomDto updateRoom) {
-        RoomDto roomDto = roomService.updateRoom(roomId, updateRoom);
-        return ResponseEntity.ok(roomDto);
-
+        return ResponseEntity.ok(roomService.updateRoom(roomId, updateRoom));
     }
 
     @DeleteMapping("{id}")
