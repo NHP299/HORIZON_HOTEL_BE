@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class Room {
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
 
-
+    @NotNull(message = "Room name must not be null")
     private String name;
     private Integer status;
     private Integer floor;

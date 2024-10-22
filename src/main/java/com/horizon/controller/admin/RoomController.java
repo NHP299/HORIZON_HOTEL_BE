@@ -42,8 +42,8 @@ public class RoomController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<RoomDto>> searchRooms( @RequestParam String input, Pageable pageable) {
-//        roomInputValidator.validate(input);
+    public ResponseEntity<Page<RoomDto>> searchRooms(@RequestParam String input, Pageable pageable) {
+        roomInputValidator.validate(input);
         return ResponseEntity.ok(roomService.findRoom(input, pageable));
     }
 

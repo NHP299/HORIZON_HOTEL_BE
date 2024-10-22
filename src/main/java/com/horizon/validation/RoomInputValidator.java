@@ -5,16 +5,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RoomInputValidator {
-
     public void validate(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw new IllegalArgumentException("Input must not be empty.");
-        }
-
-        try {
-            Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Input must be a number.");
         }
     }
 }

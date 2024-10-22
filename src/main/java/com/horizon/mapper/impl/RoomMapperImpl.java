@@ -61,7 +61,7 @@ public class RoomMapperImpl implements RoomMapper {
     }
 
     private RoomType findRoomTypeById(Integer id) {
-        return roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("RoomType"));
+        return roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("RoomType not found with id: " + id));
     }
 
 }
