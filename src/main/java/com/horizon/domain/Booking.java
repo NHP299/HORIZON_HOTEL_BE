@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -22,9 +23,9 @@ public class Booking {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    private Date checkIn;
-    private Date checkOut;
-    private Date bookingDate;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
+    private LocalDate bookingDate;
     private Short status;
     private String note;
     private BigInteger totalPrice;

@@ -1,5 +1,11 @@
 package com.horizon.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Lookup;
+
+@Getter
+@AllArgsConstructor
 public enum RoomStatus {
     AVAILABLE(0, "Available"),
     OCCUPIED(1, "Occupied"),
@@ -8,19 +14,6 @@ public enum RoomStatus {
 
     private final int code;
     private final String description;
-
-    RoomStatus(int code, String description) {
-        this.code = code;
-        this.description = description;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public static RoomStatus fromCode(int code) {
         for (RoomStatus status : RoomStatus.values()) {

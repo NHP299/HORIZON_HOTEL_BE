@@ -1,12 +1,17 @@
 package com.horizon.service;
 
+import com.horizon.domain.Room;
 import com.horizon.dto.RoomDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public interface RoomService {
 
-    Page<RoomDto> getAllRooms(int page, int size);
+
+    Page<RoomDto> getAllRooms(Pageable pageable);
 
     RoomDto createRoom(RoomDto roomDto);
 
@@ -19,4 +24,12 @@ public interface RoomService {
     RoomDto updateRoom(Integer roomId, RoomDto roomDto);
 
     void deleteRoom(Integer roomId);
+
+    Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable);
+
+    Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable);
+
+    Page<RoomDto> getRoomsIsAvailable(Pageable pageable);
+
+    Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

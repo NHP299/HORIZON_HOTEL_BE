@@ -33,5 +33,4 @@ public class Room {
     private Double price;
     private String description;
     private Boolean isActivated;
-
 }

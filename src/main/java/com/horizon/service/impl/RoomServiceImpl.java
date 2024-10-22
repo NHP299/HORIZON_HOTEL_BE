@@ -1,7 +1,7 @@
 package com.horizon.service.impl;
 
 import com.horizon.domain.Room;
-import com.horizon.domain.RoomType;
+import com.horizon.domain.RoomStatus;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.RoomMapper;
@@ -10,10 +10,11 @@ import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import com.horizon.validation.RoomInputValidator;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -27,8 +28,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomMapper roomMapper;
 
     @Override
-    public Page<RoomDto> getAllRooms(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<RoomDto> getAllRooms(Pageable pageable) {
         Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
         return rooms.map(roomMapper::toRoomDto);
     }
@@ -88,6 +88,34 @@ public class RoomServiceImpl implements RoomService {
         deletedRoom.setStatus(3);
         deletedRoom.setIsActivated(false);
         roomRepository.save(deletedRoom);
+    }
+
+
+    @Override
+    public Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable) {
+        return roomRepository.findByRoomTypeName(roomTypeName, pageable)
+                .map(roomMapper::toRoomDto);
+    }
+
+
+    @Override
+    public Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable) {
+        Integer statusCode = RoomStatus.fromDescription(statusDescription);
+        return roomRepository.findByStatusAndIsActivatedTrue(statusCode, pageable)
+                .map(roomMapper::toRoomDto);
+    }
+
+
+    @Override
+    public Page<RoomDto> getRoomsIsAvailable(Pageable pageable) {
+        return roomRepository.findByStatusAndIsActivatedTrue(0, pageable)
+                .map(roomMapper::toRoomDto);
+    }
+
+    @Override
+    public Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate, pageable)
+                .map(roomMapper::toRoomDto);
     }
 
 }
