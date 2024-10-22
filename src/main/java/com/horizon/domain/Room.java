@@ -27,7 +27,7 @@ public class Room {
 
 
     private String name;
-    private Boolean status;
+    private Integer status;
     private Integer floor;
     private Double price;
     private String description;

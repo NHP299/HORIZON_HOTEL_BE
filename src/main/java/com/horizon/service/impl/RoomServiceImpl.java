@@ -33,9 +33,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto createRoom(RoomDto roomDto) {
+        roomDto.setStatus("Available");
         Room room = roomMapper.toRoom(roomDto);
         room.setIsActivated(true);
-        room.setStatus(true);
         Room saveRoom = roomRepository.save(room);
         return roomMapper.toRoomDto(saveRoom);
     }
@@ -49,7 +49,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Page<RoomDto> findRoomByName(String name, Pageable pageable) {
-        Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(name, pageable);
+        Page<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
         return rooms.map(roomMapper::toRoomDto);
     }
 
@@ -64,7 +64,7 @@ public class RoomServiceImpl implements RoomService {
             }
         } catch (NumberFormatException e) {
         }
-        Page<Room> rooms = roomRepository.findByNameContainingAndIsActivatedTrue(input, pageable);
+        Page<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(input, pageable);
         return rooms.map(roomMapper::toRoomDto);
     }
 
@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService {
     public void deleteRoom(Integer roomId) {
         Room deletedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
-        deletedRoom.setStatus(false);
+        deletedRoom.setStatus(3);
         deletedRoom.setIsActivated(false);
         roomRepository.save(deletedRoom);
     }

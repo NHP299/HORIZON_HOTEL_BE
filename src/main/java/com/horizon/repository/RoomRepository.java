@@ -15,5 +15,5 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     Page<Room> findByIsActivatedTrue(Pageable pageable);
 
-    Page<Room> findByNameContainingAndIsActivatedTrue(String keywords, Pageable pageable);
+    Page<Room> findByNameContainingIgnoreCaseAndIsActivatedTrue(String keywords, Pageable pageable);
 }
