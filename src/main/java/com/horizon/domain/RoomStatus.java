@@ -2,7 +2,6 @@ package com.horizon.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Lookup;
 
 @Getter
 @AllArgsConstructor
@@ -10,7 +9,7 @@ public enum RoomStatus {
     AVAILABLE(0, "Available"),
     OCCUPIED(1, "Occupied"),
     RESERVED(2, "Reserved"),
-    MAINTENANCE(3, "Maintenance"); // Thêm trạng thái bảo trì
+    MAINTENANCE(3, "Maintenance");
 
     private final int code;
     private final String description;
