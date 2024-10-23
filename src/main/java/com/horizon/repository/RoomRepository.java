@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
@@ -30,7 +29,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "LEFT JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE r.isActivated = true " +
             "AND r.status = 0 " +
-            "AND (b.id IS NULL " + // No booking exists
+            "AND (b.id IS NULL " +
             "OR b.checkIn NOT BETWEEN :startDate AND :endDate " +
             "OR b.checkOut NOT BETWEEN :startDate AND :endDate)")
     Page<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
