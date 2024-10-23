@@ -22,7 +22,8 @@ public class ServicesMapper {
                 roomType,
                 servicesDto.getDescription(),
                 servicesDto.getStartedTime(),
-                servicesDto.getEndTime());
+                servicesDto.getEndTime()
+        );
     }
 
 }
