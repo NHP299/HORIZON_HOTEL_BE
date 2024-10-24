@@ -15,27 +15,28 @@ import java.util.List;
 @AllArgsConstructor
 public class RoomTypeServiceImpl implements RoomTypeService {
     private final RoomTypeRepository roomTypeRepository;
+    private RoomTypeMapper roomTypeMapper;
 
 
     //Create room type
     @Override
     public RoomTypeDto crateRoomType(RoomTypeDto roomTypeDto) {
-       RoomType roomType = RoomTypeMapper.mapToRoomType(roomTypeDto);
+       RoomType roomType = roomTypeMapper.mapToRoomType(roomTypeDto);
        RoomType saveRoomType = roomTypeRepository.save(roomType);
-         return RoomTypeMapper.mapToRoomTypeDto(saveRoomType);
+         return roomTypeMapper.mapToRoomTypeDto(saveRoomType);
     }
 
     //Get room type by id
     @Override
     public RoomTypeDto getRoomTypeById(Integer id) {
         RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new RuntimeException("Room type not found"));
-        return RoomTypeMapper.mapToRoomTypeDto(roomType);
+        return roomTypeMapper.mapToRoomTypeDto(roomType);
     }
 
     @Override
     public List<RoomTypeDto> getAllRoomType() {
         List<RoomType> roomTypes = roomTypeRepository.findAll();
-        return roomTypes.stream().map(RoomTypeMapper::mapToRoomTypeDto).toList();
+        return roomTypes.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
     }
 
     //Update room type
@@ -46,7 +47,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomType.setDescription(roomType.getDescription());
 
         RoomType updateRoomtype = roomTypeRepository.save(roomType);
-        return RoomTypeMapper.mapToRoomTypeDto(updateRoomtype);
+        return roomTypeMapper.mapToRoomTypeDto(updateRoomtype);
     }
 
     //Delete room type
