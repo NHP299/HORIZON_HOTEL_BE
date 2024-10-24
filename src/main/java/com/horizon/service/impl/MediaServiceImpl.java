@@ -126,5 +126,4 @@ public class MediaServiceImpl implements MediaService {
         List<Media> mediaList = mediaRepository.findAll();
         return MediaMapper.INSTANCE.mediaListToMediaDtoList(mediaList);
     }
-
 }
