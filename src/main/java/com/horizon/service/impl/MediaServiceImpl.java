@@ -3,7 +3,7 @@ package com.horizon.service.impl;
 import com.horizon.domain.Media;
 import com.horizon.domain.RoomType;
 import com.horizon.dto.MediaDto;
-import com.horizon.mapper.MediaMapper;
+import com.horizon.mapper.MediaMapper; // Import the MediaMapper interface
 import com.horizon.repository.MediaRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.MediaService;
@@ -26,7 +26,10 @@ public class MediaServiceImpl implements MediaService {
     @Autowired
     private RoomTypeRepository roomTypeRepository;
 
-    //upload new image
+    @Autowired
+    private MediaMapper mediaMapper; // Inject MediaMapper
+
+    // Upload new image
     @Override
     public ResponseEntity<Map<String, Object>> storeMediaFile(MultipartFile file, Integer roomTypeId) {
         Map<String, Object> response = new HashMap<>();
@@ -45,7 +48,7 @@ public class MediaServiceImpl implements MediaService {
             media.setPath(file.getOriginalFilename());
 
             Media savedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = MediaMapper.INSTANCE.mediaToMediaDto(savedMedia);
+            MediaDto mediaDto = mediaMapper.mediaToMediaDto(savedMedia); // Use the injected mediaMapper
 
             response.put("message", "Media uploaded successfully.");
             response.put("media", mediaDto);
@@ -59,7 +62,7 @@ public class MediaServiceImpl implements MediaService {
         }
     }
 
-    //update image by mediaId and roomTypeRoom corresponding to image
+    // Update image by mediaId and roomTypeId
     @Override
     public ResponseEntity<Map<String, Object>> updateMedia(Integer mediaId, MultipartFile file, Integer roomTypeId) {
         Map<String, Object> response = new HashMap<>();
@@ -80,7 +83,7 @@ public class MediaServiceImpl implements MediaService {
             media.setPath(file.getOriginalFilename());
 
             Media updatedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = MediaMapper.INSTANCE.mediaToMediaDto(updatedMedia);
+            MediaDto mediaDto = mediaMapper.mediaToMediaDto(updatedMedia); // Use the injected mediaMapper
 
             response.put("message", "Media updated successfully.");
             response.put("media", mediaDto);
@@ -94,7 +97,7 @@ public class MediaServiceImpl implements MediaService {
         }
     }
 
-    //delete image by mediaId
+    // Delete image by mediaId
     @Override
     public ResponseEntity<Map<String, Object>> deleteMedia(Integer mediaId) {
         Map<String, Object> response = new HashMap<>();
@@ -110,20 +113,20 @@ public class MediaServiceImpl implements MediaService {
                 });
     }
 
-    //get image by roomTypeId
+    // Get image by roomTypeId
     @Override
     public List<MediaDto> getMediaByRoomType(Integer roomTypeId) {
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new RuntimeException("Room type not found"));
 
         List<Media> mediaList = mediaRepository.findByRoomType(roomType);
-        return MediaMapper.INSTANCE.mediaListToMediaDtoList(mediaList);
+        return mediaMapper.mediaListToMediaDtoList(mediaList); // Use the injected mediaMapper
     }
 
-    //get all image
+    // Get all images
     @Override
     public List<MediaDto> getAllMedia() {
         List<Media> mediaList = mediaRepository.findAll();
-        return MediaMapper.INSTANCE.mediaListToMediaDtoList(mediaList);
+        return mediaMapper.mediaListToMediaDtoList(mediaList); // Use the injected mediaMapper
     }
 }
