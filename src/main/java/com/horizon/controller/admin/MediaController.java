@@ -19,18 +19,18 @@ public class MediaController {
 
     //upload new image
     @PostMapping("/upload/{roomTypeId}")
-    public ResponseEntity<Map<String, Object>> uploadMediaFile(@RequestParam("file") MultipartFile file,
-                                                               @PathVariable Integer roomTypeId) {
-        return mediaService.storeMediaFile(file, roomTypeId);
+    public ResponseEntity<Map<String, Object>> saveNewMedia(@RequestParam("file") MultipartFile file,
+                                                            @PathVariable Integer roomTypeId) {
+        return mediaService.saveNewMedia(file, roomTypeId);
     }
 
     //update image by mediaId and roomTypeRoom corresponding to image
-    @PutMapping("/update/{mediaId}/{roomTypeId}")
+    @PutMapping("/update/{mediaId}")
     public ResponseEntity<Map<String, Object>> updateMedia(@PathVariable Integer mediaId,
-                                                           @PathVariable Integer roomTypeId,
                                                            @RequestParam("file") MultipartFile file) {
-        return mediaService.updateMedia(mediaId, file, roomTypeId);
+        return mediaService.updateMedia(mediaId, file);
     }
+
 
     //delete image by mediaId
     @DeleteMapping("/{mediaId}")

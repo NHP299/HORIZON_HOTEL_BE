@@ -31,7 +31,7 @@ public class MediaServiceImpl implements MediaService {
 
     // Upload new image
     @Override
-    public ResponseEntity<Map<String, Object>> storeMediaFile(MultipartFile file, Integer roomTypeId) {
+    public ResponseEntity<Map<String, Object>> saveNewMedia(MultipartFile file, Integer roomTypeId) {
         Map<String, Object> response = new HashMap<>();
 
         if (file.isEmpty()) {
@@ -48,7 +48,7 @@ public class MediaServiceImpl implements MediaService {
             media.setPath(file.getOriginalFilename());
 
             Media savedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = mediaMapper.mediaToMediaDto(savedMedia); // Use the injected mediaMapper
+            MediaDto mediaDto = mediaMapper.mediaToMediaDto(savedMedia);
 
             response.put("message", "Media uploaded successfully.");
             response.put("media", mediaDto);
@@ -64,7 +64,7 @@ public class MediaServiceImpl implements MediaService {
 
     // Update image by mediaId and roomTypeId
     @Override
-    public ResponseEntity<Map<String, Object>> updateMedia(Integer mediaId, MultipartFile file, Integer roomTypeId) {
+    public ResponseEntity<Map<String, Object>> updateMedia(Integer mediaId, MultipartFile file) {
         Map<String, Object> response = new HashMap<>();
 
         if (file.isEmpty()) {
@@ -76,14 +76,10 @@ public class MediaServiceImpl implements MediaService {
             Media media = mediaRepository.findById(mediaId)
                     .orElseThrow(() -> new RuntimeException("Media not found with ID: " + mediaId));
 
-            RoomType roomType = roomTypeRepository.findById(roomTypeId)
-                    .orElseThrow(() -> new RuntimeException("Room type not found"));
-
-            media.setRoomType(roomType);
             media.setPath(file.getOriginalFilename());
 
             Media updatedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = mediaMapper.mediaToMediaDto(updatedMedia); // Use the injected mediaMapper
+            MediaDto mediaDto = mediaMapper.mediaToMediaDto(updatedMedia);
 
             response.put("message", "Media updated successfully.");
             response.put("media", mediaDto);
@@ -96,6 +92,7 @@ public class MediaServiceImpl implements MediaService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
 
     // Delete image by mediaId
     @Override
