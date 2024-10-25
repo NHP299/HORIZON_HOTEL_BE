@@ -3,11 +3,13 @@ package com.horizon.controller.admin;
 import com.horizon.dto.UtilitiesDto;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -27,9 +29,9 @@ public class UtilitiesController {
         return ResponseEntity.ok(utilitiesDto);
     }
 
-    @GetMapping
-    public ResponseEntity<List<UtilitiesDto>> getAllUtilities() {
-        List<UtilitiesDto> listUtilities = utilitiesService.getAllUtilities();
+    @GetMapping("/all")
+    public ResponseEntity<Page<UtilitiesDto>> getAllUtilities(Pageable pageable) {
+        Page<UtilitiesDto> listUtilities = utilitiesService.getAllUtilities(pageable);
         return ResponseEntity.ok(listUtilities);
     }
 
@@ -43,5 +45,17 @@ public class UtilitiesController {
     public ResponseEntity<String> deleteUtilities(@PathVariable("id") Integer utilitiesId) {
         utilitiesService.deleteUtilities(utilitiesId);
         return new ResponseEntity<>("Deleted utilities successfully",HttpStatus.OK);
+    }
+
+    @GetMapping("/by-room-type-name")
+    public ResponseEntity<Page<UtilitiesDto>> getUtilitiesByRoomTypeName(@RequestParam String roomTypeName, Pageable pageable) {
+        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getUtilitiesByRoomTypeName(roomTypeName, pageable);
+        return ResponseEntity.ok(utilitiesDtoPage);
+    }
+
+    @GetMapping("/by-room-name")
+    public ResponseEntity<Page<UtilitiesDto>> getUtilitiesByRoomName(@RequestParam String roomName, Pageable pageable) {
+        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getUtilitiesByRoomName(roomName, pageable);
+        return ResponseEntity.ok(utilitiesDtoPage);
     }
 }
