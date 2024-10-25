@@ -15,9 +15,11 @@ import java.util.function.Function;
 public interface UtilitiesService {
 
     UtilitiesDto createUtilities(UtilitiesDto utilitiesDto);
-    UtilitiesDto updateUtilities(Integer utilitiesId, UtilitiesDto updateUtilities);
+    UtilitiesDto updateUtilities(Integer utilitiesId, UtilitiesDto utilitiesDto);
     void deleteUtilities(Integer utilitiesId);
     UtilitiesDto getUtilitiesById(Integer utilitiesId);
-    List<UtilitiesDto> getAllUtilities();
-
+    Page<UtilitiesDto> getAllUtilities(Pageable pageable);
+    Page<UtilitiesDto> getUtilitiesByName(String name, Pageable pageable);
+    Page<UtilitiesDto> getUtilitiesByRoomTypeName(String roomTypeName, Pageable pageable);
+    Page<UtilitiesDto> getUtilitiesByRoomName(String RoomName, Pageable pageable);
 }
