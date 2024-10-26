@@ -1,6 +1,5 @@
 package com.horizon.mapper;
 
-import com.horizon.domain.RoomType;
 import com.horizon.domain.Utilities;
 import com.horizon.dto.UtilitiesDto;
 

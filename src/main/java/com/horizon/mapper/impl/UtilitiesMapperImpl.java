@@ -19,10 +19,6 @@ public class UtilitiesMapperImpl implements UtilitiesMapper {
         this.roomTypeRepository = roomTypeRepository;
     }
 
-    private RoomType findRoomTypeById(Integer id) {
-        return roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("RoomType not found with id: " + id));
-    }
-
     @Override
     public UtilitiesDto mapToUtilitiesDto(Utilities utilities) {
         if (utilities == null) {
@@ -50,5 +46,9 @@ public class UtilitiesMapperImpl implements UtilitiesMapper {
         utilities.setDescription(utilitiesDto.getDescription());
 
         return utilities;
+    }
+
+    private RoomType findRoomTypeById(Integer id) {
+        return roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("RoomType not found with id: " + id));
     }
 }
