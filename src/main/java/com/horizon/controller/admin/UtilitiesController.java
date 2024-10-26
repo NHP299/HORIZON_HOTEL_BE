@@ -3,7 +3,6 @@ package com.horizon.controller.admin;
 import com.horizon.dto.UtilitiesDto;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -58,4 +57,5 @@ public class UtilitiesController {
         Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getUtilitiesByRoomName(roomName, pageable);
         return ResponseEntity.ok(utilitiesDtoPage);
     }
+
 }
