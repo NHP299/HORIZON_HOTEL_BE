@@ -39,7 +39,7 @@ public class MediaController {
     }
 
     //get image by roomTypeId
-    @GetMapping("/roomType/{roomTypeId}")
+    @GetMapping("/{roomTypeId}")
     public ResponseEntity<List<MediaDto>> getMediaByRoomType(@PathVariable Integer roomTypeId) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomType(roomTypeId);
         return ResponseEntity.ok(mediaList);
