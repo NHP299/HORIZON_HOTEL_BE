@@ -1,11 +1,18 @@
 package com.horizon.dto;
 
-import java.sql.Timestamp;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ServicesDto {
     private Integer id;
     private Integer roomTypeId;
     private String description;
-    private Timestamp startedTime;
-    private Timestamp endTime;
+    private LocalDateTime startedTime;
+    private LocalDateTime endTime;
 }

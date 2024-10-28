@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +22,6 @@ public class Services {
     private RoomType roomType;
 
     private String description;
-    private Timestamp startedTime;
-    private Timestamp endTime;
+    private LocalDateTime startedTime;
+    private LocalDateTime   endTime;
 }
