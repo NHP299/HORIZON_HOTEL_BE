@@ -34,12 +34,15 @@ public class ServicesMapperImpl implements ServicesMapper {
     }
 
     @Override
-    public Services mapToService(ServicesDto servicesDto) {
+    public Services mapToService(ServicesDto servicesDto, Services existingServices) {
         if (servicesDto == null) {
             return null;
         }
-        Services services = new Services();
-        services.setId(servicesDto.getId());
+        Services services = (existingServices != null) ? existingServices : new Services();
+        if (existingServices == null) {
+            services.setId(servicesDto.getId());
+        }
+
         services.setRoomType(findRoomTypeById(servicesDto.getRoomTypeId()));
         services.setDescription(servicesDto.getDescription());
         services.setStartedTime(servicesDto.getStartedTime());

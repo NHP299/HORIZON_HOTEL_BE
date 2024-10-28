@@ -34,12 +34,15 @@ public class UtilitiesMapperImpl implements UtilitiesMapper {
     }
 
     @Override
-    public Utilities mapToUtilities(UtilitiesDto utilitiesDto) {
+    public Utilities mapToUtilities(UtilitiesDto utilitiesDto, Utilities existingUtilities) {
         if (utilitiesDto == null) {
             return null;
         }
-        Utilities utilities = new Utilities();
-        utilities.setId(utilitiesDto.getId());
+        Utilities utilities = (existingUtilities != null) ? existingUtilities : new Utilities();
+        if (existingUtilities == null) {
+            utilities.setId(utilitiesDto.getId());
+        }
+
         RoomType roomType = findRoomTypeById(utilitiesDto.getRoomTypeId());
         utilities.setRoomType(roomType);
         utilities.setName(utilitiesDto.getName());
