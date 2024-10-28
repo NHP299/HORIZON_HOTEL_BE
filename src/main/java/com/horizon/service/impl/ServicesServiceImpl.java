@@ -1,58 +1,48 @@
 package com.horizon.service.impl;
 
-import com.horizon.domain.RoomType;
 import com.horizon.domain.Services;
 import com.horizon.dto.ServicesDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.ServicesMapper;
-import com.horizon.repository.RoomTypeRepository;
 import com.horizon.repository.ServicesRepository;
 import com.horizon.service.ServicesService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ServicesServiceImpl implements ServicesService {
 
-    private final ServicesRepository servicesRepository;
-    private final RoomTypeRepository roomTypeRepository;
+    private ServicesRepository servicesRepository;
+    private ServicesMapper servicesMapper;
 
-    @Autowired
-    public ServicesServiceImpl(ServicesRepository servicesRepository, RoomTypeRepository roomTypeRepository) {
-        this.servicesRepository = servicesRepository;
-        this.roomTypeRepository = roomTypeRepository;
-    }
 
     @Override
     public ServicesDto createServices(ServicesDto servicesDto) {
-        Services services = ServicesMapper.mapToService(servicesDto);
+        Services services = servicesMapper.mapToService(servicesDto, null);
         Services saveServices = servicesRepository.save(services);
-        return ServicesMapper.mapToServicesDto(saveServices);
+        return servicesMapper.mapToServicesDto(saveServices);
     }
 
 
-    @Override
-    public ServicesDto updateServices(Integer serviceId, ServicesDto updateServices) {
-        Services services = servicesRepository.findById(serviceId).orElseThrow(
-                () -> new ResourceNotFoundException("Services is not exist with given id: " + serviceId));
-        RoomType roomType = roomTypeRepository.findById(updateServices.getRoomTypeId()).orElseThrow(
-                () -> new ResourceNotFoundException("RoomType is not exist with given id: " + updateServices.getRoomTypeId()));
-        services.setRoomType(roomType);
-        services.setDescription(updateServices.getDescription());
-        services.setStartedTime(updateServices.getStartedTime());
-        services.setEndTime(updateServices.getEndTime());
+    public ServicesDto updateServices(Integer serviceId, ServicesDto servicesDto) {
+        Services existingServices = servicesRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
 
-        Services updateServicesObj = servicesRepository.save(services);
-        return ServicesMapper.mapToServicesDto(updateServicesObj);
+        Services updatedServices = servicesMapper.mapToService(servicesDto, existingServices);
+
+        updatedServices = servicesRepository.save(updatedServices);
+        return servicesMapper.mapToServicesDto(updatedServices);
     }
+
 
     @Override
     public void deleteServices(Integer serviceId) {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
-                () -> new ResourceNotFoundException("Services is not exist with given id: " + serviceId)
+                () -> new ResourceNotFoundException("Service not found " + serviceId)
         );
         servicesRepository.delete(services);
     }
@@ -62,13 +52,37 @@ public class ServicesServiceImpl implements ServicesService {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Services is not exist with given id: " + serviceId)
         );
-        return ServicesMapper.mapToServicesDto(services);
+        return servicesMapper.mapToServicesDto(services);
     }
 
     @Override
-    public List<ServicesDto> getAllServices() {
-        List<Services> services = servicesRepository.findAll();
-        return services.stream().map((service) -> ServicesMapper.mapToServicesDto(service)).collect(Collectors.toList());
+    public Page<ServicesDto> getAllServices(Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findAll(pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
+    }
+
+    @Override
+    public Page<ServicesDto> getServicesByName(String name, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findByDescriptionContainingIgnoreCase(name, pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
+    }
+
+    @Override
+    public Page<ServicesDto> getServicesByRoomTypeName(String roomTypeName, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName, pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
+    }
+
+    @Override
+    public Page<ServicesDto> getServicesByRoomId(Integer roomId, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findServicesByRoomId(roomId, pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
+    }
+
+    @Override
+    public Page<ServicesDto> getServicesByRoomName(String roomName, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findServicesByRoomName(roomName, pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
 }

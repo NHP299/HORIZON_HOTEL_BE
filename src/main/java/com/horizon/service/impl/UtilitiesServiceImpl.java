@@ -5,7 +5,6 @@ import com.horizon.domain.Utilities;
 import com.horizon.dto.UtilitiesDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.UtilitiesMapper;
-import com.horizon.repository.RoomTypeRepository;
 import com.horizon.repository.UtilitiesRepository;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
@@ -25,20 +24,19 @@ public class UtilitiesServiceImpl implements UtilitiesService {
 
     @Override
     public UtilitiesDto createUtilities(UtilitiesDto utilitiesDto) {
-        Utilities utilities = utilitiesMapper.mapToUtilities(utilitiesDto);
+        Utilities utilities = utilitiesMapper.mapToUtilities(utilitiesDto,null);
         Utilities saveUtilities = utilitiesRepository.save(utilities);
         return utilitiesMapper.mapToUtilitiesDto(saveUtilities);
     }
 
     @Override
     public UtilitiesDto updateUtilities(Integer utilitiesId, UtilitiesDto utilitiesDto) {
-        Utilities updatedUtilities = utilitiesRepository.findById(utilitiesId).
-                map(existingUtilities -> {
-                    existingUtilities = utilitiesMapper.mapToUtilities(utilitiesDto);
-                    return utilitiesRepository.save(existingUtilities);
-                }).orElseThrow(() -> new ResourceNotFoundException("Utilities not found" + utilitiesId));
+        Utilities existingUtilities = utilitiesRepository.findById(utilitiesId).orElseThrow(() -> new ResourceNotFoundException("Utilities not found " + utilitiesId));
+        Utilities updatedUtilities = utilitiesMapper.mapToUtilities(utilitiesDto,existingUtilities);
+        updatedUtilities = utilitiesRepository.save(updatedUtilities);
         return utilitiesMapper.mapToUtilitiesDto(updatedUtilities);
     }
+
 
     @Override
     public void deleteUtilities(Integer utilitiesId) {
@@ -69,6 +67,12 @@ public class UtilitiesServiceImpl implements UtilitiesService {
     @Override
     public Page<UtilitiesDto> getUtilitiesByRoomTypeName(String roomTypeName, Pageable pageable) {
         Page<Utilities> utilitiesPage = utilitiesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName, pageable);
+        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    }
+
+    @Override
+    public Page<UtilitiesDto> getUtilitiesByRoomId(Integer roomId, Pageable pageable) {
+        Page<Utilities> utilitiesPage = utilitiesRepository.findUtilitiesByRoomId(roomId, pageable);
         return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
     }
 
