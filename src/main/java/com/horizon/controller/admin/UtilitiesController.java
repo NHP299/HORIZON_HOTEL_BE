@@ -52,6 +52,12 @@ public class UtilitiesController {
         return ResponseEntity.ok(utilitiesDtoPage);
     }
 
+    @GetMapping("/by-room-id/{id}")
+    public ResponseEntity<Page<UtilitiesDto>> getUtilitiesByRoomId(@PathVariable("id") Integer roomId, Pageable pageable) {
+        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getUtilitiesByRoomId(roomId, pageable);
+        return ResponseEntity.ok(utilitiesDtoPage);
+    }
+
     @GetMapping("/by-room-name")
     public ResponseEntity<Page<UtilitiesDto>> getUtilitiesByRoomName(@RequestParam String roomName, Pageable pageable) {
         Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getUtilitiesByRoomName(roomName, pageable);
