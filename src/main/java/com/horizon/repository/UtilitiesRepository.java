@@ -12,6 +12,17 @@ import org.springframework.stereotype.Repository;
 public interface UtilitiesRepository extends JpaRepository<Utilities, Integer> {
     Page<Utilities> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<Utilities> findByRoomType_NameContainingIgnoreCase(String roomTypeName, Pageable pageable);
-    @Query("SELECT u FROM Utilities u JOIN Room r ON u.roomType.id = r.roomType.id WHERE r.name = :roomName")
+
+    @Query("SELECT u FROM Utilities u " +
+            "JOIN u.roomType rt " +
+            "JOIN rt.roomList r " +
+            "WHERE r.id = :roomId")
+    Page<Utilities> findUtilitiesByRoomId(@Param("roomId") Integer roomId, Pageable pageable);
+
+    @Query("SELECT u FROM Utilities u " +
+            "JOIN u.roomType rt " +
+            "JOIN rt.roomList r " +
+            "WHERE r.name = :roomName")
     Page<Utilities> findUtilitiesByRoomName(@Param("roomName") String roomName, Pageable pageable);
+
 }
