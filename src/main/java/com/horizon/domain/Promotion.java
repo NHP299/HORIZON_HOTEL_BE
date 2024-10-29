@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -21,8 +21,8 @@ public class Promotion {
     private String description;
     private String discountCondition;
     private Double discount;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Integer maxUsage;
     private String voucherType;
     private Integer maxAmount;
