@@ -17,35 +17,41 @@ public class MediaController {
     @Autowired
     private MediaService mediaService;
 
-    //upload new image
     @PostMapping("/upload/{roomTypeId}")
-    public ResponseEntity<Map<String, Object>> saveNewMedia(@RequestParam("file") MultipartFile file,
-                                                            @PathVariable Integer roomTypeId) {
-        return mediaService.saveNewMedia(file, roomTypeId);
+    public ResponseEntity<Map<String, Object>> createNewMedia(@RequestParam("file") MultipartFile file,
+                                                              @PathVariable Integer roomTypeId) {
+        return mediaService.createNewMedia(file, roomTypeId);
     }
 
-    //update image by mediaId and roomTypeRoom corresponding to image
     @PutMapping("/update/{mediaId}")
     public ResponseEntity<Map<String, Object>> updateMedia(@PathVariable Integer mediaId,
                                                            @RequestParam("file") MultipartFile file) {
         return mediaService.updateMedia(mediaId, file);
     }
 
-
-    //delete image by mediaId
     @DeleteMapping("/{mediaId}")
     public ResponseEntity<Map<String, Object>> deleteMedia(@PathVariable Integer mediaId) {
         return mediaService.deleteMedia(mediaId);
     }
 
-    //get image by roomTypeId
     @GetMapping("/{roomTypeId}")
     public ResponseEntity<List<MediaDto>> getMediaByRoomType(@PathVariable Integer roomTypeId) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomType(roomTypeId);
         return ResponseEntity.ok(mediaList);
     }
 
-    //get all image
+    @GetMapping("/media-by-room-name")
+    public ResponseEntity<List<MediaDto>> getMediaByRoomName(@RequestParam String roomName) {
+        List<MediaDto> mediaList = mediaService.getMediaByRoomName(roomName);
+        return ResponseEntity.ok(mediaList);
+    }
+
+    @GetMapping("/media/{mediaId}")
+    public ResponseEntity<MediaDto> getMediaById(@PathVariable Integer mediaId) {
+        MediaDto mediaDto = mediaService.getMediaById(mediaId);
+        return ResponseEntity.ok(mediaDto);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<MediaDto>> getAllMedia() {
         List<MediaDto> mediaList = mediaService.getAllMedia();
