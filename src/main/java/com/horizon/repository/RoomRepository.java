@@ -9,9 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
+
+    Optional<Room> findByName(String name);
 
     Room findByIsActivatedTrueAndId(Integer id);
 
