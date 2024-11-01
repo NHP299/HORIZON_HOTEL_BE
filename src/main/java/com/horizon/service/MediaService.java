@@ -11,9 +11,17 @@ import java.util.Map;
 @Service
 public interface MediaService {
 
-    ResponseEntity<Map<String, Object>> saveNewMedia(MultipartFile file, Integer roomTypeId);
+    ResponseEntity<Map<String, Object>> createNewMedia(MultipartFile file, Integer roomTypeId);
+
     ResponseEntity<Map<String, Object>> deleteMedia(Integer mediaId);
+
     ResponseEntity<Map<String, Object>> updateMedia(Integer mediaId, MultipartFile file);
+
     List<MediaDto> getMediaByRoomType(Integer roomTypeId);
+
+    List<MediaDto> getMediaByRoomName(String roomName);
+
+    MediaDto getMediaById(Integer mediaId);
+
     List<MediaDto> getAllMedia();
 }
