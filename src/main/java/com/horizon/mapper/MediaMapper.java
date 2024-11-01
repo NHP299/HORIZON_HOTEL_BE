@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface MediaMapper {
     MediaDto mediaToMediaDto(Media media);
+    Media mediaDtoToMedia(MediaDto mediaDto);
     List<MediaDto> mediaListToMediaDtoList(List<Media> mediaList);
 }

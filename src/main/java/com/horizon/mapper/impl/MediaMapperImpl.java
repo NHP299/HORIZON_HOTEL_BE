@@ -25,6 +25,18 @@ public class MediaMapperImpl implements MediaMapper {
     }
 
     @Override
+    public Media mediaDtoToMedia(MediaDto mediaDto) {
+        if (mediaDto == null) {
+            return null;
+        }
+
+        Media media = new Media();
+        media.setId(mediaDto.getId());
+        media.setPath(mediaDto.getPath());
+        return media;
+    }
+
+    @Override
     public List<MediaDto> mediaListToMediaDtoList(List<Media> mediaList) {
         if (mediaList == null) {
             return null;
