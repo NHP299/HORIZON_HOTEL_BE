@@ -89,16 +89,14 @@ public class BannerServiceImpl implements BannerService {
         return executeMediaOperation(() -> {
             Banner banner = getBannerByIdOrThrow(bannerId);
             if (file != null && !file.isEmpty()) {
-                deleteFile(banner.getPath()); // Xóa file cũ nếu có file mới được tải lên
+                deleteFile(banner.getPath());
                 String filename = saveFile(file);
                 banner.setPath(filename);
             }
 
-            // Cập nhật các thông tin khác
             banner.setName(bannerDto.getName());
             banner.setDescription(bannerDto.getDescription());
 
-            // Cập nhật loại banner nếu cần
             if (bannerDto.getBannerTypeId() != null) {
                 BannerType bannerType = getBannerTypeOrThrow(bannerDto.getBannerTypeId());
                 banner.setBannerType(bannerType);
