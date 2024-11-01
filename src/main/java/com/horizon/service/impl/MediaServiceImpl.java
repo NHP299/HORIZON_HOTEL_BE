@@ -3,8 +3,10 @@ package com.horizon.service.impl;
 import com.horizon.domain.Media;
 import com.horizon.domain.RoomType;
 import com.horizon.dto.MediaDto;
-import com.horizon.mapper.MediaMapper; // Import the MediaMapper interface
+import com.horizon.exception.ExceptionHandlerService;
+import com.horizon.mapper.MediaMapper;
 import com.horizon.repository.MediaRepository;
+import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,113 +35,121 @@ public class MediaServiceImpl implements MediaService {
     private RoomTypeRepository roomTypeRepository;
 
     @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private MediaMapper mediaMapper;
 
-    // Upload new image
-    @Override
-    public ResponseEntity<Map<String, Object>> saveNewMedia(MultipartFile file, Integer roomTypeId) {
-        Map<String, Object> response = new HashMap<>();
+    @Autowired
+    private ExceptionHandlerService exceptionHandlerService;
 
+    private String saveFile(MultipartFile file) throws Exception {
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir, filename);
+        Files.copy(file.getInputStream(), filePath);
+        return filename;
+    }
+
+    private void deleteFile(String filename) throws Exception {
+        Path filePath = Paths.get(uploadDir, filename);
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+        }
+    }
+
+    private Media getMediaByIdOrThrow(Integer mediaId) {
+        return mediaRepository.findById(mediaId)
+                .orElseThrow(() -> new RuntimeException("Media not found with ID: " + mediaId));
+    }
+
+    private RoomType getRoomTypeOrThrow(Integer roomTypeId) {
+        return roomTypeRepository.findById(roomTypeId)
+                .orElseThrow(() -> new RuntimeException("Room type not found with ID: " + roomTypeId));
+    }
+
+    private ResponseEntity<Map<String, Object>> executeMediaOperation(MediaOperation operation) {
+        try {
+            return operation.perform();
+        } catch (Exception e) {
+            return exceptionHandlerService.handleGeneralError(e.getMessage());
+        }
+    }
+
+    @FunctionalInterface
+    interface MediaOperation {
+        ResponseEntity<Map<String, Object>> perform() throws Exception;
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> createNewMedia(MultipartFile file, Integer roomTypeId) {
         if (file.isEmpty()) {
-            response.put("message", "File is empty.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return exceptionHandlerService.handleFileUploadError("File is empty.");
         }
 
-        try {
-            RoomType roomType = roomTypeRepository.findById(roomTypeId)
-                    .orElseThrow(() -> new RuntimeException("Room type not found"));
-
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, filename);
-            Files.copy(file.getInputStream(), filePath);
+        return executeMediaOperation(() -> {
+            RoomType roomType = getRoomTypeOrThrow(roomTypeId);
+            String filename = saveFile(file);
 
             Media media = new Media();
             media.setRoomType(roomType);
             media.setPath(filename);
 
-            Media savedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = mediaMapper.mediaToMediaDto(savedMedia);
+            MediaDto mediaDto = mediaMapper.mediaToMediaDto(mediaRepository.save(media));
 
-            response.put("message", "Media uploaded successfully.");
-            response.put("media", mediaDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            response.put("message", "An error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+            return exceptionHandlerService.createResponse("Media uploaded successfully.", mediaDto, HttpStatus.CREATED);
+        });
     }
 
-    // Update image by mediaId and roomTypeId
     @Override
     public ResponseEntity<Map<String, Object>> updateMedia(Integer mediaId, MultipartFile file) {
-        Map<String, Object> response = new HashMap<>();
-
         if (file.isEmpty()) {
-            response.put("message", "File is empty.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return exceptionHandlerService.handleFileUploadError("File is empty.");
         }
 
-        try {
-            Media media = mediaRepository.findById(mediaId)
-                    .orElseThrow(() -> new RuntimeException("Media not found with ID: " + mediaId));
+        return executeMediaOperation(() -> {
+            Media media = getMediaByIdOrThrow(mediaId);
+            deleteFile(media.getPath());
 
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, filename);
-            Files.copy(file.getInputStream(), filePath);
-
+            String filename = saveFile(file);
             media.setPath(filename);
 
-            Media updatedMedia = mediaRepository.save(media);
-            MediaDto mediaDto = mediaMapper.mediaToMediaDto(updatedMedia);
+            MediaDto updatedMediaDto = mediaMapper.mediaToMediaDto(mediaRepository.save(media));
 
-            response.put("message", "Media updated successfully.");
-            response.put("media", mediaDto);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            response.put("message", "An error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+            return exceptionHandlerService.createResponse("Media updated successfully.", updatedMediaDto, HttpStatus.OK);
+        });
     }
 
-
-    // Delete image by mediaId
     @Override
     public ResponseEntity<Map<String, Object>> deleteMedia(Integer mediaId) {
-        Map<String, Object> response = new HashMap<>();
-
-        return mediaRepository.findById(mediaId)
-                .map(media -> {
-                    try {
-                        Path filePath = Paths.get(uploadDir, media.getPath());
-                        Files.deleteIfExists(filePath);
-                    } catch (Exception e) {
-                        response.put("message", "Failed to delete file from directory: " + e.getMessage());
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-                    }
-
-                    mediaRepository.delete(media);
-                    response.put("message", "Media deleted successfully.");
-                    return ResponseEntity.status(HttpStatus.OK).body(response);
-                }).orElseGet(() -> {
-                    response.put("message", "Media not found with ID: " + mediaId);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-                });
+        return executeMediaOperation(() -> {
+            Media media = getMediaByIdOrThrow(mediaId);
+            deleteFile(media.getPath());
+            mediaRepository.delete(media);
+            return exceptionHandlerService.createResponse("Media deleted successfully.", null, HttpStatus.OK);
+        });
     }
 
-    // Get image by roomTypeId
+    @Override
+    public List<MediaDto> getMediaByRoomName(String roomName) {
+        RoomType roomType = roomRepository.findByName(roomName)
+                .orElseThrow(() -> new RuntimeException("Room not found with name: " + roomName)).getRoomType();
+        return mediaMapper.mediaListToMediaDtoList(mediaRepository.findByRoomType(roomType));
+    }
+
     @Override
     public List<MediaDto> getMediaByRoomType(Integer roomTypeId) {
-        RoomType roomType = roomTypeRepository.findById(roomTypeId)
-                .orElseThrow(() -> new RuntimeException("Room type not found"));
-
-        List<Media> mediaList = mediaRepository.findByRoomType(roomType);
-        return mediaMapper.mediaListToMediaDtoList(mediaList);
+        RoomType roomType = getRoomTypeOrThrow(roomTypeId);
+        return mediaMapper.mediaListToMediaDtoList(mediaRepository.findByRoomType(roomType));
     }
 
-    // Get all images
+    @Override
+    public MediaDto getMediaById(Integer mediaId) {
+        Media media = getMediaByIdOrThrow(mediaId);
+        return mediaMapper.mediaToMediaDto(media);
+    }
+
     @Override
     public List<MediaDto> getAllMedia() {
-        List<Media> mediaList = mediaRepository.findAll();
-        return mediaMapper.mediaListToMediaDtoList(mediaList);
+        return mediaMapper.mediaListToMediaDtoList(mediaRepository.findAll());
     }
 }
