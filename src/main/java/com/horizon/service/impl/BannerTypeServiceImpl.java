@@ -2,28 +2,29 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.BannerType;
 import com.horizon.dto.BannerTypeDto;
+import com.horizon.mapper.BannerTypeMapper;
 import com.horizon.repository.BannerTypeRepository;
 import com.horizon.service.BannerTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class BannerTypeServiceImpl implements BannerTypeService {
     private final BannerTypeRepository bannerTypeRepository;
+    private final BannerTypeMapper bannerTypeMapper;
 
     @Autowired
-    public BannerTypeServiceImpl(BannerTypeRepository bannerTypeRepository) {
+    public BannerTypeServiceImpl(BannerTypeRepository bannerTypeRepository, BannerTypeMapper bannerTypeMapper) {
         this.bannerTypeRepository = bannerTypeRepository;
+        this.bannerTypeMapper = bannerTypeMapper;
     }
 
     @Override
     public String createBannerType(BannerTypeDto bannerTypeDto) {
-        BannerType bannerType = new BannerType();
-        bannerType.setName(bannerTypeDto.getName());
+        BannerType bannerType = bannerTypeMapper.toEntity(bannerTypeDto);
         BannerType savedBannerType = bannerTypeRepository.save(bannerType);
         return "Banner Type created successfully with ID: " + savedBannerType.getId();
     }
@@ -49,7 +50,7 @@ public class BannerTypeServiceImpl implements BannerTypeService {
     @Override
     public List<BannerTypeDto> getAllBannerTypes() {
         return bannerTypeRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(bannerTypeMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -57,10 +58,6 @@ public class BannerTypeServiceImpl implements BannerTypeService {
     public BannerTypeDto getBannerTypeById(Integer id) {
         BannerType bannerType = bannerTypeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("BannerType not found with id: " + id));
-        return convertToDto(bannerType);
-    }
-
-    private BannerTypeDto convertToDto(BannerType bannerType) {
-        return new BannerTypeDto(bannerType.getId(), bannerType.getName());
+        return bannerTypeMapper.toDto(bannerType);
     }
 }
