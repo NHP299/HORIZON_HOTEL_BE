@@ -6,6 +6,8 @@ import com.horizon.mapper.RoomTypeMapper;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +35,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         return roomTypeMapper.mapToRoomTypeDto(roomType);
     }
 
+    //Get all room type
     @Override
-    public List<RoomTypeDto> getAllRoomType() {
-        List<RoomType> roomTypes = roomTypeRepository.findAll();
-        return roomTypes.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
+    public Page<RoomTypeDto> getAllRoomType(Pageable pageable) {
+       Page<RoomType> roomTypes = roomTypeRepository.findAll(pageable);
+         return roomTypes.map(roomTypeMapper::mapToRoomTypeDto);
     }
 
     //Update room type
@@ -58,10 +61,4 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     }
 
-    @Override
-    public RoomTypeDto getRoomTypeByName(String name) {
-
-
-        return null;
-    }
 }
