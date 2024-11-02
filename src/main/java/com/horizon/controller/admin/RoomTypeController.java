@@ -6,6 +6,8 @@ import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +38,8 @@ public class RoomTypeController {
 
     //Get all room type
     @GetMapping
-    public ResponseEntity<List<RoomTypeDto>> getAllRoomType() {
-        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType();
+    public ResponseEntity<Page<RoomTypeDto>> getAllRoomType(Pageable pageable) {
+        Page<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType(pageable);
         return ResponseEntity.ok(roomTypeDtos);
     }
 
