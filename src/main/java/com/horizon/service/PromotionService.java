@@ -11,5 +11,8 @@ public interface PromotionService {
     void deletePromotion(Integer promotionId);
     PromotionDto getPromotionById(Integer promotionId);
     Page<PromotionDto> getAllPromotions(Pageable pageable);
+    Page<PromotionDto> getPromotionByName(String name, Pageable pageable);
+    PromotionDto getPromotionByIdAndTimeRange(Integer promotionId);
+    Page<PromotionDto> getAllPromotionsWithinTimeRange(Pageable pageable);
 
 }

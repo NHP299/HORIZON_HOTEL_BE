@@ -42,13 +42,31 @@ public class PromotionServiceImpl implements PromotionService
 
     @Override
     public PromotionDto getPromotionById(Integer promotionId) {
-        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
         return promotionMapper.maptoPromotionDto(promotion);
     }
 
     @Override
     public Page<PromotionDto> getAllPromotions(Pageable pageable) {
         Page<Promotion> promotions = promotionRepository.findAll(pageable);
+        return promotions.map(promotionMapper::maptoPromotionDto);
+    }
+
+    @Override
+    public Page<PromotionDto> getPromotionByName(String name, Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCase(name, pageable);
+        return promotions.map(promotionMapper::maptoPromotionDto);
+    }
+
+    @Override
+    public PromotionDto getPromotionByIdAndTimeRange(Integer promotionId) {
+        Promotion promotion = promotionRepository.findPromotionByIdAndTimeRange(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
+        return promotionMapper.maptoPromotionDto(promotion);
+    }
+
+    @Override
+    public Page<PromotionDto> getAllPromotionsWithinTimeRange(Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findAllPromotionsWithinTimeRange(pageable);
         return promotions.map(promotionMapper::maptoPromotionDto);
     }
 }
