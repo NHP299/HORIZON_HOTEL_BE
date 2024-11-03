@@ -29,8 +29,8 @@ public class PromotionController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<PromotionDto>> getAllPromotions(Pageable pageable) {
-        Page<PromotionDto> promotionDtos = promotionService.getAllPromotions(pageable);
-        return ResponseEntity.ok(promotionDtos);
+        Page<PromotionDto> promotionDto = promotionService.getAllPromotions(pageable);
+        return ResponseEntity.ok(promotionDto);
     }
 
     @PutMapping("{id}")
@@ -43,6 +43,18 @@ public class PromotionController {
     public ResponseEntity<String> delete(@PathVariable("id") Integer promotionId) {
         promotionService.deletePromotion(promotionId);
         return new ResponseEntity<>("Promotion deleted successfully",HttpStatus.OK);
+    }
+
+    @GetMapping("/by-id-and-time-range/{id}")
+    public ResponseEntity<PromotionDto> getPromotionByIdAndTimeRange(@PathVariable Integer id) {
+        PromotionDto promotionDto = promotionService.getPromotionByIdAndTimeRange(id);
+        return ResponseEntity.ok(promotionDto);
+    }
+
+    @GetMapping("/all-within-time-range")
+    public ResponseEntity<Page<PromotionDto>> getAllPromotionsAndTimeRange(Pageable pageable) {
+        Page<PromotionDto> promotionDto = promotionService.getAllPromotionsWithinTimeRange(pageable);
+        return ResponseEntity.ok(promotionDto);
     }
 
 }
