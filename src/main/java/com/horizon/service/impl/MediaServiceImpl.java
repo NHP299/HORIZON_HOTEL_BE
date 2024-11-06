@@ -8,6 +8,7 @@ import com.horizon.mapper.MediaMapper;
 import com.horizon.repository.MediaRepository;
 import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
+import com.horizon.service.FileService;
 import com.horizon.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -43,19 +41,8 @@ public class MediaServiceImpl implements MediaService {
     @Autowired
     private ExceptionHandlerService exceptionHandlerService;
 
-    private String saveFile(MultipartFile file) throws Exception {
-        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, filename);
-        Files.copy(file.getInputStream(), filePath);
-        return filename;
-    }
-
-    private void deleteFile(String filename) throws Exception {
-        Path filePath = Paths.get(uploadDir, filename);
-        if (Files.exists(filePath)) {
-            Files.delete(filePath);
-        }
-    }
+    @Autowired
+    private FileService fileService;
 
     private Media getMediaByIdOrThrow(Integer mediaId) {
         return mediaRepository.findById(mediaId)
@@ -88,7 +75,7 @@ public class MediaServiceImpl implements MediaService {
 
         return executeMediaOperation(() -> {
             RoomType roomType = getRoomTypeOrThrow(roomTypeId);
-            String filename = saveFile(file);
+            String filename = fileService.saveFile(file, uploadDir);
 
             Media media = new Media();
             media.setRoomType(roomType);
@@ -108,9 +95,9 @@ public class MediaServiceImpl implements MediaService {
 
         return executeMediaOperation(() -> {
             Media media = getMediaByIdOrThrow(mediaId);
-            deleteFile(media.getPath());
+            fileService.deleteFile(media.getPath(), uploadDir);
 
-            String filename = saveFile(file);
+            String filename = fileService.saveFile(file, uploadDir);
             media.setPath(filename);
 
             MediaDto updatedMediaDto = mediaMapper.mediaToMediaDto(mediaRepository.save(media));
@@ -123,7 +110,7 @@ public class MediaServiceImpl implements MediaService {
     public ResponseEntity<Map<String, Object>> deleteMedia(Integer mediaId) {
         return executeMediaOperation(() -> {
             Media media = getMediaByIdOrThrow(mediaId);
-            deleteFile(media.getPath());
+            fileService.deleteFile(media.getPath(), uploadDir);
             mediaRepository.delete(media);
             return exceptionHandlerService.createResponse("Media deleted successfully.", null, HttpStatus.OK);
         });
