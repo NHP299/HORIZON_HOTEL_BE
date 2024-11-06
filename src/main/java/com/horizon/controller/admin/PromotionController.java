@@ -45,16 +45,23 @@ public class PromotionController {
         return new ResponseEntity<>("Promotion deleted successfully",HttpStatus.OK);
     }
 
-    @GetMapping("/by-id-and-time-range/{id}")
-    public ResponseEntity<PromotionDto> getPromotionByIdAndTimeRange(@PathVariable Integer id) {
-        PromotionDto promotionDto = promotionService.getPromotionByIdAndTimeRange(id);
+    @GetMapping("/by-id-available/{id}")
+    public ResponseEntity<PromotionDto> getPromotionByIdAndAvailable(@PathVariable("id") Integer id) {
+        PromotionDto promotionDto = promotionService.getPromotionByIdAndAvailable(id);
         return ResponseEntity.ok(promotionDto);
     }
 
-    @GetMapping("/all-within-time-range")
-    public ResponseEntity<Page<PromotionDto>> getAllPromotionsAndTimeRange(Pageable pageable) {
-        Page<PromotionDto> promotionDto = promotionService.getAllPromotionsWithinTimeRange(pageable);
+    @GetMapping("/all-available")
+    public ResponseEntity<Page<PromotionDto>> getAllAvailablePromotions(Pageable pageable) {
+        Page<PromotionDto> promotionDto = promotionService.getAllAvailablePromotions(pageable);
         return ResponseEntity.ok(promotionDto);
     }
+
+    @GetMapping("/by-name-available")
+    public ResponseEntity<Page<PromotionDto>> getPromotionByNameAndAvailable(@RequestParam String name, Pageable pageable) {
+        Page<PromotionDto> promotionDto = promotionService.getPromotionByNameAndAvailable(name,pageable);
+        return ResponseEntity.ok(promotionDto);
+    }
+
 
 }

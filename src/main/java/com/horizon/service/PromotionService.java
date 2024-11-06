@@ -12,7 +12,8 @@ public interface PromotionService {
     PromotionDto getPromotionById(Integer promotionId);
     Page<PromotionDto> getAllPromotions(Pageable pageable);
     Page<PromotionDto> getPromotionByName(String name, Pageable pageable);
-    PromotionDto getPromotionByIdAndTimeRange(Integer promotionId);
-    Page<PromotionDto> getAllPromotionsWithinTimeRange(Pageable pageable);
+    PromotionDto getPromotionByIdAndAvailable(Integer promotionId);
+    Page<PromotionDto> getAllAvailablePromotions(Pageable pageable);
+    Page<PromotionDto> getPromotionByNameAndAvailable(String name, Pageable pageable);
 
 }
