@@ -18,36 +18,36 @@ public class MediaController {
     private MediaService mediaService;
 
     @PostMapping("/upload/{roomTypeId}")
-    public ResponseEntity<Map<String, Object>> createNewMedia(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<Map<String, Object>> create(@RequestParam("file") MultipartFile file,
                                                               @PathVariable Integer roomTypeId) {
         return mediaService.createNewMedia(file, roomTypeId);
     }
 
     @PutMapping("/update/{mediaId}")
-    public ResponseEntity<Map<String, Object>> updateMedia(@PathVariable Integer mediaId,
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer mediaId,
                                                            @RequestParam("file") MultipartFile file) {
         return mediaService.updateMedia(mediaId, file);
     }
 
     @DeleteMapping("/{mediaId}")
-    public ResponseEntity<Map<String, Object>> deleteMedia(@PathVariable Integer mediaId) {
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer mediaId) {
         return mediaService.deleteMedia(mediaId);
     }
 
     @GetMapping("/{roomTypeId}")
-    public ResponseEntity<List<MediaDto>> getMediaByRoomType(@PathVariable Integer roomTypeId) {
+    public ResponseEntity<List<MediaDto>> getByRoomType(@PathVariable Integer roomTypeId) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomType(roomTypeId);
         return ResponseEntity.ok(mediaList);
     }
 
     @GetMapping("/media-by-room-name")
-    public ResponseEntity<List<MediaDto>> getMediaByRoomName(@RequestParam String roomName) {
+    public ResponseEntity<List<MediaDto>> getByRoomName(@RequestParam String roomName) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomName(roomName);
         return ResponseEntity.ok(mediaList);
     }
 
-    @GetMapping("/media/{mediaId}")
-    public ResponseEntity<MediaDto> getMediaById(@PathVariable Integer mediaId) {
+    @GetMapping("/{mediaId}")
+    public ResponseEntity<MediaDto> getById(@PathVariable Integer mediaId) {
         MediaDto mediaDto = mediaService.getMediaById(mediaId);
         return ResponseEntity.ok(mediaDto);
     }
