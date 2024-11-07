@@ -21,31 +21,31 @@ public class BannerTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createBannerType(@RequestBody BannerTypeDto bannerTypeDto) {
+    public ResponseEntity<String> create(@RequestBody BannerTypeDto bannerTypeDto) {
         String message = bannerTypeService.createBannerType(bannerTypeDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateBannerType(@PathVariable Integer id, @RequestBody BannerTypeDto bannerTypeDto) {
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody BannerTypeDto bannerTypeDto) {
         String message = bannerTypeService.updateBannerType(id, bannerTypeDto);
         return ResponseEntity.ok(message);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBannerType(@PathVariable Integer id) {
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
         String message = bannerTypeService.deleteBannerType(id);
         return ResponseEntity.ok(message);
     }
 
     @GetMapping
-    public ResponseEntity<List<BannerTypeDto>> getAllBannerTypes() {
+    public ResponseEntity<List<BannerTypeDto>> getAll() {
         List<BannerTypeDto> bannerTypes = bannerTypeService.getAllBannerTypes();
         return ResponseEntity.ok(bannerTypes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BannerTypeDto> getBannerTypeById(@PathVariable Integer id) {
+    public ResponseEntity<BannerTypeDto> getById(@PathVariable Integer id) {
         BannerTypeDto bannerType = bannerTypeService.getBannerTypeById(id);
         return ResponseEntity.ok(bannerType);
     }
