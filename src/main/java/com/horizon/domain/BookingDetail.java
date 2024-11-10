@@ -23,7 +23,4 @@ public class BookingDetail {
     @JoinColumn(name = "booking_id")
     private Booking booking;
 
-    private Integer adult;
-    private Integer child;
-    private Integer baby;
 }
