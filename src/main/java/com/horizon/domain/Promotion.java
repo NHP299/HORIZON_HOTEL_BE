@@ -19,12 +19,10 @@ public class Promotion {
 
     private String name;
     private String description;
-    private String discountCondition;
-    private Double discount;
     private Timestamp startTime;
     private Timestamp endTime;
     private Integer maxUsage;
-    private String voucherType;
     private Integer maxAmount;
+
 
 }
