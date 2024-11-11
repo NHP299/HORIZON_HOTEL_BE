@@ -9,18 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "booking_detail")
-public class BookingDetail {
+@Table(name = "promotion_type")
+public class PromotionType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
-
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
-
+    private String name;
+    private String description;
 }

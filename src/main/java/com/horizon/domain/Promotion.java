@@ -26,12 +26,6 @@ public class Promotion {
 
     private String description;
 
-    @NotBlank(message = "Discount condition cannot be blank")
-    private String discountCondition;
-
-    @NotNull(message = "Discount cannot be null")
-    private Double discount;
-
     @NotNull(message = "Start time cannot be null")
     @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
     @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
@@ -46,12 +40,9 @@ public class Promotion {
     @Min(value = 1, message = "Maximum usage must be at least 1")
     private Integer maxUsage;
 
-    @NotBlank(message = "Voucher type cannot be blank")
-    @Size(max = 50, message = "Voucher type must be less than 50 characters")
-    private String voucherType;
-
     @NotNull(message = "Maximum amount cannot be null")
     @Min(value = 0, message = "Maximum amount must be at least 0")
     private Integer maxAmount;
+
 
 }

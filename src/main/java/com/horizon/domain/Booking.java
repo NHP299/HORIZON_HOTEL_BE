@@ -26,6 +26,9 @@ public class Booking {
     private LocalDate checkIn;
     private LocalDate checkOut;
     private LocalDate bookingDate;
+    private Integer adult;
+    private Integer child;
+    private Integer baby;
     private Short status;
     private String note;
     private BigInteger totalPrice;

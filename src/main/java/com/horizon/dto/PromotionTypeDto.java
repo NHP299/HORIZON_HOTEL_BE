@@ -1,5 +1,6 @@
 package com.horizon.dto;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDetailDto {
+public class PromotionTypeDto {
     private Integer id;
-    private Integer bookingId;
-    private Integer roomId;
+    private String name;
+    private String description;
 }
