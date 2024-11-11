@@ -18,12 +18,9 @@ public class PromotionMapperImpl implements PromotionMapper {
         promotionDto.setId(promotion.getId());
         promotionDto.setName(promotion.getName());
         promotionDto.setDescription(promotion.getDescription());
-        promotionDto.setDiscountCondition(promotion.getDiscountCondition());
-        promotionDto.setDiscount(promotion.getDiscount());
         promotionDto.setStartTime(promotion.getStartTime());
         promotionDto.setEndTime(promotion.getEndTime());
         promotionDto.setMaxUsage(promotion.getMaxUsage());
-        promotionDto.setVoucherType(promotion.getVoucherType());
         promotionDto.setMaxAmount(promotion.getMaxAmount());
         return promotionDto;
     }
@@ -41,12 +38,9 @@ public class PromotionMapperImpl implements PromotionMapper {
 
         promotion.setName(promotionDto.getName());
         promotion.setDescription(promotionDto.getDescription());
-        promotion.setDiscountCondition(promotionDto.getDiscountCondition());
-        promotion.setDiscount(promotionDto.getDiscount());
         promotion.setStartTime(promotionDto.getStartTime());
         promotion.setEndTime(promotionDto.getEndTime());
         promotion.setMaxUsage(promotionDto.getMaxUsage());
-        promotion.setVoucherType(promotionDto.getVoucherType());
         promotion.setMaxAmount(promotionDto.getMaxAmount());
 
         return promotion;
