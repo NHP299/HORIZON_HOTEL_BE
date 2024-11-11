@@ -1,9 +1,12 @@
 package com.horizon.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Time;
 
@@ -19,10 +22,12 @@ public class PromotionCondition {
 
     @ManyToOne
     @JoinColumn(name = "promotion_id")
+    @NotNull(message = "Promotion cannot be null")
     private Promotion promotion;
 
     @ManyToOne
     @JoinColumn(name = "promotion_type_id")
+    @NotNull(message = "Promotion Type cannot be null")
     private PromotionType promotionType;
 
     private Integer value;

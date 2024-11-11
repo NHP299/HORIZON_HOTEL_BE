@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -44,5 +45,7 @@ public class Promotion {
     @Min(value = 0, message = "Maximum amount must be at least 0")
     private Integer maxAmount;
 
+    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
+    private List<PromotionCondition> conditions;
 
 }
