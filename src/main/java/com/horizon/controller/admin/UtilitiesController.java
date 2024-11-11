@@ -7,12 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/admin/utilities")
+@Validated
 public class UtilitiesController {
     private UtilitiesService utilitiesService;
 
