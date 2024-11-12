@@ -9,27 +9,27 @@ import java.util.List;
 
 public interface RoomService {
 
-    List<RoomDto> getAllRooms();
+    List<RoomDto> getAll();
 
-    Page<RoomDto> getAllRooms(Pageable pageable);
+    Page<RoomDto> getAll(Pageable pageable);
 
-    RoomDto createRoom(RoomDto roomDto);
+    RoomDto create(RoomDto roomDto);
 
-    RoomDto getRoomById(Integer id);
+    RoomDto getById(Integer id);
 
-    Page<RoomDto> findRoomByName(String name, Pageable pageable);
+    Page<RoomDto> findByName(String name, Pageable pageable);
 
-    Page<RoomDto> findRoom(String input, Pageable pageable);
+    Page<RoomDto> find(String input, Pageable pageable);
 
-    RoomDto updateRoom(Integer roomId, RoomDto roomDto);
+    RoomDto update(Integer roomId, RoomDto roomDto);
 
-    void deleteRoom(Integer roomId);
+    void delete(Integer roomId);
 
-    Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable);
+    Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable);
 
-    Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable);
+    Page<RoomDto> getByStatus(String statusDescription, Pageable pageable);
 
-    Page<RoomDto> getRoomsIsAvailable(Pageable pageable);
+    Page<RoomDto> getIsAvailable(Pageable pageable);
 
-    Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
+    Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

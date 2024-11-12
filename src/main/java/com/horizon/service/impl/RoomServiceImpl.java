@@ -27,7 +27,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomMapper roomMapper;
 
     @Override
-    public List<RoomDto> getAllRooms() {
+    public List<RoomDto> getAll() {
         List<Room> rooms = roomRepository.findAll();
         return rooms.stream()
                 .map(roomMapper::toRoomDto)
@@ -35,13 +35,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<RoomDto> getAllRooms(Pageable pageable) {
+    public Page<RoomDto> getAll(Pageable pageable) {
         Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
         return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
-    public RoomDto createRoom(RoomDto roomDto) {
+    public RoomDto create(RoomDto roomDto) {
         roomDto.setStatus("Available");
         Room room = roomMapper.toRoom(roomDto);
         room.setIsActivated(true);
@@ -50,20 +50,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto getRoomById(Integer id) {
+    public RoomDto getById(Integer id) {
         return Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id))
                 .map(roomMapper::toRoomDto)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
     }
 
     @Override
-    public Page<RoomDto> findRoomByName(String name, Pageable pageable) {
+    public Page<RoomDto> findByName(String name, Pageable pageable) {
         Page<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
         return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
-    public Page<RoomDto> findRoom(String input, Pageable pageable) {
+    public Page<RoomDto> find(String input, Pageable pageable) {
         try {
             Integer id = Integer.valueOf(input);
             Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));
@@ -78,7 +78,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto updateRoom(Integer roomId, RoomDto roomDto) {
+    public RoomDto update(Integer roomId, RoomDto roomDto) {
         Room updatedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
                 .map(existingRoom -> {
                     existingRoom = roomMapper.toRoom(roomDto);
@@ -88,7 +88,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void deleteRoom(Integer roomId) {
+    public void delete(Integer roomId) {
         Room deletedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
         deletedRoom.setStatus(3);
@@ -98,14 +98,14 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable) {
+    public Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
         return roomRepository.findByRoomTypeName(roomTypeName, pageable)
                 .map(roomMapper::toRoomDto);
     }
 
 
     @Override
-    public Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable) {
+    public Page<RoomDto> getByStatus(String statusDescription, Pageable pageable) {
         Integer statusCode = RoomStatus.fromDescription(statusDescription);
         return roomRepository.findByStatusAndIsActivatedTrue(statusCode, pageable)
                 .map(roomMapper::toRoomDto);
@@ -113,13 +113,13 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public Page<RoomDto> getRoomsIsAvailable(Pageable pageable) {
+    public Page<RoomDto> getIsAvailable(Pageable pageable) {
         return roomRepository.findByStatusAndIsActivatedTrue(0, pageable)
                 .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    public Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable) {
         return roomRepository.findAvailableRoomsInDateRange(startDate, endDate, pageable)
                 .map(roomMapper::toRoomDto);
     }
