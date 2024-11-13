@@ -11,25 +11,25 @@ public interface RoomService {
 
     List<RoomDto> getAll();
 
-    Page<RoomDto> getAll(Pageable pageable);
+    List<RoomDto> getAllIsActivated();
 
     RoomDto create(RoomDto roomDto);
 
     RoomDto getById(Integer id);
 
-    Page<RoomDto> findByName(String name, Pageable pageable);
+    List<RoomDto> findByName(String name);
 
-    Page<RoomDto> find(String input, Pageable pageable);
+    List<RoomDto> find(String input);
 
     RoomDto update(Integer roomId, RoomDto roomDto);
 
     void delete(Integer roomId);
 
-    Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable);
+    List<RoomDto> getByRoomTypeName(String roomTypeName);
 
-    Page<RoomDto> getByStatus(String statusDescription, Pageable pageable);
+    List<RoomDto> getByStatus(String statusDescription);
 
-    Page<RoomDto> getIsAvailable(Pageable pageable);
+    List<RoomDto> getIsAvailable();
 
-    Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable);
+    List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate);
 }

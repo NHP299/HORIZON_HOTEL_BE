@@ -9,20 +9,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     Room findByIsActivatedTrueAndId(Integer id);
 
-    Page<Room> findByIsActivatedTrue(Pageable pageable);
+    List<Room> findByIsActivatedTrue();
 
-    Page<Room> findByNameContainingIgnoreCaseAndIsActivatedTrue(String keywords, Pageable pageable);
+    List<Room> findByNameContainingIgnoreCaseAndIsActivatedTrue(String keywords);
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.roomType.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))")
-    Page<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName, Pageable pageable);
+    List<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName);
 
-    Page<Room> findByStatusAndIsActivatedTrue(Integer status, Pageable pageable);
+    List<Room> findByStatusAndIsActivatedTrue(Integer status);
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN BookingDetail bd ON r.id = bd.room.id " +
@@ -32,7 +33,6 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "AND (b.id IS NULL " +
             "OR b.checkIn NOT BETWEEN :startDate AND :endDate " +
             "OR b.checkOut NOT BETWEEN :startDate AND :endDate)")
-    Page<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
-                                             @Param("endDate") LocalDate endDate,
-                                             Pageable pageable);
+    List<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
+                                             @Param("endDate") LocalDate endDate);
 }

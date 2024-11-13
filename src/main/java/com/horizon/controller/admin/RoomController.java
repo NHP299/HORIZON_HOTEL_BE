@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -30,9 +31,8 @@ public class RoomController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<RoomDto>> getAll(
-            Pageable pageable) {
-        Page<RoomDto> rooms = roomService.getAll(pageable);
+    public ResponseEntity<List<RoomDto>> getAll() {
+        List<RoomDto> rooms = roomService.getAllIsActivated();
         return ResponseEntity.ok(rooms);
     }
 
@@ -44,10 +44,9 @@ public class RoomController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<RoomDto>> search(
-            @RequestParam String input,
-            Pageable pageable) {
-        Page<RoomDto> rooms = roomService.find(input, pageable);
+    public ResponseEntity<List<RoomDto>> search(
+            @RequestParam String input) {
+        List<RoomDto> rooms = roomService.find(input);
         return ResponseEntity.ok(rooms);
     }
 
@@ -67,34 +66,30 @@ public class RoomController {
     }
 
     @GetMapping("/by-room-type")
-    public ResponseEntity<Page<RoomDto>> getByRoomTypeName(
-            @RequestParam String roomTypeName,
-            Pageable pageable) {
-        Page<RoomDto> rooms = roomService.getByRoomTypeName(roomTypeName, pageable);
+    public ResponseEntity<List<RoomDto>> getByRoomTypeName(
+            @RequestParam String roomTypeName) {
+        List<RoomDto> rooms = roomService.getByRoomTypeName(roomTypeName);
         return ResponseEntity.ok(rooms);
     }
 
     @GetMapping("/filter-by-status")
-    public ResponseEntity<Page<RoomDto>> getByStatus(
-            @RequestParam String status,
-            Pageable pageable) {
-        Page<RoomDto> rooms = roomService.getByStatus(status, pageable);
+    public ResponseEntity<List<RoomDto>> getByStatus(
+            @RequestParam String status) {
+        List<RoomDto> rooms = roomService.getByStatus(status);
         return ResponseEntity.ok(rooms);
     }
 
     @GetMapping
-    public ResponseEntity<Page<RoomDto>> getIsAvailable(
-            Pageable pageable) {
-        Page<RoomDto> rooms = roomService.getIsAvailable(pageable);
+    public ResponseEntity<List<RoomDto>> getIsAvailable() {
+        List<RoomDto> rooms = roomService.getIsAvailable();
         return ResponseEntity.ok(rooms);
     }
 
     @GetMapping("/range")
-    public ResponseEntity<Page<RoomDto>> getAvailable(
+    public ResponseEntity<List<RoomDto>> getAvailable(
             @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate,
-            Pageable pageable) {
-        Page<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate, pageable);
+            @RequestParam LocalDate endDate) {
+        List<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate);
         return ResponseEntity.ok(availableRooms);
     }
 

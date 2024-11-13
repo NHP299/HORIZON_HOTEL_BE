@@ -13,7 +13,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +34,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<RoomDto> getAll(Pageable pageable) {
-        Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
-        return rooms.map(roomMapper::toRoomDto);
+    public List<RoomDto> getAllIsActivated() {
+        List<Room> rooms = roomRepository.findByIsActivatedTrue();
+        return rooms.stream()
+                .map(roomMapper::toRoomDto)
+                .toList();
     }
 
     @Override
@@ -57,24 +58,25 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<RoomDto> findByName(String name, Pageable pageable) {
-        Page<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
-        return rooms.map(roomMapper::toRoomDto);
+    public List<RoomDto> findByName(String name) {
+        List<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
+        return rooms.stream()
+                .map(roomMapper::toRoomDto)
+                .toList();
     }
 
     @Override
-    public Page<RoomDto> find(String input, Pageable pageable) {
+    public List<RoomDto> find(String input) {
         try {
             Integer id = Integer.valueOf(input);
             Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));
             if (room.isPresent()) {
-                return new PageImpl<>(Collections.singletonList(roomMapper.toRoomDto(room.get())), pageable,
-                        1);
+                return List.of(new RoomDto[]{roomMapper.toRoomDto(room.get())});
             }
         } catch (NumberFormatException e) {
         }
-        Page<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(input, pageable);
-        return rooms.map(roomMapper::toRoomDto);
+        List<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(input);
+        return rooms.stream().map(roomMapper::toRoomDto).toList();
     }
 
     @Override
@@ -98,30 +100,30 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
-        return roomRepository.findByRoomTypeName(roomTypeName, pageable)
-                .map(roomMapper::toRoomDto);
+    public List<RoomDto> getByRoomTypeName(String roomTypeName) {
+        return roomRepository.findByRoomTypeName(roomTypeName)
+                .stream().map(roomMapper::toRoomDto).toList();
     }
 
 
     @Override
-    public Page<RoomDto> getByStatus(String statusDescription, Pageable pageable) {
+    public List<RoomDto> getByStatus(String statusDescription) {
         Integer statusCode = RoomStatus.fromDescription(statusDescription);
-        return roomRepository.findByStatusAndIsActivatedTrue(statusCode, pageable)
-                .map(roomMapper::toRoomDto);
+        return roomRepository.findByStatusAndIsActivatedTrue(statusCode)
+                .stream().map(roomMapper::toRoomDto).toList();
     }
 
 
     @Override
-    public Page<RoomDto> getIsAvailable(Pageable pageable) {
-        return roomRepository.findByStatusAndIsActivatedTrue(0, pageable)
-                .map(roomMapper::toRoomDto);
+    public List<RoomDto> getIsAvailable() {
+        return roomRepository.findByStatusAndIsActivatedTrue(0)
+                .stream().map(roomMapper::toRoomDto).toList();
     }
 
     @Override
-    public Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate, pageable)
-                .map(roomMapper::toRoomDto);
+    public List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate) {
+        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate)
+                .stream().map(roomMapper::toRoomDto).toList();
     }
 
 }
