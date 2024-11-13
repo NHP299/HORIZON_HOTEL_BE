@@ -31,6 +31,11 @@ public class BookingController {
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
     }
 
+    @GetMapping("/get-by-account-id/{accountId}")
+    private ResponseEntity<List<BookingDto>> getByAccountId(@PathVariable Integer accountId) {
+        return new ResponseEntity<>(bookingService.getByAccountId(accountId), HttpStatus.OK);
+    }
+
 
 
 }

@@ -34,6 +34,12 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(bookingMapper::toBookingDto).toList();
     }
 
+    @Override
+    public List<BookingDto> getByAccountId(Integer accountId) {
+        List<Booking> bookings = bookingRepository.getByAccountId(accountId);
+        return bookings.stream().map(bookingMapper::toBookingDto).toList();
+    }
+
 
 
 

@@ -12,4 +12,6 @@ public interface BookingService {
     BookingDto getById(Integer id);
 
     List<BookingDto> getAll();
+
+    List<BookingDto> getByAccountId(Integer accountId);
 }
