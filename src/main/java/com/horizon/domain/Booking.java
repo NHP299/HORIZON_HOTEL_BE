@@ -23,9 +23,16 @@ public class Booking {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     private LocalDate checkIn;
     private LocalDate checkOut;
     private LocalDate bookingDate;
+    private Integer adult;
+    private Integer child;
+    private Integer baby;
     private Short status;
     private String note;
     private BigInteger totalPrice;

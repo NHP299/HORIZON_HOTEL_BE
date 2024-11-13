@@ -1,15 +1,20 @@
 package com.horizon.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PromotionDto {
     private Integer id;
     private String name;
     private String description;
-    private Integer discountCondition;
     private Timestamp startTime;
     private Timestamp endTime;
     private Integer maxUsage;
-    private String voucherType;
     private Integer maxAmount;
 }
