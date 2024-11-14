@@ -25,8 +25,6 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
-
-    @NotNull(message = "Room name must not be null")
     private String name;
     private Integer status;
     private Integer floor;

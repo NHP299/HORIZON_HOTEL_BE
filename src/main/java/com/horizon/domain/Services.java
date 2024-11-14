@@ -23,18 +23,8 @@ public class Services {
 
     @ManyToOne
     @JoinColumn(name = "room_type_id")
-    @NotNull(message = "Room type cannot be null")
     private RoomType roomType;
-
     private String description;
-
-    @NotNull(message = "Start time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
     private LocalDateTime startedTime;
-
-    @NotNull(message = "End time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
     private LocalDateTime endTime;
 }

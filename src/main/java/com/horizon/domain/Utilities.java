@@ -20,13 +20,8 @@ public class Utilities {
 
     @ManyToOne
     @JoinColumn(name = "room_type_id")
-    @NotNull(message = "Room type cannot be null")
     private RoomType roomType;
-
-    @NotBlank(message = "Name cannot be blank")
-    @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
-
     private String description;
 
 

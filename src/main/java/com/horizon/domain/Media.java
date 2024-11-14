@@ -19,9 +19,7 @@ public class Media {
 
     @ManyToOne
     @JoinColumn(name = "room_type_id")
-    @NotNull(message = "Room type cannot be null")
     private RoomType roomType;
 
-    @NotBlank(message = "Path cannot be blank")
     private String path;
 }
