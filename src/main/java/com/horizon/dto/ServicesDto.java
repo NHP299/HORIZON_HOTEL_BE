@@ -16,18 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ServicesDto {
     private Integer id;
-    @NotNull(message = "Room type id cannot be null")
     private Integer roomTypeId;
-
     private String description;
-
-    @NotNull(message = "Start time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
     private LocalDateTime startedTime;
-
-    @NotNull(message = "End time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
     private LocalDateTime endTime;
 }

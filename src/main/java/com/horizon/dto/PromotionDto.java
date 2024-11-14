@@ -32,10 +32,10 @@ public class PromotionDto {
     private LocalDateTime endTime;
 
     @NotNull(message = "Maximum usage cannot be null")
-    @Min(value = 1, message = "Maximum usage must be at least 1")
+    @Positive(message = "Maximum amount must be greater than 0")
     private Integer maxUsage;
 
     @NotNull(message = "Maximum amount cannot be null")
-    @Min(value = 0, message = "Maximum amount must be at least 0")
+    @Positive(message = "Maximum amount must be greater than 0")
     private Integer maxAmount;
 }
