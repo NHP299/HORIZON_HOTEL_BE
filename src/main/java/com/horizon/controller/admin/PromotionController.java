@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/admin/promotion")
@@ -65,5 +67,12 @@ public class PromotionController {
         return ResponseEntity.ok(promotionDto);
     }
 
+    @GetMapping("/applicable")
+    public ResponseEntity<List<PromotionDto>> getApplicablePromotions(
+            @RequestParam("daysOfBooking") Integer daysOfBooking,
+            @RequestParam("roomsOfBooking") Integer roomsOfBooking) {
+        List<PromotionDto> promotions = promotionService.getApplicablePromotions(daysOfBooking, roomsOfBooking);
+        return ResponseEntity.ok(promotions);
+    };
 
 }
