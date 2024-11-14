@@ -11,6 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -74,5 +77,13 @@ public class PromotionServiceImpl implements PromotionService
     public Page<PromotionDto> getPromotionByNameAndAvailable(String name, Pageable pageable) {
         Page<Promotion> promotions = promotionRepository.findPromotionByNameContainingAndAvailable(name, pageable);
         return promotions.map(promotionMapper::maptoPromotionDto);
+    }
+
+    @Override
+    public List<PromotionDto> getApplicablePromotions(Integer daysOfBooking, Integer roomsOfBooking) {
+        List<Promotion> promotions = promotionRepository.findApplicablePromotions(daysOfBooking, roomsOfBooking);
+        return promotions.stream()
+                .map(promotionMapper::maptoPromotionDto)
+                .collect(Collectors.toList());
     }
 }
