@@ -3,12 +3,12 @@ package com.horizon.controller.admin;
 import com.horizon.dto.PromotionConditionDto;
 import com.horizon.service.PromotionConditionService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -30,8 +30,8 @@ public class PromotionConditionController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<PromotionConditionDto>> getAllPromotionConditions(Pageable pageable) {
-        Page<PromotionConditionDto> promotionConditionDto = promotionConditionService.getAllPromotionConditions(pageable);
+    public ResponseEntity<List<PromotionConditionDto>> getAllPromotionConditions() {
+        List<PromotionConditionDto> promotionConditionDto = promotionConditionService.getAllPromotionConditions();
         return ResponseEntity.ok(promotionConditionDto);
     }
 

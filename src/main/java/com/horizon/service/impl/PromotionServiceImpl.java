@@ -7,12 +7,9 @@ import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -50,15 +47,15 @@ public class PromotionServiceImpl implements PromotionService
     }
 
     @Override
-    public Page<PromotionDto> getAllPromotions(Pageable pageable) {
-        Page<Promotion> promotions = promotionRepository.findAll(pageable);
-        return promotions.map(promotionMapper::maptoPromotionDto);
+    public List<PromotionDto> getAllPromotions() {
+        List<Promotion> promotions = promotionRepository.findAll();
+        return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public Page<PromotionDto> getPromotionByName(String name, Pageable pageable) {
-        Page<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCase(name, pageable);
-        return promotions.map(promotionMapper::maptoPromotionDto);
+    public List<PromotionDto> getPromotionByName(String name) {
+        List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCase(name);
+        return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
@@ -68,22 +65,20 @@ public class PromotionServiceImpl implements PromotionService
     }
 
     @Override
-    public Page<PromotionDto> getAllAvailablePromotions(Pageable pageable) {
-        Page<Promotion> promotions = promotionRepository.findAllAvailablePromotions(pageable);
-        return promotions.map(promotionMapper::maptoPromotionDto);
+    public List<PromotionDto> getAllAvailablePromotions() {
+        List<Promotion> promotions = promotionRepository.findAllAvailablePromotions();
+        return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public Page<PromotionDto> getPromotionByNameAndAvailable(String name, Pageable pageable) {
-        Page<Promotion> promotions = promotionRepository.findPromotionByNameContainingAndAvailable(name, pageable);
-        return promotions.map(promotionMapper::maptoPromotionDto);
+    public List<PromotionDto> getPromotionByNameAndAvailable(String name) {
+        List<Promotion> promotions = promotionRepository.findPromotionByNameContainingAndAvailable(name);
+        return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
     public List<PromotionDto> getApplicablePromotions(Integer daysOfBooking, Integer roomsOfBooking) {
         List<Promotion> promotions = promotionRepository.findApplicablePromotions(daysOfBooking, roomsOfBooking);
-        return promotions.stream()
-                .map(promotionMapper::maptoPromotionDto)
-                .collect(Collectors.toList());
+        return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 }

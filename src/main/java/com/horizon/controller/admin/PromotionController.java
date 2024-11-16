@@ -3,8 +3,6 @@ package com.horizon.controller.admin;
 import com.horizon.dto.PromotionDto;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -32,8 +30,8 @@ public class PromotionController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<PromotionDto>> getAllPromotions(Pageable pageable) {
-        Page<PromotionDto> promotionDto = promotionService.getAllPromotions(pageable);
+    public ResponseEntity<List<PromotionDto>> getAllPromotions() {
+        List<PromotionDto> promotionDto = promotionService.getAllPromotions();
         return ResponseEntity.ok(promotionDto);
     }
 
@@ -56,21 +54,21 @@ public class PromotionController {
     }
 
     @GetMapping("/all-available")
-    public ResponseEntity<Page<PromotionDto>> getAllAvailablePromotions(Pageable pageable) {
-        Page<PromotionDto> promotionDto = promotionService.getAllAvailablePromotions(pageable);
+    public ResponseEntity<List<PromotionDto>> getAllAvailablePromotions() {
+        List<PromotionDto> promotionDto = promotionService.getAllAvailablePromotions();
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/by-name-available")
-    public ResponseEntity<Page<PromotionDto>> getPromotionByNameAndAvailable(@RequestParam String name, Pageable pageable) {
-        Page<PromotionDto> promotionDto = promotionService.getPromotionByNameAndAvailable(name,pageable);
+    public ResponseEntity<List<PromotionDto>> getPromotionByNameAndAvailable(@RequestParam String name ) {
+        List<PromotionDto> promotionDto = promotionService.getPromotionByNameAndAvailable(name);
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/applicable")
     public ResponseEntity<List<PromotionDto>> getApplicablePromotions(
-            @RequestParam("daysOfBooking") Integer daysOfBooking,
-            @RequestParam("roomsOfBooking") Integer roomsOfBooking) {
+            @RequestParam("days_of_booking") Integer daysOfBooking,
+            @RequestParam("rooms_of_booking") Integer roomsOfBooking) {
         List<PromotionDto> promotions = promotionService.getApplicablePromotions(daysOfBooking, roomsOfBooking);
         return ResponseEntity.ok(promotions);
     };

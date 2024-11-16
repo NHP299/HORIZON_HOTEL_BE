@@ -7,9 +7,9 @@ import com.horizon.mapper.PromotionTypeMapper;
 import com.horizon.repository.PromotionTypeRepository;
 import com.horizon.service.PromotionTypeService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -45,8 +45,8 @@ public class PromotionTypeServiceImpl implements PromotionTypeService {
     }
 
     @Override
-    public Page<PromotionTypeDto> getAllPromotionTypes(Pageable pageable) {
-        Page<PromotionType> promotionTypes = promotionTypeRepository.findAll(pageable);
-        return promotionTypes.map(promotionTypeMapper::maptoPromotionTypeDto);
+    public List<PromotionTypeDto> getAllPromotionTypes() {
+        List<PromotionType> promotionTypes = promotionTypeRepository.findAll();
+        return promotionTypes.stream().map(promotionTypeMapper::maptoPromotionTypeDto).toList();
     }
 }

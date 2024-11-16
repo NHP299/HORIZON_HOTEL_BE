@@ -7,9 +7,9 @@ import com.horizon.mapper.PromotionConditionMapper;
 import com.horizon.repository.PromotionConditionRepository;
 import com.horizon.service.PromotionConditionService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -45,8 +45,8 @@ public class PromotionConditionServiceImpl implements PromotionConditionService 
     }
 
     @Override
-    public Page<PromotionConditionDto> getAllPromotionConditions(Pageable pageable) {
-        Page<PromotionCondition> promotionConditions = promotionConditionRepository.findAll(pageable);
-        return promotionConditions.map(promotionConditionMapper::maptoPromotionConditionDto);
+    public List<PromotionConditionDto> getAllPromotionConditions() {
+        List<PromotionCondition> promotionConditions = promotionConditionRepository.findAll();
+        return promotionConditions.stream().map(promotionConditionMapper::maptoPromotionConditionDto).toList();
     }
 }

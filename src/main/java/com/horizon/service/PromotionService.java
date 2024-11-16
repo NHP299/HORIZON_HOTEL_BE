@@ -2,8 +2,6 @@ package com.horizon.service;
 
 
 import com.horizon.dto.PromotionDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,11 +10,11 @@ public interface PromotionService {
     PromotionDto updatePromotion(Integer promotionId,PromotionDto promotionDto);
     void deletePromotion(Integer promotionId);
     PromotionDto getPromotionById(Integer promotionId);
-    Page<PromotionDto> getAllPromotions(Pageable pageable);
-    Page<PromotionDto> getPromotionByName(String name, Pageable pageable);
+    List<PromotionDto> getAllPromotions();
+    List<PromotionDto> getPromotionByName(String name);
     PromotionDto getPromotionByIdAndAvailable(Integer promotionId);
-    Page<PromotionDto> getAllAvailablePromotions(Pageable pageable);
-    Page<PromotionDto> getPromotionByNameAndAvailable(String name, Pageable pageable);
+    List<PromotionDto> getAllAvailablePromotions();
+    List<PromotionDto> getPromotionByNameAndAvailable(String name);
     List<PromotionDto> getApplicablePromotions(Integer daysOfBooking, Integer roomsOfBooking);
 
 }
