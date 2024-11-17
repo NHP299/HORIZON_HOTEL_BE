@@ -8,23 +8,20 @@ import com.horizon.mapper.MediaMapper;
 import com.horizon.repository.MediaRepository;
 import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
-import com.horizon.service.FileService;
+import com.horizon.service.CloudinaryService;
 import com.horizon.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class MediaServiceImpl implements MediaService {
-
-    @Value("${media.upload.dir}")
-    private String uploadDir;
 
     @Autowired
     private MediaRepository mediaRepository;
@@ -42,7 +39,7 @@ public class MediaServiceImpl implements MediaService {
     private ExceptionHandlerService exceptionHandlerService;
 
     @Autowired
-    private FileService fileService;
+    private CloudinaryService cloudinaryService;
 
     private Media getMediaByIdOrThrow(Integer mediaId) {
         return mediaRepository.findById(mediaId)
@@ -54,37 +51,26 @@ public class MediaServiceImpl implements MediaService {
                 .orElseThrow(() -> new RuntimeException("Room type not found with ID: " + roomTypeId));
     }
 
-    private ResponseEntity<Map<String, Object>> executeMediaOperation(MediaOperation operation) {
-        try {
-            return operation.perform();
-        } catch (Exception e) {
-            return exceptionHandlerService.handleGeneralError(e.getMessage());
-        }
-    }
-
-    @FunctionalInterface
-    interface MediaOperation {
-        ResponseEntity<Map<String, Object>> perform() throws Exception;
-    }
-
     @Override
     public ResponseEntity<Map<String, Object>> createNewMedia(MultipartFile file, Integer roomTypeId) {
         if (file.isEmpty()) {
             return exceptionHandlerService.handleFileUploadError("File is empty.");
         }
 
-        return executeMediaOperation(() -> {
+        try {
             RoomType roomType = getRoomTypeOrThrow(roomTypeId);
-            String filename = fileService.saveFile(file, uploadDir);
+            String publicId = cloudinaryService.uploadImage(file);
 
             Media media = new Media();
             media.setRoomType(roomType);
-            media.setPath(filename);
+            media.setPublicId(publicId);
+            media.setPath(cloudinaryService.getImageUrl(publicId));
 
             MediaDto mediaDto = mediaMapper.mediaToMediaDto(mediaRepository.save(media));
-
             return exceptionHandlerService.createResponse("Media uploaded successfully.", mediaDto, HttpStatus.CREATED);
-        });
+        } catch (IOException e) {
+            return exceptionHandlerService.handleFileUploadError("Error uploading image: " + e.getMessage());
+        }
     }
 
     @Override
@@ -93,39 +79,53 @@ public class MediaServiceImpl implements MediaService {
             return exceptionHandlerService.handleFileUploadError("File is empty.");
         }
 
-        return executeMediaOperation(() -> {
-            Media media = getMediaByIdOrThrow(mediaId);
-            fileService.deleteFile(media.getPath(), uploadDir);
+        try {
+            Media existingMedia = getMediaByIdOrThrow(mediaId);
 
-            String filename = fileService.saveFile(file, uploadDir);
-            media.setPath(filename);
+            String newPublicId = cloudinaryService.updateImage(file, existingMedia);
 
-            MediaDto updatedMediaDto = mediaMapper.mediaToMediaDto(mediaRepository.save(media));
+            existingMedia.setPublicId(newPublicId);
+            existingMedia.setPath(cloudinaryService.getImageUrl(newPublicId));
+
+            MediaDto updatedMediaDto = mediaMapper.mediaToMediaDto(existingMedia);
+
+            mediaRepository.save(existingMedia);
 
             return exceptionHandlerService.createResponse("Media updated successfully.", updatedMediaDto, HttpStatus.OK);
-        });
+        } catch (Exception e) {
+            return exceptionHandlerService.handleGeneralError("Error updating media: " + e.getMessage());
+        }
     }
 
     @Override
     public ResponseEntity<Map<String, Object>> deleteMedia(Integer mediaId) {
-        return executeMediaOperation(() -> {
+        try {
             Media media = getMediaByIdOrThrow(mediaId);
-            fileService.deleteFile(media.getPath(), uploadDir);
+
+            String publicId = media.getPublicId();
+            if (publicId == null || publicId.isEmpty()) {
+                return exceptionHandlerService.handleGeneralError("Media does not have a valid publicId.");
+            }
+
+            cloudinaryService.deleteImage(publicId);
             mediaRepository.delete(media);
+
             return exceptionHandlerService.createResponse("Media deleted successfully.", null, HttpStatus.OK);
-        });
+        } catch (Exception e) {
+            return exceptionHandlerService.handleGeneralError("Failed to delete media: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<MediaDto> getMediaByRoomType(Integer roomTypeId) {
+        RoomType roomType = getRoomTypeOrThrow(roomTypeId);
+        return mediaMapper.mediaListToMediaDtoList(mediaRepository.findByRoomType(roomType));
     }
 
     @Override
     public List<MediaDto> getMediaByRoomName(String roomName) {
         RoomType roomType = roomRepository.findByName(roomName)
                 .orElseThrow(() -> new RuntimeException("Room not found with name: " + roomName)).getRoomType();
-        return mediaMapper.mediaListToMediaDtoList(mediaRepository.findByRoomType(roomType));
-    }
-
-    @Override
-    public List<MediaDto> getMediaByRoomType(Integer roomTypeId) {
-        RoomType roomType = getRoomTypeOrThrow(roomTypeId);
         return mediaMapper.mediaListToMediaDtoList(mediaRepository.findByRoomType(roomType));
     }
 
