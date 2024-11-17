@@ -34,13 +34,13 @@ public class MediaController {
         return mediaService.deleteMedia(mediaId);
     }
 
-    @GetMapping("/{roomTypeId}")
+    @GetMapping("/roomtype/{roomTypeId}")
     public ResponseEntity<List<MediaDto>> getByRoomType(@PathVariable Integer roomTypeId) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomType(roomTypeId);
         return ResponseEntity.ok(mediaList);
     }
 
-    @GetMapping("/media-by-room-name")
+    @GetMapping("/room-name")
     public ResponseEntity<List<MediaDto>> getByRoomName(@RequestParam String roomName) {
         List<MediaDto> mediaList = mediaService.getMediaByRoomName(roomName);
         return ResponseEntity.ok(mediaList);
