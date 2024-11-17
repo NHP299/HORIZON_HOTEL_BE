@@ -20,4 +20,6 @@ public class Media {
     private RoomType roomType;
 
     private String path;
+
+    private String publicId;
 }
