@@ -24,13 +24,13 @@ public class PromotionTypeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PromotionTypeDto> getPromotionTypeById(@PathVariable Integer id) {
+    public ResponseEntity<PromotionTypeDto> getById(@PathVariable Integer id) {
         PromotionTypeDto promotionTypeDto = promotionTypeService.getById(id);
         return ResponseEntity.ok(promotionTypeDto);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PromotionTypeDto>> getAllPromotionTypes() {
+    public ResponseEntity<List<PromotionTypeDto>> getAll() {
         List<PromotionTypeDto> promotionTypeDto = promotionTypeService.getAll();
         return ResponseEntity.ok(promotionTypeDto);
     }

@@ -24,13 +24,13 @@ public class PromotionConditionController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PromotionConditionDto> getPromotionConditionById(@PathVariable Integer id) {
+    public ResponseEntity<PromotionConditionDto> getById(@PathVariable Integer id) {
         PromotionConditionDto promotionConditionDto = promotionConditionService.getById(id);
         return ResponseEntity.ok(promotionConditionDto);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PromotionConditionDto>> getAllPromotionConditions() {
+    public ResponseEntity<List<PromotionConditionDto>> getAll() {
         List<PromotionConditionDto> promotionConditionDto = promotionConditionService.getAll();
         return ResponseEntity.ok(promotionConditionDto);
     }
