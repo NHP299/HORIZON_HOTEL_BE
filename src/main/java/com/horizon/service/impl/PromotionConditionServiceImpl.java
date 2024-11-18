@@ -18,14 +18,14 @@ public class PromotionConditionServiceImpl implements PromotionConditionService 
     private PromotionConditionMapper promotionConditionMapper;
 
     @Override
-    public PromotionConditionDto createPromotionCondition(PromotionConditionDto promotionConditionDto) {
+    public PromotionConditionDto create(PromotionConditionDto promotionConditionDto) {
         PromotionCondition promotionCondition = promotionConditionMapper.maptoPromotionCondition(promotionConditionDto,null);
         PromotionCondition savedpromotionCondition = promotionConditionRepository.save(promotionCondition);
         return promotionConditionMapper.maptoPromotionConditionDto(savedpromotionCondition);
     }
 
     @Override
-    public PromotionConditionDto updatePromotionCondition(Integer promotionConditionId, PromotionConditionDto promotionConditionDto) {
+    public PromotionConditionDto update(Integer promotionConditionId, PromotionConditionDto promotionConditionDto) {
         PromotionCondition existingPromotionCondition = promotionConditionRepository.findById(promotionConditionId).orElseThrow(() -> new ResourceNotFoundException("Promotion condition not found " + promotionConditionId));
         PromotionCondition updatedPromotionCondition = promotionConditionMapper.maptoPromotionCondition(promotionConditionDto,existingPromotionCondition);
         updatedPromotionCondition = promotionConditionRepository.save(updatedPromotionCondition);
@@ -33,19 +33,19 @@ public class PromotionConditionServiceImpl implements PromotionConditionService 
     }
 
     @Override
-    public void deletePromotionCondition(Integer promotionConditionId) {
+    public void delete(Integer promotionConditionId) {
         PromotionCondition promotionCondition = promotionConditionRepository.findById(promotionConditionId).orElseThrow(() -> new ResourceNotFoundException("Promotion condition not found " + promotionConditionId));
         promotionConditionRepository.delete(promotionCondition);
     }
 
     @Override
-    public PromotionConditionDto getPromotionConditionById(Integer promotionConditionId) {
+    public PromotionConditionDto getById(Integer promotionConditionId) {
         PromotionCondition promotionCondition = promotionConditionRepository.findById(promotionConditionId).orElseThrow(() -> new ResourceNotFoundException("Promotion condition not found " + promotionConditionId));
         return promotionConditionMapper.maptoPromotionConditionDto(promotionCondition);
     }
 
     @Override
-    public List<PromotionConditionDto> getAllPromotionConditions() {
+    public List<PromotionConditionDto> getAll() {
         List<PromotionCondition> promotionConditions = promotionConditionRepository.findAll();
         return promotionConditions.stream().map(promotionConditionMapper::maptoPromotionConditionDto).toList();
     }

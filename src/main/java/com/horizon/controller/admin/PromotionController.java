@@ -19,58 +19,64 @@ public class PromotionController {
 
     @PostMapping
     public ResponseEntity<PromotionDto> create(@RequestBody PromotionDto promotionDto) {
-        PromotionDto savePromotion = promotionService.createPromotion(promotionDto);
+        PromotionDto savePromotion = promotionService.create(promotionDto);
         return new ResponseEntity<>(savePromotion, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PromotionDto> getPromotionById(@PathVariable Integer id) {
-        PromotionDto promotionDto = promotionService.getPromotionById(id);
+    public ResponseEntity<PromotionDto> getById(@PathVariable Integer id) {
+        PromotionDto promotionDto = promotionService.getById(id);
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PromotionDto>> getAllPromotions() {
-        List<PromotionDto> promotionDto = promotionService.getAllPromotions();
+    public ResponseEntity<List<PromotionDto>> getAll() {
+        List<PromotionDto> promotionDto = promotionService.getAll();
         return ResponseEntity.ok(promotionDto);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<PromotionDto> update(@PathVariable("id") Integer promotionId, @RequestBody PromotionDto updatePromotionDto) {
-        PromotionDto promotionDto = promotionService.updatePromotion(promotionId, updatePromotionDto);
+        PromotionDto promotionDto = promotionService.update(promotionId, updatePromotionDto);
         return ResponseEntity.ok(promotionDto);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Integer promotionId) {
-        promotionService.deletePromotion(promotionId);
+        promotionService.delete(promotionId);
         return new ResponseEntity<>("Promotion deleted successfully",HttpStatus.OK);
     }
 
     @GetMapping("/by-id-available/{id}")
-    public ResponseEntity<PromotionDto> getPromotionByIdAndAvailable(@PathVariable("id") Integer id) {
-        PromotionDto promotionDto = promotionService.getPromotionByIdAndAvailable(id);
+    public ResponseEntity<PromotionDto> getByIdAndAvailable(@PathVariable("id") Integer id) {
+        PromotionDto promotionDto = promotionService.getByIdAndAvailable(id);
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/all-available")
-    public ResponseEntity<List<PromotionDto>> getAllAvailablePromotions() {
-        List<PromotionDto> promotionDto = promotionService.getAllAvailablePromotions();
+    public ResponseEntity<List<PromotionDto>> getAllAvailable() {
+        List<PromotionDto> promotionDto = promotionService.getAllAvailable();
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/by-name-available")
-    public ResponseEntity<List<PromotionDto>> getPromotionByNameAndAvailable(@RequestParam String name ) {
-        List<PromotionDto> promotionDto = promotionService.getPromotionByNameAndAvailable(name);
+    public ResponseEntity<List<PromotionDto>> getByNameAndAvailable(@RequestParam String name ) {
+        List<PromotionDto> promotionDto = promotionService.getByNameAndAvailable(name);
         return ResponseEntity.ok(promotionDto);
     }
 
     @GetMapping("/applicable")
-    public ResponseEntity<List<PromotionDto>> getApplicablePromotions(
+    public ResponseEntity<List<PromotionDto>> getApplicable(
             @RequestParam("days_of_booking") Integer daysOfBooking,
             @RequestParam("rooms_of_booking") Integer roomsOfBooking) {
-        List<PromotionDto> promotions = promotionService.getApplicablePromotions(daysOfBooking, roomsOfBooking);
+        List<PromotionDto> promotions = promotionService.getApplicable(daysOfBooking, roomsOfBooking);
         return ResponseEntity.ok(promotions);
-    };
+    }
+
+    @PostMapping("/apply/{promotionId}")
+    public ResponseEntity<String> applyPromotion(@PathVariable Integer promotionId) {
+        promotionService.applyPromotionUsage(promotionId);
+        return ResponseEntity.ok("Promotion applied successfully.");
+    }
 
 }

@@ -6,15 +6,15 @@ import com.horizon.dto.PromotionDto;
 import java.util.List;
 
 public interface PromotionService {
-    PromotionDto createPromotion(PromotionDto promotionDto);
-    PromotionDto updatePromotion(Integer promotionId,PromotionDto promotionDto);
-    void deletePromotion(Integer promotionId);
-    PromotionDto getPromotionById(Integer promotionId);
-    List<PromotionDto> getAllPromotions();
-    List<PromotionDto> getPromotionByName(String name);
-    PromotionDto getPromotionByIdAndAvailable(Integer promotionId);
-    List<PromotionDto> getAllAvailablePromotions();
-    List<PromotionDto> getPromotionByNameAndAvailable(String name);
-    List<PromotionDto> getApplicablePromotions(Integer daysOfBooking, Integer roomsOfBooking);
-
+    PromotionDto create(PromotionDto promotionDto);
+    PromotionDto update(Integer promotionId,PromotionDto promotionDto);
+    void delete(Integer promotionId);
+    PromotionDto getById(Integer promotionId);
+    List<PromotionDto> getAll();
+    List<PromotionDto> getByName(String name);
+    PromotionDto getByIdAndAvailable(Integer promotionId);
+    List<PromotionDto> getAllAvailable();
+    List<PromotionDto> getByNameAndAvailable(String name);
+    List<PromotionDto> getApplicable(Integer daysOfBooking, Integer roomsOfBooking);
+    void applyPromotionUsage(Integer promotionId);
 }

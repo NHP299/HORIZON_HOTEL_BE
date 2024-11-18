@@ -18,14 +18,14 @@ public class PromotionTypeServiceImpl implements PromotionTypeService {
     private PromotionTypeMapper promotionTypeMapper;
 
     @Override
-    public PromotionTypeDto createPromotionType(PromotionTypeDto promotionTypeDto) {
+    public PromotionTypeDto create(PromotionTypeDto promotionTypeDto) {
         PromotionType promotionType = promotionTypeMapper.maptoPromotionType(promotionTypeDto, null);
         PromotionType savedPromotionType = promotionTypeRepository.save(promotionType);
         return promotionTypeMapper.maptoPromotionTypeDto(savedPromotionType);
     }
 
     @Override
-    public PromotionTypeDto updatePromotionType(Integer promotionTypeId, PromotionTypeDto promotionTypeDto) {
+    public PromotionTypeDto update(Integer promotionTypeId, PromotionTypeDto promotionTypeDto) {
         PromotionType existingPromotionType = promotionTypeRepository.findById(promotionTypeId).orElseThrow(()->new ResourceNotFoundException("Promotion type not found " + promotionTypeId) );
         PromotionType updatedPromotionType = promotionTypeMapper.maptoPromotionType(promotionTypeDto, existingPromotionType);
         updatedPromotionType = promotionTypeRepository.save(updatedPromotionType);
@@ -33,19 +33,19 @@ public class PromotionTypeServiceImpl implements PromotionTypeService {
     }
 
     @Override
-    public void deletePromotionType(Integer promotionTypeId) {
+    public void delete(Integer promotionTypeId) {
         PromotionType promotionType = promotionTypeRepository.findById(promotionTypeId).orElseThrow(()->new ResourceNotFoundException("Promotion type not found " + promotionTypeId) );
         promotionTypeRepository.delete(promotionType);
     }
 
     @Override
-    public PromotionTypeDto getPromotionTypeById(Integer promotionTypeId) {
+    public PromotionTypeDto getById(Integer promotionTypeId) {
         PromotionType promotionType = promotionTypeRepository.findById(promotionTypeId).orElseThrow(()->new ResourceNotFoundException("Promotion type not found " + promotionTypeId) );
         return promotionTypeMapper.maptoPromotionTypeDto(promotionType);
     }
 
     @Override
-    public List<PromotionTypeDto> getAllPromotionTypes() {
+    public List<PromotionTypeDto> getAll() {
         List<PromotionType> promotionTypes = promotionTypeRepository.findAll();
         return promotionTypes.stream().map(promotionTypeMapper::maptoPromotionTypeDto).toList();
     }

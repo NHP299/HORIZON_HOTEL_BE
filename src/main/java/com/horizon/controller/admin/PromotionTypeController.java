@@ -19,31 +19,31 @@ public class PromotionTypeController {
 
     @PostMapping
     public ResponseEntity<PromotionTypeDto> create(@RequestBody PromotionTypeDto promotionTypeDto) {
-        PromotionTypeDto savePromotionType = promotionTypeService.createPromotionType(promotionTypeDto);
+        PromotionTypeDto savePromotionType = promotionTypeService.create(promotionTypeDto);
         return new ResponseEntity<>(savePromotionType, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PromotionTypeDto> getPromotionTypeById(@PathVariable Integer id) {
-        PromotionTypeDto promotionTypeDto = promotionTypeService.getPromotionTypeById(id);
+        PromotionTypeDto promotionTypeDto = promotionTypeService.getById(id);
         return ResponseEntity.ok(promotionTypeDto);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<PromotionTypeDto>> getAllPromotionTypes() {
-        List<PromotionTypeDto> promotionTypeDto = promotionTypeService.getAllPromotionTypes();
+        List<PromotionTypeDto> promotionTypeDto = promotionTypeService.getAll();
         return ResponseEntity.ok(promotionTypeDto);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<PromotionTypeDto> update(@PathVariable("id") Integer promotionTypeId, @RequestBody PromotionTypeDto updatePromotionTypeDto) {
-        PromotionTypeDto promotionTypeDto = promotionTypeService.updatePromotionType(promotionTypeId, updatePromotionTypeDto);
+        PromotionTypeDto promotionTypeDto = promotionTypeService.update(promotionTypeId, updatePromotionTypeDto);
         return ResponseEntity.ok(promotionTypeDto);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Integer promotionTypeId) {
-        promotionTypeService.deletePromotionType(promotionTypeId);
+        promotionTypeService.delete(promotionTypeId);
         return new ResponseEntity<>("PromotionType deleted successfully",HttpStatus.OK);
     }
 }

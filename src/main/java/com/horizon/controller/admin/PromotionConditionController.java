@@ -19,31 +19,31 @@ public class PromotionConditionController {
 
     @PostMapping
     public ResponseEntity<PromotionConditionDto> create(@RequestBody PromotionConditionDto promotionConditionDto) {
-        PromotionConditionDto savePromotionCondition = promotionConditionService.createPromotionCondition(promotionConditionDto);
+        PromotionConditionDto savePromotionCondition = promotionConditionService.create(promotionConditionDto);
         return new ResponseEntity<>(savePromotionCondition, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PromotionConditionDto> getPromotionConditionById(@PathVariable Integer id) {
-        PromotionConditionDto promotionConditionDto = promotionConditionService.getPromotionConditionById(id);
+        PromotionConditionDto promotionConditionDto = promotionConditionService.getById(id);
         return ResponseEntity.ok(promotionConditionDto);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<PromotionConditionDto>> getAllPromotionConditions() {
-        List<PromotionConditionDto> promotionConditionDto = promotionConditionService.getAllPromotionConditions();
+        List<PromotionConditionDto> promotionConditionDto = promotionConditionService.getAll();
         return ResponseEntity.ok(promotionConditionDto);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<PromotionConditionDto> update(@PathVariable("id") Integer promotionConditionId, @RequestBody PromotionConditionDto updatePromotionConditionDto) {
-        PromotionConditionDto promotionConditionDto = promotionConditionService.updatePromotionCondition(promotionConditionId, updatePromotionConditionDto);
+        PromotionConditionDto promotionConditionDto = promotionConditionService.update(promotionConditionId, updatePromotionConditionDto);
         return ResponseEntity.ok(promotionConditionDto);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Integer promotionConditionId) {
-        promotionConditionService.deletePromotionCondition(promotionConditionId);
+        promotionConditionService.delete(promotionConditionId);
         return new ResponseEntity<>("PromotionCondition deleted successfully",HttpStatus.OK);
     }
 }

@@ -6,6 +6,7 @@ import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
 import com.horizon.service.PromotionService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +21,14 @@ public class PromotionServiceImpl implements PromotionService
     private PromotionMapper promotionMapper;
 
     @Override
-    public PromotionDto createPromotion(PromotionDto promotionDto) {
+    public PromotionDto create(PromotionDto promotionDto) {
         Promotion promotion = promotionMapper.maptoPromotion(promotionDto,null);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return promotionMapper.maptoPromotionDto(savedPromotion);
     }
 
     @Override
-    public PromotionDto updatePromotion(Integer promotionId, PromotionDto promotionDto) {
+    public PromotionDto update(Integer promotionId, PromotionDto promotionDto) {
         Promotion existingPromotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
         Promotion updatedPromotion = promotionMapper.maptoPromotion(promotionDto,existingPromotion);
         updatedPromotion = promotionRepository.save(updatedPromotion);
@@ -35,50 +36,59 @@ public class PromotionServiceImpl implements PromotionService
     }
 
     @Override
-    public void deletePromotion(Integer promotionId) {
+    public void delete(Integer promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
         promotionRepository.delete(promotion);
     }
 
     @Override
-    public PromotionDto getPromotionById(Integer promotionId) {
+    public PromotionDto getById(Integer promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
         return promotionMapper.maptoPromotionDto(promotion);
     }
 
     @Override
-    public List<PromotionDto> getAllPromotions() {
+    public List<PromotionDto> getAll() {
         List<Promotion> promotions = promotionRepository.findAll();
         return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public List<PromotionDto> getPromotionByName(String name) {
+    public List<PromotionDto> getByName(String name) {
         List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCase(name);
         return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public PromotionDto getPromotionByIdAndAvailable(Integer promotionId) {
-        Promotion promotion = promotionRepository.findPromotionByIdAndAvailable(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
+    public PromotionDto getByIdAndAvailable(Integer promotionId) {
+        Promotion promotion = promotionRepository.findByIdAndAvailable(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
         return promotionMapper.maptoPromotionDto(promotion);
     }
 
     @Override
-    public List<PromotionDto> getAllAvailablePromotions() {
-        List<Promotion> promotions = promotionRepository.findAllAvailablePromotions();
+    public List<PromotionDto> getAllAvailable() {
+        List<Promotion> promotions = promotionRepository.findAllAvailable();
         return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public List<PromotionDto> getPromotionByNameAndAvailable(String name) {
-        List<Promotion> promotions = promotionRepository.findPromotionByNameContainingAndAvailable(name);
+    public List<PromotionDto> getByNameAndAvailable(String name) {
+        List<Promotion> promotions = promotionRepository.findByNameContainingAndAvailable(name);
         return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
     }
 
     @Override
-    public List<PromotionDto> getApplicablePromotions(Integer daysOfBooking, Integer roomsOfBooking) {
-        List<Promotion> promotions = promotionRepository.findApplicablePromotions(daysOfBooking, roomsOfBooking);
+    public List<PromotionDto> getApplicable(Integer daysOfBooking, Integer roomsOfBooking) {
+        List<Promotion> promotions = promotionRepository.findApplicable(daysOfBooking, roomsOfBooking);
         return promotions.stream().map(promotionMapper::maptoPromotionDto).toList();
+    }
+
+    @Override
+    @Transactional
+    public void applyPromotionUsage(Integer promotionId) {
+        int rowsUpdated = promotionRepository.decrementMaxUsage(promotionId);
+        if (rowsUpdated == 0) {
+            throw new IllegalArgumentException("Promotion usage limit reached or invalid promotion ID.");
+        }
     }
 }

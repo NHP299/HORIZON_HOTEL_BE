@@ -5,9 +5,9 @@ import com.horizon.dto.PromotionConditionDto;
 import java.util.List;
 
 public interface PromotionConditionService {
-    PromotionConditionDto createPromotionCondition(PromotionConditionDto promotionConditionDto);
-    PromotionConditionDto updatePromotionCondition(Integer promotionConditionId, PromotionConditionDto promotionConditionDto);
-    void deletePromotionCondition(Integer promotionConditionId);
-    PromotionConditionDto getPromotionConditionById(Integer promotionConditionId);
-    List<PromotionConditionDto> getAllPromotionConditions();
+    PromotionConditionDto create(PromotionConditionDto promotionConditionDto);
+    PromotionConditionDto update(Integer promotionConditionId, PromotionConditionDto promotionConditionDto);
+    void delete(Integer promotionConditionId);
+    PromotionConditionDto getById(Integer promotionConditionId);
+    List<PromotionConditionDto> getAll();
 }
