@@ -14,20 +14,20 @@ import java.util.Optional;
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     List<Promotion> findByNameContainingIgnoreCase(String name);
 
-    @Query("SELECT p FROM Promotion p WHERE p.id = :promotionId AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime")
+    @Query("SELECT p FROM Promotion p WHERE p.id = :promotionId AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
     Optional<Promotion> findByIdAndAvailable(@Param("promotionId") Integer promotionId);
 
-    @Query("SELECT p FROM Promotion p WHERE CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime")
+    @Query("SELECT p FROM Promotion p WHERE CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
     List<Promotion> findAllAvailable();
 
-    @Query("SELECT p FROM Promotion p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :promotionName, '%')) AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime")
+    @Query("SELECT p FROM Promotion p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :promotionName, '%')) AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
     List<Promotion> findByNameContainingAndAvailable(@Param("promotionName") String promotionName);
 
     @Query("SELECT p FROM Promotion p " +
             "JOIN p.promotionCondition pc " +
             "JOIN pc.promotionType pt " +
             "WHERE " +
-            "(CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime) AND " +
+            "(CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0) AND " +
             "(" +
             "   (pt.name = 'days_of_booking' AND :daysOfBooking >= pc.value) OR " +
             "   (pt.name = 'rooms_of_booking' AND :roomsOfBooking >= pc.value) OR " +
