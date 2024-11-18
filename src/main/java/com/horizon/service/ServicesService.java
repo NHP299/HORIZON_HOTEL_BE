@@ -7,14 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface ServicesService {
 
-    ServicesDto createServices(ServicesDto servicesDto);
-    ServicesDto updateServices(Integer serviceId, ServicesDto servicesDto);
-    void deleteServices(Integer serviceId);
-    ServicesDto getServicesById(Integer serviceId);
-    Page<ServicesDto> getAllServices(Pageable pageable);
-    Page<ServicesDto> getServicesByName(String name, Pageable pageable);
-    Page<ServicesDto> getServicesByRoomTypeName(String roomTypeName, Pageable pageable);
-    Page<ServicesDto> getServicesByRoomId(Integer roomId, Pageable pageable);
-    Page<ServicesDto> getServicesByRoomName(String roomName, Pageable pageable);
+    ServicesDto create(ServicesDto servicesDto);
+    ServicesDto update(Integer serviceId, ServicesDto servicesDto);
+    void delete(Integer serviceId);
+    ServicesDto getById(Integer serviceId);
+    Page<ServicesDto> getAll(Pageable pageable);
+    Page<ServicesDto> getByName(String name, Pageable pageable);
+    Page<ServicesDto> getByRoomTypeName(String roomTypeName, Pageable pageable);
+    Page<ServicesDto> getByRoomId(Integer roomId, Pageable pageable);
+    Page<ServicesDto> getByRoomName(String roomName, Pageable pageable);
 
 }

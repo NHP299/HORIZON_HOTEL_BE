@@ -21,14 +21,14 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     @Override
-    public ServicesDto createServices(ServicesDto servicesDto) {
+    public ServicesDto create(ServicesDto servicesDto) {
         Services services = servicesMapper.mapToService(servicesDto, null);
         Services saveServices = servicesRepository.save(services);
         return servicesMapper.mapToServicesDto(saveServices);
     }
 
 
-    public ServicesDto updateServices(Integer serviceId, ServicesDto servicesDto) {
+    public ServicesDto update(Integer serviceId, ServicesDto servicesDto) {
         Services existingServices = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
 
@@ -40,7 +40,7 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     @Override
-    public void deleteServices(Integer serviceId) {
+    public void delete(Integer serviceId) {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found " + serviceId)
         );
@@ -48,7 +48,7 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public ServicesDto getServicesById(Integer serviceId) {
+    public ServicesDto getById(Integer serviceId) {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Services is not exist with given id: " + serviceId)
         );
@@ -56,32 +56,32 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public Page<ServicesDto> getAllServices(Pageable pageable) {
+    public Page<ServicesDto> getAll(Pageable pageable) {
         Page<Services> servicesPage = servicesRepository.findAll(pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
     @Override
-    public Page<ServicesDto> getServicesByName(String name, Pageable pageable) {
+    public Page<ServicesDto> getByName(String name, Pageable pageable) {
         Page<Services> servicesPage = servicesRepository.findByDescriptionContainingIgnoreCase(name, pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomTypeName(String roomTypeName, Pageable pageable) {
+    public Page<ServicesDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
         Page<Services> servicesPage = servicesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName, pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomId(Integer roomId, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findServicesByRoomId(roomId, pageable);
+    public Page<ServicesDto> getByRoomId(Integer roomId, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findByRoomId(roomId, pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomName(String roomName, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findServicesByRoomName(roomName, pageable);
+    public Page<ServicesDto> getByRoomName(String roomName, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findByRoomName(roomName, pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 

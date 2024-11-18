@@ -17,12 +17,12 @@ public interface UtilitiesRepository extends JpaRepository<Utilities, Integer> {
             "JOIN u.roomType rt " +
             "JOIN rt.roomList r " +
             "WHERE r.id = :roomId")
-    Page<Utilities> findUtilitiesByRoomId(@Param("roomId") Integer roomId, Pageable pageable);
+    Page<Utilities> findByRoomId(@Param("roomId") Integer roomId, Pageable pageable);
 
     @Query("SELECT u FROM Utilities u " +
             "JOIN u.roomType rt " +
             "JOIN rt.roomList r " +
             "WHERE r.name = :roomName")
-    Page<Utilities> findUtilitiesByRoomName(@Param("roomName") String roomName, Pageable pageable);
+    Page<Utilities> findByRoomName(@Param("roomName") String roomName, Pageable pageable);
 
 }
