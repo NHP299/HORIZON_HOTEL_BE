@@ -8,53 +8,55 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/admin/medias")
 public class MediaController {
-
     @Autowired
     private MediaService mediaService;
 
-    @PostMapping("/upload/{roomTypeId}")
-    public ResponseEntity<Map<String, Object>> create(@RequestParam("file") MultipartFile file,
-                                                              @PathVariable Integer roomTypeId) {
-        return mediaService.createNewMedia(file, roomTypeId);
-    }
-
-    @PutMapping("/update/{mediaId}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer mediaId,
-                                                           @RequestParam("file") MultipartFile file) {
-        return mediaService.updateMedia(mediaId, file);
-    }
-
-    @DeleteMapping("/{mediaId}")
-    public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer mediaId) {
-        return mediaService.deleteMedia(mediaId);
-    }
-
-    @GetMapping("/roomtype/{roomTypeId}")
-    public ResponseEntity<List<MediaDto>> getByRoomType(@PathVariable Integer roomTypeId) {
-        List<MediaDto> mediaList = mediaService.getMediaByRoomType(roomTypeId);
-        return ResponseEntity.ok(mediaList);
-    }
-
-    @GetMapping("/room-name")
-    public ResponseEntity<List<MediaDto>> getByRoomName(@RequestParam String roomName) {
-        List<MediaDto> mediaList = mediaService.getMediaByRoomName(roomName);
-        return ResponseEntity.ok(mediaList);
-    }
-
-    @GetMapping("/{mediaId}")
-    public ResponseEntity<MediaDto> getById(@PathVariable Integer mediaId) {
-        MediaDto mediaDto = mediaService.getMediaById(mediaId);
+    @PostMapping("/create")
+    public ResponseEntity<MediaDto> create(@RequestParam("file") MultipartFile file,
+                                           @RequestParam Integer roomTypeId) {
+        MediaDto mediaDto = mediaService.create(file, roomTypeId);
         return ResponseEntity.ok(mediaDto);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<MediaDto>> getAllMedia() {
-        List<MediaDto> mediaList = mediaService.getAllMedia();
-        return ResponseEntity.ok(mediaList);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<MediaDto> update(@PathVariable Long id,
+                                           @RequestParam("file") MultipartFile file) {
+        MediaDto mediaDto = mediaService.update(id, file);
+        return ResponseEntity.ok(mediaDto);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        mediaService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MediaDto>> getAll() {
+        List<MediaDto> mediaDto = mediaService.getAll();
+        return ResponseEntity.ok(mediaDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MediaDto> getById(@PathVariable Long id) {
+        MediaDto mediaDto = mediaService.getById(id);
+        return ResponseEntity.ok(mediaDto);
+    }
+
+    @GetMapping("/roomType/{roomTypeId}")
+    public ResponseEntity<List<MediaDto>> getByRoomTypeId(@PathVariable Integer roomTypeId) {
+        List<MediaDto> mediaDto = mediaService.getByRoomTypeId(roomTypeId);
+        return ResponseEntity.ok(mediaDto);
+    }
+
+    @GetMapping("/roomName/{roomName}")
+    public ResponseEntity<List<MediaDto>> getByRoomName(@PathVariable String roomName) {
+        List<MediaDto> mediaDto = mediaService.getByRoomName(roomName);
+        return ResponseEntity.ok(mediaDto);
     }
 }
