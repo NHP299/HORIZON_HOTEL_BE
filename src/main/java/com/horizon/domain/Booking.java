@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +21,10 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     private LocalDate checkIn;
     private LocalDate checkOut;

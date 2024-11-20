@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,14 @@ public class RoomServiceImpl implements RoomService {
     private RoomRepository roomRepository;
     private RoomTypeRepository roomTypeRepository;
     private RoomMapper roomMapper;
+
+    @Override
+    public List<RoomDto> getAllRooms() {
+        List<Room> rooms = roomRepository.findAll();
+        return rooms.stream()
+                .map(roomMapper::toRoomDto)
+                .toList();
+    }
 
     @Override
     public Page<RoomDto> getAllRooms(Pageable pageable) {

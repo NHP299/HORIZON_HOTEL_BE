@@ -18,8 +18,8 @@ public class Utilities {
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
-
     private String name;
     private String description;
+
 
 }

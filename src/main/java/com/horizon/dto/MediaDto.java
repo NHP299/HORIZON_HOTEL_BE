@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 public class MediaDto {
     private Integer id;
-    private Integer roomTypeId;
+    private RoomType roomType;
     private String path;
     private String publicId;
 }

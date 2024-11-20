@@ -7,9 +7,9 @@ import com.horizon.mapper.ServicesMapper;
 import com.horizon.repository.ServicesRepository;
 import com.horizon.service.ServicesService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -21,14 +21,14 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     @Override
-    public ServicesDto createServices(ServicesDto servicesDto) {
+    public ServicesDto create(ServicesDto servicesDto) {
         Services services = servicesMapper.mapToService(servicesDto, null);
         Services saveServices = servicesRepository.save(services);
         return servicesMapper.mapToServicesDto(saveServices);
     }
 
 
-    public ServicesDto updateServices(Integer serviceId, ServicesDto servicesDto) {
+    public ServicesDto update(Integer serviceId, ServicesDto servicesDto) {
         Services existingServices = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
 
@@ -40,7 +40,7 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     @Override
-    public void deleteServices(Integer serviceId) {
+    public void delete(Integer serviceId) {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found " + serviceId)
         );
@@ -48,7 +48,7 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public ServicesDto getServicesById(Integer serviceId) {
+    public ServicesDto getById(Integer serviceId) {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Services is not exist with given id: " + serviceId)
         );
@@ -56,33 +56,33 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public Page<ServicesDto> getAllServices(Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findAll(pageable);
-        return servicesPage.map(servicesMapper::mapToServicesDto);
+    public List<ServicesDto> getAll() {
+        List<Services> servicesPage = servicesRepository.findAll();
+        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
     @Override
-    public Page<ServicesDto> getServicesByName(String name, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findByDescriptionContainingIgnoreCase(name, pageable);
-        return servicesPage.map(servicesMapper::mapToServicesDto);
+    public List<ServicesDto> getByName(String name) {
+        List<Services> servicesPage = servicesRepository.findByDescriptionContainingIgnoreCase(name);
+        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomTypeName(String roomTypeName, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName, pageable);
-        return servicesPage.map(servicesMapper::mapToServicesDto);
+    public List<ServicesDto> getByRoomTypeName(String roomTypeName) {
+        List<Services> servicesPage = servicesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName);
+        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomId(Integer roomId, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findServicesByRoomId(roomId, pageable);
-        return servicesPage.map(servicesMapper::mapToServicesDto);
+    public List<ServicesDto> getByRoomId(Integer roomId) {
+        List<Services> servicesPage = servicesRepository.findByRoomId(roomId);
+        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
     @Override
-    public Page<ServicesDto> getServicesByRoomName(String roomName, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findServicesByRoomName(roomName, pageable);
-        return servicesPage.map(servicesMapper::mapToServicesDto);
+    public List<ServicesDto> getByRoomName(String roomName) {
+        List<Services> servicesPage = servicesRepository.findByRoomName(roomName);
+        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
 }
