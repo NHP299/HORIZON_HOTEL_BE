@@ -1,7 +1,9 @@
 package com.horizon.dto;
 
+import com.horizon.domain.RoomType;
+
 public class MediaDto {
     private Integer id;
-    private Integer roomTypeId;
+    private RoomType roomType;
     private String path;
 }
