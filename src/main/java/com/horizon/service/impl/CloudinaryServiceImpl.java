@@ -2,7 +2,6 @@ package com.horizon.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.horizon.domain.Media;
 import com.horizon.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,29 +20,40 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         this.cloudinary = cloudinary;
     }
 
-    public String uploadImage(MultipartFile file) throws IOException {
-        Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return (String) uploadResult.get("public_id");
-    }
-
-    public void deleteImage(String publicId) {
+    @Override
+    public String upload(MultipartFile file) {
         try {
-            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return (String) uploadResult.get("url");
         } catch (IOException e) {
-            throw new RuntimeException("Could not delete image with public ID: " + publicId, e);
+            throw new RuntimeException("Error uploading file to Cloudinary", e);
         }
     }
 
-    public String getImageUrl(String publicId) {
-        return cloudinary.url().publicId(publicId).generate();
+    @Override
+    public void delete(String publicId) {
+        try {
+            Map<String, Object> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            if (result == null || !result.containsKey("result") || !"ok".equals(result.get("result"))) {
+                throw new RuntimeException("Failed to delete image from Cloudinary");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting file from Cloudinary", e);
+        }
     }
 
-    public String updateImage(MultipartFile file, Media media) throws IOException {
-        if (media == null || media.getPublicId() == null) {
-            throw new IllegalArgumentException("Media object and its public ID are required to update the image.");
+    @Override
+    public String getPublicId(String path) {
+        if (path != null) {
+            String fileName = path.substring(path.lastIndexOf("/") + 1);
+            int dotIndex = fileName.lastIndexOf(".");
+            if (dotIndex != -1) {
+                return fileName.substring(0, dotIndex);
+            } else {
+                return fileName;
+            }
         }
-        String oldPublicId = media.getPublicId();
-        deleteImage(oldPublicId);
-        return uploadImage(file);
+        return null;
     }
+
 }
