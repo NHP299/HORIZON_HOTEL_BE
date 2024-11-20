@@ -1,19 +1,19 @@
 package com.horizon.service;
 
 import com.horizon.dto.UtilitiesDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 
 public interface UtilitiesService {
 
-    UtilitiesDto createUtilities(UtilitiesDto utilitiesDto);
-    UtilitiesDto updateUtilities(Integer utilitiesId, UtilitiesDto utilitiesDto);
-    void deleteUtilities(Integer utilitiesId);
-    UtilitiesDto getUtilitiesById(Integer utilitiesId);
-    Page<UtilitiesDto> getAllUtilities(Pageable pageable);
-    Page<UtilitiesDto> getUtilitiesByName(String name, Pageable pageable);
-    Page<UtilitiesDto> getUtilitiesByRoomTypeName(String roomTypeName, Pageable pageable);
-    Page<UtilitiesDto> getUtilitiesByRoomId(Integer roomId, Pageable pageable);
-    Page<UtilitiesDto> getUtilitiesByRoomName(String roomName, Pageable pageable);
+    UtilitiesDto create(UtilitiesDto utilitiesDto);
+    UtilitiesDto update(Integer utilitiesId, UtilitiesDto utilitiesDto);
+    void delete(Integer utilitiesId);
+    UtilitiesDto getById(Integer utilitiesId);
+    List<UtilitiesDto> getAll();
+    List<UtilitiesDto> getByName(String name);
+    List<UtilitiesDto> getByRoomTypeName(String roomTypeName);
+    List<UtilitiesDto> getByRoomId(Integer roomId);
+    List<UtilitiesDto> getByRoomName(String roomName);
 }
