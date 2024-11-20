@@ -8,13 +8,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     List<Promotion> findByNameContainingIgnoreCase(String name);
 
     @Query("SELECT p FROM Promotion p WHERE p.id = :promotionId AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
-    Promotion findByIdAndAvailable(@Param("promotionId") Integer promotionId);
+    Optional<Promotion> findByIdAndAvailable(@Param("promotionId") Integer promotionId);
 
     @Query("SELECT p FROM Promotion p WHERE CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
     List<Promotion> findAllAvailable();
