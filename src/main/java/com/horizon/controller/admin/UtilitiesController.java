@@ -3,12 +3,12 @@ package com.horizon.controller.admin;
 import com.horizon.dto.UtilitiesDto;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -31,8 +31,8 @@ public class UtilitiesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<UtilitiesDto>> getAll(Pageable pageable) {
-        Page<UtilitiesDto> listUtilities = utilitiesService.getAll(pageable);
+    public ResponseEntity<List<UtilitiesDto>> getAll() {
+        List<UtilitiesDto> listUtilities = utilitiesService.getAll();
         return ResponseEntity.ok(listUtilities);
     }
 
@@ -49,20 +49,20 @@ public class UtilitiesController {
     }
 
     @GetMapping("/by-room-type-name")
-    public ResponseEntity<Page<UtilitiesDto>> getByRoomTypeName(@RequestParam String roomTypeName, Pageable pageable) {
-        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomTypeName(roomTypeName, pageable);
+    public ResponseEntity<List<UtilitiesDto>> getByRoomTypeName(@RequestParam String roomTypeName) {
+        List<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomTypeName(roomTypeName);
         return ResponseEntity.ok(utilitiesDtoPage);
     }
 
     @GetMapping("/by-room-id/{id}")
-    public ResponseEntity<Page<UtilitiesDto>> getByRoomId(@PathVariable("id") Integer roomId, Pageable pageable) {
-        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomId(roomId, pageable);
+    public ResponseEntity<List<UtilitiesDto>> getByRoomId(@PathVariable("id") Integer roomId) {
+        List<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomId(roomId);
         return ResponseEntity.ok(utilitiesDtoPage);
     }
 
     @GetMapping("/by-room-name")
-    public ResponseEntity<Page<UtilitiesDto>> getByRoomName(@RequestParam String roomName, Pageable pageable) {
-        Page<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomName(roomName, pageable);
+    public ResponseEntity<List<UtilitiesDto>> getByRoomName(@RequestParam String roomName) {
+        List<UtilitiesDto> utilitiesDtoPage = utilitiesService.getByRoomName(roomName);
         return ResponseEntity.ok(utilitiesDtoPage);
     }
 

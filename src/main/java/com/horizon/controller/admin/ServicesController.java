@@ -3,12 +3,12 @@ package com.horizon.controller.admin;
 import com.horizon.dto.ServicesDto;
 import com.horizon.service.ServicesService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -31,8 +31,8 @@ public class ServicesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<ServicesDto>> getAll(Pageable pageable) {
-        Page<ServicesDto> listServices = servicesService.getAll(pageable);
+    public ResponseEntity<List<ServicesDto>> getAll() {
+        List<ServicesDto> listServices = servicesService.getAll();
         return ResponseEntity.ok(listServices);
     }
 
@@ -49,20 +49,20 @@ public class ServicesController {
     }
 
     @GetMapping("/by-room-type-name")
-    public ResponseEntity<Page<ServicesDto>> getByRoomTypeName(@RequestParam String roomTypeName, Pageable pageable) {
-        Page<ServicesDto> servicesDtoPage = servicesService.getByRoomTypeName(roomTypeName, pageable);
+    public ResponseEntity<List<ServicesDto>> getByRoomTypeName(@RequestParam String roomTypeName) {
+        List<ServicesDto> servicesDtoPage = servicesService.getByRoomTypeName(roomTypeName);
         return ResponseEntity.ok(servicesDtoPage);
     }
 
     @GetMapping("/by-room-id/{id}")
-    public ResponseEntity<Page<ServicesDto>> getByRoomId(@PathVariable("id") Integer roomId, Pageable pageable) {
-        Page<ServicesDto> servicesDtoPage = servicesService.getByRoomId(roomId, pageable);
+    public ResponseEntity<List<ServicesDto>> getByRoomId(@PathVariable("id") Integer roomId) {
+        List<ServicesDto> servicesDtoPage = servicesService.getByRoomId(roomId);
         return ResponseEntity.ok(servicesDtoPage);
     }
 
     @GetMapping("/by-room-name")
-    public ResponseEntity<Page<ServicesDto>> getByRoomName(@RequestParam String roomName, Pageable pageable) {
-        Page<ServicesDto> servicesDtoPage = servicesService.getByRoomName(roomName, pageable);
+    public ResponseEntity<List<ServicesDto>> getByRoomName(@RequestParam String roomName) {
+        List<ServicesDto> servicesDtoPage = servicesService.getByRoomName(roomName);
         return ResponseEntity.ok(servicesDtoPage);
     }
 
