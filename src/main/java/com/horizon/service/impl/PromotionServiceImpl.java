@@ -85,7 +85,7 @@ public class PromotionServiceImpl implements PromotionService
 
     @Override
     @Transactional
-    public void applyPromotionUsage(Integer promotionId) {
+    public void apply(Integer promotionId) {
         int rowsUpdated = promotionRepository.decrementMaxUsage(promotionId);
         if (rowsUpdated == 0) {
             throw new IllegalArgumentException("Promotion usage limit reached or invalid promotion ID.");
