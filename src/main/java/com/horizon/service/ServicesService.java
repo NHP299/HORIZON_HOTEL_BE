@@ -1,8 +1,8 @@
 package com.horizon.service;
 
 import com.horizon.dto.ServicesDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 
 public interface ServicesService {
@@ -11,10 +11,10 @@ public interface ServicesService {
     ServicesDto update(Integer serviceId, ServicesDto servicesDto);
     void delete(Integer serviceId);
     ServicesDto getById(Integer serviceId);
-    Page<ServicesDto> getAll(Pageable pageable);
-    Page<ServicesDto> getByName(String name, Pageable pageable);
-    Page<ServicesDto> getByRoomTypeName(String roomTypeName, Pageable pageable);
-    Page<ServicesDto> getByRoomId(Integer roomId, Pageable pageable);
-    Page<ServicesDto> getByRoomName(String roomName, Pageable pageable);
+    List<ServicesDto> getAll();
+    List<ServicesDto> getByName(String name);
+    List<ServicesDto> getByRoomTypeName(String roomTypeName);
+    List<ServicesDto> getByRoomId(Integer roomId);
+    List<ServicesDto> getByRoomName(String roomName);
 
 }

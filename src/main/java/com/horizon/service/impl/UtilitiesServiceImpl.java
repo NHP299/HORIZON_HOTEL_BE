@@ -9,9 +9,9 @@ import com.horizon.repository.UtilitiesRepository;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -53,33 +53,33 @@ public class UtilitiesServiceImpl implements UtilitiesService {
     }
 
     @Override
-    public Page<UtilitiesDto> getAll(Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findAll(pageable);
-        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    public List<UtilitiesDto> getAll() {
+        List<Utilities> utilitiesPage = utilitiesRepository.findAll();
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public Page<UtilitiesDto> getByName(String name, Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCase(name, pageable);
-        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    public List<UtilitiesDto> getByName(String name) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCase(name);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public Page<UtilitiesDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName, pageable);
-        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    public List<UtilitiesDto> getByRoomTypeName(String roomTypeName) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public Page<UtilitiesDto> getByRoomId(Integer roomId, Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findByRoomId(roomId, pageable);
-        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    public List<UtilitiesDto> getByRoomId(Integer roomId) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomId(roomId);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public Page<UtilitiesDto> getByRoomName(String roomName, Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findByRoomName(roomName, pageable);
-        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
+    public List<UtilitiesDto> getByRoomName(String roomName) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomName(roomName);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
 }
