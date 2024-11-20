@@ -24,8 +24,8 @@ public class PromotionController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PromotionDto> getById(@PathVariable Integer id) {
-        PromotionDto promotionDto = promotionService.getById(id);
+    public ResponseEntity<PromotionDto> getById(@PathVariable("id") Integer promotionId) {
+        PromotionDto promotionDto = promotionService.getById(promotionId);
         return ResponseEntity.ok(promotionDto);
     }
 
@@ -48,8 +48,8 @@ public class PromotionController {
     }
 
     @GetMapping("/by-id-available/{id}")
-    public ResponseEntity<PromotionDto> getByIdAndAvailable(@PathVariable("id") Integer id) {
-        PromotionDto promotionDto = promotionService.getByIdAndAvailable(id);
+    public ResponseEntity<PromotionDto> getByIdAndAvailable(@PathVariable("id") Integer promotionId) {
+        PromotionDto promotionDto = promotionService.getByIdAndAvailable(promotionId);
         return ResponseEntity.ok(promotionDto);
     }
 
@@ -73,9 +73,9 @@ public class PromotionController {
         return ResponseEntity.ok(promotions);
     }
 
-    @PostMapping("/apply/{promotionId}")
-    public ResponseEntity<String> applyPromotion(@PathVariable Integer promotionId) {
-        promotionService.applyPromotionUsage(promotionId);
+    @PostMapping("/apply/{id}")
+    public ResponseEntity<String> apply(@PathVariable("id") Integer promotionId) {
+        promotionService.apply(promotionId);
         return ResponseEntity.ok("Promotion applied successfully.");
     }
 
