@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@CrossOrigin
 @AllArgsConstructor
 @RequestMapping("/admin/roles")
 public class RoleController {
@@ -23,8 +26,8 @@ public class RoleController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<RoleDto>>  getAllRoles(Pageable pageable) {
-        Page<RoleDto> roles = roleService.getAllRoles(pageable);
+    public ResponseEntity<List<RoleDto>>  getAllRoles() {
+        List<RoleDto> roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);
     }
 
