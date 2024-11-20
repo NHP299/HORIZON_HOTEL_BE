@@ -1,10 +1,15 @@
 package com.horizon.repository;
 
 import com.horizon.domain.Media;
+import com.horizon.domain.RoomType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface MediaRepository extends JpaRepository<Media, Integer> {
+import java.util.List;
+import java.util.Optional;
 
+@Repository
+public interface MediaRepository extends JpaRepository<Media, Long> {
+
+    List<Media> findByRoomType(RoomType roomType);
 }

@@ -1,79 +1,35 @@
 package com.horizon.service;
 
-import com.horizon.domain.Room;
-import org.springframework.data.domain.Example;
+import com.horizon.dto.RoomDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 public interface RoomService {
-    void deleteAllByIdInBatch(Iterable<Integer> integers);
 
-    <S extends Room, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction);
+    List<RoomDto> getAllRooms();
 
-    void deleteAll(Iterable<? extends Room> entities);
+    Page<RoomDto> getAllRooms(Pageable pageable);
 
-    List<Room> findAll(Sort sort);
+    RoomDto createRoom(RoomDto roomDto);
 
-    <S extends Room> Optional<S> findOne(Example<S> example);
+    RoomDto getRoomById(Integer id);
 
-    <S extends Room> boolean exists(Example<S> example);
+    Page<RoomDto> findRoomByName(String name, Pageable pageable);
 
-    <S extends Room> S save(S entity);
+    Page<RoomDto> findRoom(String input, Pageable pageable);
 
-    void deleteAllById(Iterable<? extends Integer> integers);
+    RoomDto updateRoom(Integer roomId, RoomDto roomDto);
 
-    void deleteAllInBatch();
+    void deleteRoom(Integer roomId);
 
-    Optional<Room> findById(Integer integer);
+    Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable);
 
-    @Deprecated
-    Room getOne(Integer integer);
+    Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable);
 
-    void deleteAll();
+    Page<RoomDto> getRoomsIsAvailable(Pageable pageable);
 
-    @Deprecated
-    Room getById(Integer integer);
-
-    void flush();
-
-    Page<Room> findAll(Pageable pageable);
-
-    <S extends Room> S saveAndFlush(S entity);
-
-    List<Room> findAllById(Iterable<Integer> integers);
-
-    <S extends Room> List<S> findAll(Example<S> example);
-
-    Room getReferenceById(Integer integer);
-
-    <S extends Room> Page<S> findAll(Example<S> example, Pageable pageable);
-
-    boolean existsById(Integer integer);
-
-    <S extends Room> List<S> saveAllAndFlush(Iterable<S> entities);
-
-    List<Room> findAll();
-
-    void deleteById(Integer integer);
-
-    <S extends Room> List<S> findAll(Example<S> example, Sort sort);
-
-    void delete(Room entity);
-
-    @Deprecated
-    void deleteInBatch(Iterable<Room> entities);
-
-    <S extends Room> List<S> saveAll(Iterable<S> entities);
-
-    long count();
-
-    void deleteAllInBatch(Iterable<Room> entities);
-
-    <S extends Room> long count(Example<S> example);
+    Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

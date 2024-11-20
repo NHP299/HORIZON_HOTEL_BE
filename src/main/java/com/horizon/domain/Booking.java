@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -22,9 +22,16 @@ public class Booking {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    private Date checkIn;
-    private Date checkOut;
-    private Date bookingDate;
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
+    private LocalDate checkIn;
+    private LocalDate checkOut;
+    private LocalDate bookingDate;
+    private Integer adult;
+    private Integer child;
+    private Integer baby;
     private Short status;
     private String note;
     private BigInteger totalPrice;

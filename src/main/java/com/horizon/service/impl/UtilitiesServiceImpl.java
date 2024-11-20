@@ -1,185 +1,85 @@
 package com.horizon.service.impl;
 
+
 import com.horizon.domain.Utilities;
+import com.horizon.dto.UtilitiesDto;
+import com.horizon.exception.ResourceNotFoundException;
+import com.horizon.mapper.UtilitiesMapper;
 import com.horizon.repository.UtilitiesRepository;
 import com.horizon.service.UtilitiesService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
+import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+
 
 @Service
+@AllArgsConstructor
 public class UtilitiesServiceImpl implements UtilitiesService {
 
-    private final UtilitiesRepository utilitiesRepository;
+    private UtilitiesRepository utilitiesRepository;
+    private UtilitiesMapper utilitiesMapper;
 
-    @Autowired
-    private UtilitiesServiceImpl(UtilitiesRepository utilitiesRepository) {
-        this.utilitiesRepository = utilitiesRepository;
+
+    @Override
+    public UtilitiesDto create(UtilitiesDto utilitiesDto) {
+        Utilities utilities = utilitiesMapper.mapToUtilities(utilitiesDto,null);
+        Utilities saveUtilities = utilitiesRepository.save(utilities);
+        return utilitiesMapper.mapToUtilitiesDto(saveUtilities);
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-        utilitiesRepository.deleteAllByIdInBatch(integers);
+    public UtilitiesDto update(Integer utilitiesId, UtilitiesDto utilitiesDto) {
+        Utilities existingUtilities = utilitiesRepository.findById(utilitiesId).orElseThrow(() -> new ResourceNotFoundException("Utilities not found " + utilitiesId));
+        Utilities updatedUtilities = utilitiesMapper.mapToUtilities(utilitiesDto,existingUtilities);
+        updatedUtilities = utilitiesRepository.save(updatedUtilities);
+        return utilitiesMapper.mapToUtilitiesDto(updatedUtilities);
+    }
+
+
+    @Override
+    public void delete(Integer utilitiesId) {
+        Utilities utilities = utilitiesRepository.findById(utilitiesId).orElseThrow(
+                () -> new ResourceNotFoundException("Utilities not found" + utilitiesId));
+        utilitiesRepository.delete(utilities);
     }
 
     @Override
-    public void delete(Utilities entity) {
-        utilitiesRepository.delete(entity);
+    public UtilitiesDto getById(Integer utilitiesId) {
+        Utilities utilities = utilitiesRepository.findById(utilitiesId).orElseThrow(
+                () -> new ResourceNotFoundException("Utilities is not exist with given id: " + utilitiesId));
+        return utilitiesMapper.mapToUtilitiesDto(utilities);
     }
 
     @Override
-    public <S extends Utilities> boolean exists(Example<S> example) {
-        return utilitiesRepository.exists(example);
+    public List<UtilitiesDto> getAll() {
+        List<Utilities> utilitiesPage = utilitiesRepository.findAll();
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    @Deprecated
-    public void deleteInBatch(Iterable<Utilities> entities) {
-        utilitiesRepository.deleteInBatch(entities);
+    public List<UtilitiesDto> getByName(String name) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCase(name);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public List<Utilities> findAll(Sort sort) {
-        return utilitiesRepository.findAll(sort);
+    public List<UtilitiesDto> getByRoomTypeName(String roomTypeName) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public void deleteById(Integer integer) {
-        utilitiesRepository.deleteById(integer);
+    public List<UtilitiesDto> getByRoomId(Integer roomId) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomId(roomId);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
     @Override
-    public <S extends Utilities> long count(Example<S> example) {
-        return utilitiesRepository.count(example);
+    public List<UtilitiesDto> getByRoomName(String roomName) {
+        List<Utilities> utilitiesPage = utilitiesRepository.findByRoomName(roomName);
+        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
     }
 
-    @Override
-    public void deleteAllInBatch(Iterable<Utilities> entities) {
-        utilitiesRepository.deleteAllInBatch(entities);
-    }
-
-    @Override
-    public long count() {
-        return utilitiesRepository.count();
-    }
-
-    @Override
-    public <S extends Utilities> List<S> findAll(Example<S> example) {
-        return utilitiesRepository.findAll(example);
-    }
-
-    @Override
-    public <S extends Utilities> List<S> findAll(Example<S> example, Sort sort) {
-        return utilitiesRepository.findAll(example, sort);
-    }
-
-    @Override
-    public <S extends Utilities> Page<S> findAll(Example<S> example, Pageable pageable) {
-        return utilitiesRepository.findAll(example, pageable);
-    }
-
-    @Override
-    public <S extends Utilities> S saveAndFlush(S entity) {
-        return utilitiesRepository.saveAndFlush(entity);
-    }
-
-    @Override
-    public <S extends Utilities> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return utilitiesRepository.saveAllAndFlush(entities);
-    }
-
-    @Override
-    public boolean existsById(Integer integer) {
-        return utilitiesRepository.existsById(integer);
-    }
-
-    @Override
-    @Deprecated
-    public Utilities getById(Integer integer) {
-        return utilitiesRepository.getById(integer);
-    }
-
-    @Override
-    public <S extends Utilities> List<S> saveAll(Iterable<S> entities) {
-        return utilitiesRepository.saveAll(entities);
-    }
-
-    @Override
-    public Utilities getReferenceById(Integer integer) {
-        return utilitiesRepository.getReferenceById(integer);
-    }
-
-    @Override
-    public Optional<Utilities> findById(Integer integer) {
-        return utilitiesRepository.findById(integer);
-    }
-
-    @Override
-    public void flush() {
-        utilitiesRepository.flush();
-    }
-
-    @Override
-    public Page<Utilities> findAll(Pageable pageable) {
-        return utilitiesRepository.findAll(pageable);
-    }
-
-    @Override
-    public void deleteAll() {
-        utilitiesRepository.deleteAll();
-    }
-
-    @Override
-    public <S extends Utilities> Optional<S> findOne(Example<S> example) {
-        return utilitiesRepository.findOne(example);
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends Utilities> entities) {
-        utilitiesRepository.deleteAll(entities);
-    }
-
-    @Override
-    public List<Utilities> findAllById(Iterable<Integer> integers) {
-        return utilitiesRepository.findAllById(integers);
-    }
-
-    @Override
-    @Deprecated
-    public Utilities getOne(Integer integer) {
-        return utilitiesRepository.getOne(integer);
-    }
-
-    @Override
-    public <S extends Utilities, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-        return utilitiesRepository.findBy(example, queryFunction);
-    }
-
-    @Override
-    public <S extends Utilities> S save(S entity) {
-        return utilitiesRepository.save(entity);
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends Integer> integers) {
-        utilitiesRepository.deleteAllById(integers);
-    }
-
-    @Override
-    public void deleteAllInBatch() {
-        utilitiesRepository.deleteAllInBatch();
-    }
-
-    @Override
-    public List<Utilities> findAll() {
-        return utilitiesRepository.findAll();
-    }
 }
