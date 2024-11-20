@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
@@ -51,6 +53,12 @@ public class RoleServiceImpl implements RoleService {
     public Page<RoleDto> getAllRoles(Pageable pageable) {
         Page<Role> roles = roleRepository.findAll(pageable);
         return roles.map(roleMapper::toRoleDto);
+    }
+
+    @Override
+    public List<RoleDto> getAllRoles() {
+        List<Role> roles = roleRepository.findAll();
+        return roles.stream().map(roleMapper::toRoleDto).toList();
     }
 }
 
