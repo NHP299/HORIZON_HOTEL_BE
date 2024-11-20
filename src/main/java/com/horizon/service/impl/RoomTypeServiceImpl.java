@@ -61,4 +61,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     }
 
+    @Override
+    public List<RoomTypeDto> getAllRoomType() {
+        List<RoomType> roomType = roomTypeRepository.findAll();
+        return roomType.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
+    }
+
 }
