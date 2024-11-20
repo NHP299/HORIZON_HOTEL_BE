@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @NoArgsConstructor
+@CrossOrigin
 @RequestMapping("/admin/room-type")
 public class RoomTypeController {
     @Autowired
@@ -38,8 +39,8 @@ public class RoomTypeController {
 
     //Get all room type
     @GetMapping
-    public ResponseEntity<Page<RoomTypeDto>> getAllRoomType(Pageable pageable) {
-        Page<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType(pageable);
+    public ResponseEntity<List<RoomTypeDto>> getAllRoomType() {
+        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType();
         return ResponseEntity.ok(roomTypeDtos);
     }
 
