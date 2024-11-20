@@ -20,4 +20,6 @@ public interface RoomTypeService {
 
     void deleteRoomType(Integer id);
 
+    List<RoomTypeDto> getAllRoomType();
+
 }
