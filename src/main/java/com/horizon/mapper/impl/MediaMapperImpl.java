@@ -3,29 +3,34 @@ package com.horizon.mapper.impl;
 import com.horizon.domain.Media;
 import com.horizon.dto.MediaDto;
 import com.horizon.mapper.MediaMapper;
-import org.springframework.stereotype.Service;
+import com.horizon.service.CloudinaryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Service
+@Component
 public class MediaMapperImpl implements MediaMapper {
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     @Override
-    public MediaDto mediaToMediaDto(Media media) {
+    public MediaDto toDto(Media media) {
         if (media == null) {
             return null;
         }
 
         MediaDto mediaDto = new MediaDto();
         mediaDto.setId(media.getId());
-        mediaDto.setRoomTypeId(media.getRoomType().getId());
         mediaDto.setPath(media.getPath());
+        mediaDto.setRoomTypeId(media.getRoomType().getId());
+
+        mediaDto.setPublicId(cloudinaryService.getPublicId(media.getPath()));
+
         return mediaDto;
     }
 
     @Override
-    public Media mediaDtoToMedia(MediaDto mediaDto) {
+    public Media toEntity(MediaDto mediaDto) {
         if (mediaDto == null) {
             return null;
         }
@@ -33,17 +38,7 @@ public class MediaMapperImpl implements MediaMapper {
         Media media = new Media();
         media.setId(mediaDto.getId());
         media.setPath(mediaDto.getPath());
+
         return media;
-    }
-
-    @Override
-    public List<MediaDto> mediaListToMediaDtoList(List<Media> mediaList) {
-        if (mediaList == null) {
-            return null;
-        }
-
-        return mediaList.stream()
-                .map(this::mediaToMediaDto)
-                .collect(Collectors.toList());
     }
 }
