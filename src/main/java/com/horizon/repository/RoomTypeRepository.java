@@ -14,8 +14,11 @@ import java.util.Optional;
 public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
 
     Optional<RoomType> findByName(String name);
-    @Query(value = "SELECT rt.id, rt.name, m.path " +
-            "FROM room_type rt LEFT JOIN media m ON rt.id = m.room_type_id", nativeQuery = true)
-    List<Map<String, Object>> findRoomTypeMedia();
 
+    @Query(value = "SELECT rt.id, rt.name, STRING_AGG(m.path, ', ') AS paths " +
+            "FROM room_type rt " +
+            "LEFT JOIN media m ON rt.id = m.room_type_id " +
+            "GROUP BY rt.id, rt.name",
+            nativeQuery = true)
+    List<Map<String, Object>> findRoomTypeMedia();
 }
