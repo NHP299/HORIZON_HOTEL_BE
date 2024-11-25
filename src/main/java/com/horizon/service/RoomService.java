@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface RoomService {
 
@@ -32,4 +33,6 @@ public interface RoomService {
     Page<RoomDto> getRoomsIsAvailable(Pageable pageable);
 
     Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+    List<Map<String, Object>> getRoomDetail();
 }
