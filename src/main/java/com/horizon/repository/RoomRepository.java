@@ -50,14 +50,14 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "r.description , " +
             "STRING_AGG(DISTINCT s.description, ', ') AS services, " +
             "STRING_AGG(DISTINCT u.name, ', ') AS utilities, " +
-            "m.path " +
+            "STRING_AGG(DISTINCT m.path, ', ') AS paths " +
             "FROM room r " +
             "LEFT JOIN room_type rt ON r.room_type_id = rt.id " +
             "LEFT JOIN services s ON rt.id = s.room_type_id " +
             "LEFT JOIN utilities u ON rt.id = u.room_type_id " +
             "LEFT JOIN media m ON rt.id = m.room_type_id " +
             "WHERE r.is_activated = true " +
-            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description, m.path",
+            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description",
             nativeQuery = true)
     List<Map<String, Object>> getRoomDetail();
 
