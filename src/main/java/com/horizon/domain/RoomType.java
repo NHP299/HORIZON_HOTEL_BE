@@ -19,6 +19,4 @@ public class RoomType {
     private Integer id;
     private String name;
     private String description;
-    @OneToMany(mappedBy = "roomType")
-    private List<Room> roomList;
 }

@@ -23,7 +23,4 @@ public class PromotionType {
     @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
     private String description;
-
-    @OneToMany(mappedBy = "promotionType", cascade = CascadeType.ALL)
-    private List<PromotionCondition> conditions;
 }

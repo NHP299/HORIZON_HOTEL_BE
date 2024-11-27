@@ -44,7 +44,4 @@ public class Promotion {
     @NotNull(message = "Maximum amount cannot be null")
     @Positive(message = "Maximum amount must be greater than 0")
     private Integer maxAmount;
-
-    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
-    private List<PromotionCondition> promotionCondition;
 }
