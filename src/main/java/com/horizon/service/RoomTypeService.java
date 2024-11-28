@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface RoomTypeService {
 
-    RoomTypeDto crateRoomType(RoomTypeDto roomTypeDto);
+    RoomTypeDto createRoomType(RoomTypeDto roomTypeDto);
 
     RoomTypeDto getRoomTypeById(Integer id);
 
