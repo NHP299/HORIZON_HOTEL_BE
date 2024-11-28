@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/admin/banner-types")
 public class BannerTypeController {
@@ -21,21 +22,21 @@ public class BannerTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody BannerTypeDto bannerTypeDto) {
-        String message = bannerTypeService.createBannerType(bannerTypeDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+    public ResponseEntity<BannerTypeDto> create(@RequestBody BannerTypeDto bannerTypeDto) {
+        BannerTypeDto createdBannerType = bannerTypeService.createBannerType(bannerTypeDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBannerType);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody BannerTypeDto bannerTypeDto) {
-        String message = bannerTypeService.updateBannerType(id, bannerTypeDto);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<BannerTypeDto> update(@PathVariable Integer id, @RequestBody BannerTypeDto bannerTypeDto) {
+        BannerTypeDto updatedBannerType = bannerTypeService.updateBannerType(id, bannerTypeDto);
+        return ResponseEntity.ok(updatedBannerType);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Integer id) {
-        String message = bannerTypeService.deleteBannerType(id);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        bannerTypeService.deleteBannerType(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
