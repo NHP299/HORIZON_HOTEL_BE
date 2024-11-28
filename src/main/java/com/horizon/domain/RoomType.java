@@ -21,4 +21,6 @@ public class RoomType {
     private String description;
     @OneToMany(mappedBy = "roomType")
     private List<Room> roomList;
+    public RoomType(Integer id, String name, String description) {
+    }
 }
