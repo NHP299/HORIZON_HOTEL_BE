@@ -23,28 +23,27 @@ public class BannerTypeServiceImpl implements BannerTypeService {
     }
 
     @Override
-    public String createBannerType(BannerTypeDto bannerTypeDto) {
+    public BannerTypeDto createBannerType(BannerTypeDto bannerTypeDto) {
         BannerType bannerType = bannerTypeMapper.toEntity(bannerTypeDto);
         BannerType savedBannerType = bannerTypeRepository.save(bannerType);
-        return "Banner Type created successfully with ID: " + savedBannerType.getId();
+        return bannerTypeMapper.toDto(savedBannerType);
     }
 
     @Override
-    public String updateBannerType(Integer id, BannerTypeDto bannerTypeDto) {
+    public BannerTypeDto updateBannerType(Integer id, BannerTypeDto bannerTypeDto) {
         BannerType bannerType = bannerTypeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("BannerType not found with id: " + id));
         bannerType.setName(bannerTypeDto.getName());
         BannerType updatedBannerType = bannerTypeRepository.save(bannerType);
-        return "Banner Type updated successfully with ID: " + updatedBannerType.getId();
+        return bannerTypeMapper.toDto(updatedBannerType);
     }
 
     @Override
-    public String deleteBannerType(Integer id) {
+    public void deleteBannerType(Integer id) {
         if (!bannerTypeRepository.existsById(id)) {
             throw new RuntimeException("BannerType not found with id: " + id);
         }
         bannerTypeRepository.deleteById(id);
-        return "Banner Type deleted successfully with ID: " + id;
     }
 
     @Override
