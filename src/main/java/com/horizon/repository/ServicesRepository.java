@@ -15,14 +15,16 @@ public interface ServicesRepository extends JpaRepository<Services, Integer> {
 
     @Query("SELECT s FROM Services s " +
             "JOIN s.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.id = :roomId " +
             "AND CURRENT_TIMESTAMP BETWEEN s.startedTime AND s.endTime")
     List<Services> findByRoomId(@Param("roomId") Integer roomId);
 
+
+
     @Query("SELECT s FROM Services s " +
             "JOIN s.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.name = :roomName " +
             "AND CURRENT_TIMESTAMP BETWEEN s.startedTime AND s.endTime")
     List<Services> findByRoomName(@Param("roomName") String roomName);

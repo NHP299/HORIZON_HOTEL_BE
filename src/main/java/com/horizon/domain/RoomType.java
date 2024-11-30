@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,8 +18,4 @@ public class RoomType {
     private Integer id;
     private String name;
     private String description;
-    @OneToMany(mappedBy = "roomType")
-    private List<Room> roomList;
-    public RoomType(Integer id, String name, String description) {
-    }
 }

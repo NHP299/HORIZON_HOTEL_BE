@@ -12,6 +12,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -65,6 +66,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public List<RoomTypeDto> getAllRoomType() {
         List<RoomType> roomType = roomTypeRepository.findAll();
         return roomType.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
+    }
+
+    @Override
+    public List<Map<String, Object>> getRoomTypeMedia() {
+        return roomTypeRepository.findRoomTypeMedia();
     }
 
 }
