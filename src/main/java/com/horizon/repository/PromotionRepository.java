@@ -24,7 +24,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     List<Promotion> findByNameContainingAndAvailable(@Param("promotionName") String promotionName);
 
     @Query("SELECT p FROM Promotion p " +
-            "JOIN p.promotionCondition pc " +
+            "JOIN PromotionCondition pc ON pc.promotion = p " +
             "JOIN pc.promotionType pt " +
             "WHERE " +
             "(CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0) AND " +

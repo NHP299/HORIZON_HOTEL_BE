@@ -15,13 +15,13 @@ public interface UtilitiesRepository extends JpaRepository<Utilities, Integer> {
 
     @Query("SELECT u FROM Utilities u " +
             "JOIN u.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.id = :roomId")
     List<Utilities> findByRoomId(@Param("roomId") Integer roomId);
 
     @Query("SELECT u FROM Utilities u " +
             "JOIN u.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.name = :roomName")
     List<Utilities> findByRoomName(@Param("roomName") String roomName);
 
