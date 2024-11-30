@@ -23,10 +23,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     //Create room type
     @Override
-    public RoomTypeDto crateRoomType(RoomTypeDto roomTypeDto) {
-       RoomType roomType = roomTypeMapper.mapToRoomType(roomTypeDto);
-       RoomType saveRoomType = roomTypeRepository.save(roomType);
-         return roomTypeMapper.mapToRoomTypeDto(saveRoomType);
+    public RoomTypeDto createRoomType(RoomTypeDto roomTypeDto) {
+        RoomType roomType = roomTypeMapper.mapToRoomType(roomTypeDto);
+        RoomType saveRoomType = roomTypeRepository.save(roomType);
+        return roomTypeMapper.mapToRoomTypeDto(saveRoomType);
     }
 
     //Get room type by id
@@ -39,8 +39,8 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     //Get all room type
     @Override
     public Page<RoomTypeDto> getAllRoomType(Pageable pageable) {
-       Page<RoomType> roomTypes = roomTypeRepository.findAll(pageable);
-         return roomTypes.map(roomTypeMapper::mapToRoomTypeDto);
+        Page<RoomType> roomTypes = roomTypeRepository.findAll(pageable);
+        return roomTypes.map(roomTypeMapper::mapToRoomTypeDto);
     }
 
     //Update room type
