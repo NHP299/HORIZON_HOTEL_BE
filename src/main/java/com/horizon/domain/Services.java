@@ -20,8 +20,7 @@ public class Services {
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
-
     private String description;
     private LocalDateTime startedTime;
-    private LocalDateTime   endTime;
+    private LocalDateTime endTime;
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -125,6 +126,11 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate) {
         return roomRepository.findAvailableRoomsInDateRange(startDate, endDate)
                 .stream().map(roomMapper::toRoomDto).toList();
+    }
+
+    @Override
+    public List<Map<String, Object>> getRoomDetail() {
+        return roomRepository.getRoomDetail();
     }
 
 }

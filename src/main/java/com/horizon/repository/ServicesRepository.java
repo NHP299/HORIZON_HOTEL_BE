@@ -1,30 +1,32 @@
 package com.horizon.repository;
 
 import com.horizon.domain.Services;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ServicesRepository extends JpaRepository<Services, Integer> {
-    Page<Services> findByDescriptionContainingIgnoreCase(String description, Pageable pageable);
-    Page<Services> findByRoomType_NameContainingIgnoreCase(String roomTypeName, Pageable pageable);
+    List<Services> findByDescriptionContainingIgnoreCase(String description);
+    List<Services> findByRoomType_NameContainingIgnoreCase(String roomTypeName);
 
     @Query("SELECT s FROM Services s " +
             "JOIN s.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.id = :roomId " +
             "AND CURRENT_TIMESTAMP BETWEEN s.startedTime AND s.endTime")
-    Page<Services> findServicesByRoomId(@Param("roomId") Integer roomId, Pageable pageable);
+    List<Services> findByRoomId(@Param("roomId") Integer roomId);
+
+
 
     @Query("SELECT s FROM Services s " +
             "JOIN s.roomType rt " +
-            "JOIN rt.roomList r " +
+            "JOIN Room r ON r.roomType = rt " +
             "WHERE r.name = :roomName " +
             "AND CURRENT_TIMESTAMP BETWEEN s.startedTime AND s.endTime")
-    Page<Services> findServicesByRoomName(@Param("roomName") String roomName, Pageable pageable);
+    List<Services> findByRoomName(@Param("roomName") String roomName);
 
 }
