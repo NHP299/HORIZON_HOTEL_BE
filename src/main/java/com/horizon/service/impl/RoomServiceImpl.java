@@ -43,8 +43,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto create(RoomDto roomDto) {
-        roomDto.setStatus("Available");
         Room room = roomMapper.toRoom(roomDto);
+        room.setStatus(1);
         room.setIsActivated(true);
         Room saveRoom = roomRepository.save(room);
         return roomMapper.toRoomDto(saveRoom);
@@ -74,9 +74,10 @@ public class RoomServiceImpl implements RoomService {
                 return List.of(new RoomDto[]{roomMapper.toRoomDto(room.get())});
             }
         } catch (NumberFormatException e) {
+            List<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(input);
+            return rooms.stream().map(roomMapper::toRoomDto).toList();
         }
-        List<Room> rooms = roomRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(input);
-        return rooms.stream().map(roomMapper::toRoomDto).toList();
+        return List.of();
     }
 
     @Override
