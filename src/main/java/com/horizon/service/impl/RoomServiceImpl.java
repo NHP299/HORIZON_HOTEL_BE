@@ -9,11 +9,13 @@ import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -100,13 +102,11 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.save(deletedRoom);
     }
 
-
     @Override
     public List<RoomDto> getByRoomTypeName(String roomTypeName) {
         return roomRepository.findByRoomTypeName(roomTypeName)
                 .stream().map(roomMapper::toRoomDto).toList();
     }
-
 
     @Override
     public List<RoomDto> getByStatus(String statusDescription) {
@@ -114,7 +114,6 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findByStatusAndIsActivatedTrue(statusCode)
                 .stream().map(roomMapper::toRoomDto).toList();
     }
-
 
     @Override
     public List<RoomDto> getIsAvailable() {
@@ -132,5 +131,16 @@ public class RoomServiceImpl implements RoomService {
     public List<Map<String, Object>> getRoomDetail() {
         return roomRepository.getRoomDetail();
     }
+
+    @Override
+    public List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount) {
+        int avgGuestCount = (int) Math.ceil((double) guestCount / roomCount);
+        List<Room> availableRooms = roomRepository.searchAvailableRooms(roomTypeName, checkIn, checkOut, avgGuestCount);
+        if (availableRooms.size() < roomCount) {
+            throw new IllegalArgumentException("Không đủ số phòng đáp ứng yêu cầu!");
+        }
+        return availableRooms.stream().map(roomMapper::toRoomDto).toList();
+    }
+
 
 }

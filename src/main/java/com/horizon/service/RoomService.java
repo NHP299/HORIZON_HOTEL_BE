@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import com.horizon.dto.RoomDto;
 
 public interface RoomService {
@@ -35,7 +32,7 @@ public interface RoomService {
 
     List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate);
 
-    Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
-
     List<Map<String, Object>> getRoomDetail();
+
+    List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount);
 }

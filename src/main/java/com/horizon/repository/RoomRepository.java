@@ -41,10 +41,6 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    Page<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            Pageable pageable);
-
     @Query(value = "SELECT " +
             "r.id , " +
             "r.name , " +
@@ -63,5 +59,32 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "WHERE r.is_activated = true " +
             "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description", nativeQuery = true)
     List<Map<String, Object>> getRoomDetail();
+
+
+    @Query("SELECT r FROM Room r JOIN r.roomType rt WHERE rt.capacity >= :numberOfPeople")
+    List<Room> findByCapacity(@Param("numberOfPeople") int numberOfPeople);
+
+    @Query("""
+        SELECT r 
+        FROM Room r 
+        JOIN r.roomType rt 
+        WHERE (:roomTypeName IS NULL OR LOWER(rt.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))) 
+          AND rt.capacity >= :avgGuestCount
+          AND r.isActivated = true
+          AND r.status = 0
+          AND r.id NOT IN (
+              SELECT bd.room.id 
+              FROM BookingDetail bd 
+              JOIN bd.booking b 
+              WHERE b.checkIn < :checkOutDate 
+                AND b.checkOut > :checkInDate
+          )
+    """)
+    List<Room> searchAvailableRooms(
+            @Param("roomTypeName") String roomTypeName,
+            @Param("checkInDate") LocalDate checkInDate,
+            @Param("checkOutDate") LocalDate checkOutDate,
+            @Param("avgGuestCount") int avgGuestCount
+    );
 
 }
