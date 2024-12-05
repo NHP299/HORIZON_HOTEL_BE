@@ -18,8 +18,7 @@ public class RoomTypeMapperImpl implements RoomTypeMapper {
     public RoomType mapToRoomType(RoomTypeDto roomTypeDto) {
         return new RoomType(roomTypeDto.getId(),
                 roomTypeDto.getName(),
-                roomTypeDto.getDescription(),
-                null);
+                roomTypeDto.getDescription());
     }
 
 
