@@ -1,4 +1,4 @@
-package com.horizon.domain;
+package com.horizon.domain.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -32,9 +32,9 @@ public class Booking {
     private Integer adult;
     private Integer child;
     private Integer baby;
-    private Short status;
+    private Integer status;
     private String note;
-    private BigInteger totalPrice;
+    private Double totalPrice;
 
     @ManyToOne
     @JoinColumn(name = "promotion_id")

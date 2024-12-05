@@ -1,10 +1,8 @@
 package com.horizon.mapper.impl;
 
-import com.horizon.domain.Account;
-import com.horizon.domain.Booking;
-import com.horizon.domain.Promotion;
+import com.horizon.domain.*;
+import com.horizon.domain.status.BookingStatus;
 import com.horizon.dto.BookingDto;
-import com.horizon.mapper.BookingDetailMapper;
 import com.horizon.mapper.BookingMapper;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +26,9 @@ public class BookingMapperImpl implements BookingMapper {
         dto.setAdult(booking.getAdult());
         dto.setChild(booking.getChild());
         dto.setBaby(booking.getBaby());
-        dto.setStatus(booking.getStatus() != null ? booking.getStatus().toString() : null);
+        dto.setStatus(BookingStatus.fromCode(booking.getStatus()).getDescription());
         dto.setNote(booking.getNote());
-        dto.setTotalPrice(booking.getTotalPrice() != null ? new BigDecimal(booking.getTotalPrice()) : null);
+        dto.setTotalPrice(booking.getTotalPrice() != null ? booking.getTotalPrice() : null);
         dto.setPromotionId(booking.getPromotion() != null ? booking.getPromotion().getId() : null);
 
         return dto;
@@ -57,9 +55,9 @@ public class BookingMapperImpl implements BookingMapper {
         booking.setAdult(dto.getAdult());
         booking.setChild(dto.getChild());
         booking.setBaby(dto.getBaby());
-        booking.setStatus(dto.getStatus() != null ? Short.valueOf(dto.getStatus()) : null);
+        booking.setStatus(BookingStatus.fromDescription(dto.getStatus()));
         booking.setNote(dto.getNote());
-        booking.setTotalPrice(dto.getTotalPrice() != null ? dto.getTotalPrice().toBigInteger() : null);
+        booking.setTotalPrice(dto.getTotalPrice() != null ? dto.getTotalPrice() : null);
 
         if (dto.getPromotionId() != null) {
             Promotion promotion = new Promotion();

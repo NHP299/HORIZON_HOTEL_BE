@@ -23,8 +23,8 @@ public class Payment {
     private Booking booking;
 
     private String transactionId;
-    private Integer amount;
-    private Short status;
+    private Double amount;
+    private Integer status;
     private Timestamp paymentTime;
     private String errorCode;
     private String description;

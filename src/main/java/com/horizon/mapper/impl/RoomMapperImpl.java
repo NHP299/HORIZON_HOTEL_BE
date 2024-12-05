@@ -1,7 +1,7 @@
 package com.horizon.mapper.impl;
 
 import com.horizon.domain.Room;
-import com.horizon.domain.RoomStatus;
+import com.horizon.domain.status.RoomStatus;
 import com.horizon.domain.RoomType;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
