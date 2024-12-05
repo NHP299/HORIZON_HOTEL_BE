@@ -10,6 +10,7 @@ public interface PromotionTypeService {
     void delete(Integer promotionTypeId);
     PromotionTypeDto getById(Integer promotionTypeId);
     List<PromotionTypeDto> getAll();
+    List<PromotionTypeDto> findByPromotionId(Integer promotionId);
 
 
 }
