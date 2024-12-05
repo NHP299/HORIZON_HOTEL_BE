@@ -1,13 +1,20 @@
 package com.horizon.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentDto {
     private Integer id;
     private Integer bookingId;
-    private Integer transactionId;
-    private BigDecimal amount;
+    private String transactionId;
+    private Double amount;
     private String status;
     private Timestamp paymentTime;
     private String errorCode;

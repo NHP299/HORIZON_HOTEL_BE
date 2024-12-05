@@ -49,4 +49,11 @@ public class PromotionTypeServiceImpl implements PromotionTypeService {
         List<PromotionType> promotionTypes = promotionTypeRepository.findAll();
         return promotionTypes.stream().map(promotionTypeMapper::maptoPromotionTypeDto).toList();
     }
+
+    @Override
+    public List<PromotionTypeDto> findByPromotionId(Integer promotionId) {
+        List<PromotionType> promotionTypes = promotionTypeRepository.findByPromotionId(promotionId);
+        return promotionTypes.stream().map(promotionTypeMapper::maptoPromotionTypeDto).toList();
+    }
+
 }

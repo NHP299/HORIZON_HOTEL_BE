@@ -1,7 +1,7 @@
 package com.horizon.service.impl;
 
 import com.horizon.domain.Room;
-import com.horizon.domain.RoomStatus;
+import com.horizon.domain.status.RoomStatus;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.RoomMapper;
@@ -9,13 +9,9 @@ import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
-import org.springframework.cglib.core.Local;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -141,6 +137,5 @@ public class RoomServiceImpl implements RoomService {
         }
         return availableRooms.stream().map(roomMapper::toRoomDto).toList();
     }
-
 
 }

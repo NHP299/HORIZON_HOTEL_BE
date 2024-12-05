@@ -21,6 +21,6 @@ public class BookingDto {
     private Integer baby;
     private String status;
     private String note;
-    private BigDecimal totalPrice;
+    private Double totalPrice;
     private Integer promotionId;
 }
