@@ -46,4 +46,10 @@ public class PromotionTypeController {
         promotionTypeService.delete(promotionTypeId);
         return new ResponseEntity<>("PromotionType deleted successfully",HttpStatus.OK);
     }
+
+    @GetMapping("/by-promotion-id/{id}")
+    public ResponseEntity<List<PromotionTypeDto>> getByPromotionId(@PathVariable("id") Integer promotionId) {
+        List<PromotionTypeDto> promotionTypeDto = promotionTypeService.findByPromotionId(promotionId);
+        return ResponseEntity.ok(promotionTypeDto);
+    }
 }
