@@ -138,4 +138,7 @@ public class RoomServiceImpl implements RoomService {
         return availableRooms.stream().map(roomMapper::toRoomDto).toList();
     }
 
+
+
+
 }

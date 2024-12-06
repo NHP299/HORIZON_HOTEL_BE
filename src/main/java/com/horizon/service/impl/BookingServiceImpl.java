@@ -2,21 +2,16 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.*;
 import com.horizon.dto.BookingDto;
-import com.horizon.dto.RoomDto;
 import com.horizon.mapper.BookingMapper;
-import com.horizon.mapper.RoomMapper;
+import com.horizon.mapper.PaymentMapper;
 import com.horizon.repository.*;
 import com.horizon.service.BookingService;
 import com.horizon.service.PromotionService;
-import com.horizon.service.RoomService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +20,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingMapper bookingMapper;
+    private final PaymentMapper paymentMapper;
 
-    private final RoomMapper roomMapper;
+    private final BookingMapper bookingMapper;
 
     private final BookingRepository bookingRepository;
 
@@ -38,45 +33,28 @@ public class BookingServiceImpl implements BookingService {
     private final RoomRepository roomRepository;
 
     private final PromotionRepository promotionRepository;
+
     private final AccountRepository accountRepository;
+
     private final PromotionTypeRepository promotionTypeRepository;
 
-    public BookingDto create( int accountId,
-                              List<Integer> roomIds,
-                              LocalDate checkIn,
-                              LocalDate checkOut,
-                              int adultCount,
-                              int childCount,
-                              int babyCount,
-                              int promotionId,
-                              int paymentId) {
-        for (int roomId : roomIds) {
-            Room room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
-                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found."));
-            if (!isRoomAvailable(roomId, checkIn, checkOut)) {
-                throw new IllegalStateException("Room " + room.getName() + " is not available for the selected dates.");
-            }
-        }
+    private final PromotionServiceImpl promotionServiceImpl;
 
-        Double totalPrice = 0.0;
-        for (int roomId : roomIds) {
-            Room room = roomRepository.findByIsActivatedTrueAndId(roomId);
-            totalPrice += room.getPrice();
-        }
+    private final PromotionService promotionService;
+    private final PaymentServiceImpl paymentServiceImpl;
+    private final BookingDetailServiceImpl bookingDetailServiceImpl;
 
-        double discount = 0;
-        if (promotionId != 0) {
-            Promotion promotion = promotionRepository.findByIdAndAvailable(promotionId)
-                    .orElseThrow(() -> new IllegalArgumentException("Promotion with ID " + promotionId + " not found."));
-            if (totalPrice >= promotion.getMaxAmount()) {
-                if (promotionTypeRepository.findByPromotionId(promotionId).stream().anyMatch(pt -> pt.getName().equalsIgnoreCase("percent"))) {
-                    discount = totalPrice * promotion.getMaxAmount() / 100.0;
-                } else if (promotionTypeRepository.findByPromotionId(promotionId).stream().anyMatch(pt -> pt.getName().equalsIgnoreCase("fixed"))) {
-                    discount = promotion.getMaxAmount();
-                }
-                totalPrice -= discount;
-            }
-        }
+    public BookingDto create(HttpServletRequest request,
+                             int accountId,
+                             List<Integer> roomIds,
+                             LocalDate checkIn,
+                             LocalDate checkOut,
+                             int adultCount,
+                             int childCount,
+                             int babyCount,
+                             Double totalPrice,
+                             int promotionId) {
+        checkRoomAvailable(roomIds, checkIn, checkOut);
 
         Booking booking = new Booking();
         booking.setAccount(accountRepository.getById(accountId));
@@ -89,30 +67,29 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(1);
         booking.setTotalPrice(totalPrice);
         booking.setPromotion(promotionRepository.getById(promotionId));
+        bookingDetailServiceImpl.createByBooking(roomIds, booking);
+        Payment payment =  paymentServiceImpl.create(request, booking);
+
+        booking.setPayment(payment);
         bookingRepository.save(booking);
-
-        for (int roomId : roomIds) {
-            BookingDetail bookingDetail = new BookingDetail();
-            bookingDetail.setBooking(booking);
-            bookingDetail.setRoom(roomRepository.getById(roomId));
-            bookingDetailRepository.save(bookingDetail);
-        }
-
-        Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setTransactionId("TX-" + System.currentTimeMillis());
-        payment.setAmount(totalPrice);
-        payment.setStatus(1);
-        payment.setPaymentTime(Timestamp.valueOf(LocalDateTime.now()));
-        payment.setDescription("Payment for booking ID " + booking.getId());
-        payment.setPaymentMethod("E-Wallet");
-        paymentRepository.save(payment);
 
         return bookingMapper.toBookingDto(booking);
     }
 
 
-    private boolean isRoomAvailable(int roomId, LocalDate checkIn, LocalDate checkOut) {
+    @Override
+    public void checkRoomAvailable(List<Integer> roomIds, LocalDate checkIn, LocalDate checkOut) {
+        for (int roomId : roomIds) {
+            Room room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found."));
+            if (!isRoomAvailable(roomId, checkIn, checkOut)) {
+                throw new IllegalStateException("Room " + room.getName() + " is not available for the selected dates.");
+            }
+        }
+    }
+
+    @Override
+    public boolean isRoomAvailable(int roomId, LocalDate checkIn, LocalDate checkOut) {
         List<BookingDetail> conflictingBookings = bookingDetailRepository.findConflictingBookings(roomId, checkIn, checkOut);
         return conflictingBookings.isEmpty();
     }
@@ -133,9 +110,5 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.getByAccountId(accountId);
         return bookings.stream().map(bookingMapper::toBookingDto).toList();
     }
-
-
-
-
 
 }

@@ -1,10 +1,16 @@
 package com.horizon.mapper;
 
 import com.horizon.domain.Payment;
-import com.horizon.dto.PaymentDto;
+import com.horizon.dto.PaymentTransactionDto;
+
+import java.sql.Timestamp;
 
 public interface PaymentMapper {
-    PaymentDto toPaymentDto(Payment payment);
+    PaymentTransactionDto toPaymentDto(Payment payment);
 
-    Payment toPayment(PaymentDto paymentDto);
+    Payment toPayment(PaymentTransactionDto paymentTransactionDto);
+
+    Timestamp toTimestamp(String time);
+
+    String toTimeString(Timestamp timestamp);
 }

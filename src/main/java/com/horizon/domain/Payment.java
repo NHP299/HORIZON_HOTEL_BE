@@ -26,11 +26,12 @@ public class Payment {
     private Double amount;
     private Integer status;
     private Timestamp paymentTime;
-    private String errorCode;
+    private Timestamp createdTime;
+    private Timestamp expiredTime;
     private String description;
     private String paymentMethod;
-    private Timestamp createdTime;
-    private String signature;
+    private String bankCode;
+    private String cardType;
     private String extraData;
 
 }

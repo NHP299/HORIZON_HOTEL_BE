@@ -73,10 +73,10 @@ public class PromotionController {
         return ResponseEntity.ok(promotions);
     }
 
-    @PostMapping("/apply/{id}")
-    public ResponseEntity<String> apply(@PathVariable("id") Integer promotionId) {
-        promotionService.apply(promotionId);
-        return ResponseEntity.ok("Promotion applied successfully.");
+    @PostMapping("apply/{id}")
+    public ResponseEntity<Double> applyPromotion(@PathVariable("id") Integer promotionId,@RequestParam Double totalPrice) {
+        Double discountedPrice = promotionService.apply(promotionId, totalPrice);
+        return ResponseEntity.ok(discountedPrice);
     }
 
 }

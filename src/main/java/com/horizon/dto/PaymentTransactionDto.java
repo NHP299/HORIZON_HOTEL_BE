@@ -4,24 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentDto {
+public class PaymentTransactionDto {
     private Integer id;
     private Integer bookingId;
     private String transactionId;
     private Double amount;
     private String status;
-    private Timestamp paymentTime;
-    private String errorCode;
+    private String paymentTime;
+    private String createdTime;
+    private String expiredTime;
     private String description;
     private String paymentMethod;
-    private Timestamp createdTime;
-    private Timestamp updatedTime;
-    private String signature;
+    private String bankCode;
+    private String cardType;
     private String extraData;
 }
