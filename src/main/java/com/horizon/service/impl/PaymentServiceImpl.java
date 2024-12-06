@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -45,20 +49,51 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentUrl(paymentUrl).build();
     }
 
+
     @Override
-    public Payment create(HttpServletRequest request, Booking booking) {
+    public Payment create(String url, Booking booking) throws UnsupportedEncodingException {
+        Map<String, String> params = getParameter(url);
         Payment payment = new Payment();
         payment.setBooking(booking);
-        payment.setTransactionId(request.getParameter("vnp_TxnRef"));
-        payment.setAmount(Double.valueOf(request.getParameter("vnp_Amount")));
+        payment.setTransactionId(params.get("vnp_TxnRef"));
+        payment.setAmount(Double.valueOf(params.get("vnp_Amount")));
         payment.setStatus(1);
-        payment.setPaymentTime(paymentMapper.toTimestamp(request.getParameter("vnp_PayDate")));
-        payment.setCreatedTime(paymentMapper.toTimestamp(request.getParameter("vnp_CreateDate")));
-        payment.setExpiredTime(paymentMapper.toTimestamp(request.getParameter("vnp_ExpireDate")));
-        payment.setDescription(request.getParameter("vnp_OrderInfo"));
-        payment.setPaymentMethod(request.getParameter("vnp_Command"));
-        payment.setBankCode(request.getParameter("vnp_BankCode"));
+        payment.setCreatedTime(paymentMapper.toTimestamp(params.get("vnp_CreateDate")));
+        payment.setExpiredTime(paymentMapper.toTimestamp(params.get("vnp_ExpireDate")));
+        payment.setDescription(params.get("vnp_OrderInfo"));
+        payment.setPaymentMethod(params.get("vnp_Command"));
+        payment.setBankCode(params.get("vnp_BankCode"));
         paymentRepository.save(payment);
         return payment;
     }
+
+    private Map<String, String> getParameter(String url) throws UnsupportedEncodingException {
+        String queryString = url.substring(url.indexOf("?") + 1);
+        Map<String, String> queryPairs = new HashMap<>();
+        String[] pairs = queryString.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            String key = URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8);
+            String value = URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8);
+            queryPairs.put(key, value);
+        }
+        return queryPairs;
+    }
+
+    @Override
+    public Payment updateSuccessPayment(HttpServletRequest request) {
+        Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));
+        if (payment == null) {
+            return null;
+        }
+        payment.setStatus(2);
+        payment.setPaymentTime(paymentMapper.toTimestamp(request.getParameter("vnp_PayDate")));
+        payment.setCardType(request.getParameter("vnp_CardType"));
+        payment.setExtraData("BankTranNo: " + request.getParameter("vnp_BankTranNo")
+                + " - TransactionNo: " + request.getParameter("vnp_TransactionNo")
+                +" - TransactionStatus: " + request.getParameter("vnp_TransactionStatus"));
+        return paymentRepository.save(payment);
+    }
+
+
 }

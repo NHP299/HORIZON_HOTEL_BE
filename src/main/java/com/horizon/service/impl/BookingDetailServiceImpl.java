@@ -11,6 +11,7 @@ import com.horizon.repository.RoomRepository;
 import com.horizon.service.BookingDetailService;
 import com.horizon.service.BookingService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 public class BookingDetailServiceImpl implements BookingDetailService {
     private final BookingDetailRepository bookingDetailRepository;
     private final BookingDetailMapper bookingDetailMapper;
+    @Lazy
     private final BookingService bookingService;
     private final BookingMapper bookingMapper;
     private final RoomRepository roomRepository;

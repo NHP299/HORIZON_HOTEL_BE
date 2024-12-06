@@ -5,12 +5,16 @@ import com.horizon.dto.BookingDto;
 import com.horizon.mapper.BookingMapper;
 import com.horizon.mapper.PaymentMapper;
 import com.horizon.repository.*;
+import com.horizon.service.BookingDetailService;
 import com.horizon.service.BookingService;
+import com.horizon.service.PaymentService;
 import com.horizon.service.PromotionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -38,37 +42,38 @@ public class BookingServiceImpl implements BookingService {
 
     private final PromotionTypeRepository promotionTypeRepository;
 
-    private final PromotionServiceImpl promotionServiceImpl;
-
     private final PromotionService promotionService;
-    private final PaymentServiceImpl paymentServiceImpl;
-    private final BookingDetailServiceImpl bookingDetailServiceImpl;
 
-    public BookingDto create(HttpServletRequest request,
-                             int accountId,
-                             List<Integer> roomIds,
-                             LocalDate checkIn,
-                             LocalDate checkOut,
-                             int adultCount,
-                             int childCount,
-                             int babyCount,
-                             Double totalPrice,
-                             int promotionId) {
+    private final PaymentService paymentService;
+
+    @Override
+    public BookingDto create(HttpServletRequest request, String url) throws UnsupportedEncodingException {
+
+        List<Integer> roomIds = List.of(Integer.parseInt(request.getParameter("roomId")));
+        LocalDate checkIn = LocalDate.parse(request.getParameter("checkIn"));
+        LocalDate checkOut = LocalDate.parse(request.getParameter("checkOut"));
+
         checkRoomAvailable(roomIds, checkIn, checkOut);
-
         Booking booking = new Booking();
-        booking.setAccount(accountRepository.getById(accountId));
+        booking.setAccount(accountRepository.getById(Integer.parseInt(request.getParameter("accountId"))));
         booking.setCheckIn(checkIn);
         booking.setCheckOut(checkOut);
         booking.setBookingDate(LocalDate.now());
-        booking.setAdult(adultCount);
-        booking.setChild(childCount);
-        booking.setBaby(babyCount);
+        booking.setAdult(Integer.parseInt(request.getParameter("adultCount")));
+        booking.setChild(Integer.parseInt(request.getParameter("childCount")));
+        booking.setBaby(Integer.parseInt(request.getParameter("babyCount")));
         booking.setStatus(1);
-        booking.setTotalPrice(totalPrice);
-        booking.setPromotion(promotionRepository.getById(promotionId));
-        bookingDetailServiceImpl.createByBooking(roomIds, booking);
-        Payment payment =  paymentServiceImpl.create(request, booking);
+        booking.setTotalPrice(Double.parseDouble(request.getParameter("totalPrice")));
+        booking.setPromotion(promotionRepository.getById(Integer.parseInt(request.getParameter("promotionId"))));
+
+        for (int roomId : roomIds) {
+            BookingDetail bookingDetail = new BookingDetail();
+            bookingDetail.setBooking(booking);
+            bookingDetail.setRoom(roomRepository.getById(roomId));
+            bookingDetailRepository.save(bookingDetail);
+        }
+
+        Payment payment = paymentService.create(url, booking);
 
         booking.setPayment(payment);
         bookingRepository.save(booking);

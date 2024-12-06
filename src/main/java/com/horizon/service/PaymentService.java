@@ -6,8 +6,12 @@ import com.horizon.domain.Payment;
 import com.horizon.dto.PaymentDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.io.UnsupportedEncodingException;
+
 public interface PaymentService {
     PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request);
 
-    Payment create(HttpServletRequest request, Booking booking);
+    Payment create(String url, Booking booking) throws UnsupportedEncodingException;
+
+    Payment updateSuccessPayment(HttpServletRequest request);
 }
