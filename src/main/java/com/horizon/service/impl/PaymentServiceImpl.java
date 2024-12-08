@@ -102,6 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findAll().stream()
                 .map(paymentMapper::toPaymentDto)
                 .toList();
-    };
+    }
+
 
 }
