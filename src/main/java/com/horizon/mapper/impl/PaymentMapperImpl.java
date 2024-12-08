@@ -30,9 +30,9 @@ public class PaymentMapperImpl implements PaymentMapper {
         dto.setTransactionId(payment.getTransactionId());
         dto.setAmount(payment.getAmount());
         dto.setStatus(PaymentStatus.fromCode(payment.getStatus()).getDescription());
-        dto.setPaymentTime(toTimeString(payment.getPaymentTime()));
-        dto.setCreatedTime(toTimeString(payment.getCreatedTime()));
-        dto.setExpiredTime(toTimeString(payment.getExpiredTime()));
+        dto.setPaymentTime(payment.getPaymentTime() != null ? toTimeString(payment.getPaymentTime()) : null);
+        dto.setCreatedTime(payment.getCreatedTime() != null ? toTimeString(payment.getCreatedTime()) : null);
+        dto.setExpiredTime(payment.getExpiredTime() != null ? toTimeString(payment.getExpiredTime()) : null);
         dto.setDescription(payment.getDescription());
         dto.setPaymentMethod(payment.getPaymentMethod());
         dto.setBankCode(payment.getBankCode());
@@ -53,9 +53,9 @@ public class PaymentMapperImpl implements PaymentMapper {
         payment.setTransactionId(paymentTransactionDto.getTransactionId());
         payment.setAmount(paymentTransactionDto.getAmount());
         payment.setStatus(PaymentStatus.fromDescription(paymentTransactionDto.getStatus()).getCode());
-        payment.setPaymentTime(toTimestamp(paymentTransactionDto.getPaymentTime()));
-        payment.setCreatedTime(toTimestamp(paymentTransactionDto.getCreatedTime()));
-        payment.setExpiredTime(toTimestamp(paymentTransactionDto.getExpiredTime()));
+        payment.setPaymentTime(paymentTransactionDto.getPaymentTime() != null ? toTimestamp(paymentTransactionDto.getPaymentTime()) : null);
+        payment.setCreatedTime(paymentTransactionDto.getCreatedTime() != null ? toTimestamp(paymentTransactionDto.getCreatedTime()) : null);
+        payment.setExpiredTime(paymentTransactionDto.getExpiredTime() != null ? toTimestamp(paymentTransactionDto.getExpiredTime()) : null);
         payment.setDescription(paymentTransactionDto.getDescription());
         payment.setPaymentMethod(paymentTransactionDto.getPaymentMethod());
         payment.setBankCode(paymentTransactionDto.getBankCode());

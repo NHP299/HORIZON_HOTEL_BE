@@ -4,6 +4,7 @@ import com.horizon.config.VNPAYConfig;
 import com.horizon.domain.Booking;
 import com.horizon.domain.Payment;
 import com.horizon.dto.PaymentDTO;
+import com.horizon.dto.PaymentTransactionDto;
 import com.horizon.mapper.PaymentMapper;
 import com.horizon.repository.PaymentRepository;
 import com.horizon.service.PaymentService;
@@ -16,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -95,5 +97,11 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
     }
 
+    @Override
+    public List<PaymentTransactionDto> getAll(){
+        return paymentRepository.findAll().stream()
+                .map(paymentMapper::toPaymentDto)
+                .toList();
+    };
 
 }
