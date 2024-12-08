@@ -51,7 +51,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto getById(Integer id) {
-        return Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id))
+        return roomRepository.findByIsActivatedTrueAndId(id)
                 .map(roomMapper::toRoomDto)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
     }
@@ -68,7 +68,7 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomDto> find(String input) {
         try {
             Integer id = Integer.valueOf(input);
-            Optional<Room> room = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(id));
+            Optional<Room> room = roomRepository.findByIsActivatedTrueAndId(id);
             if (room.isPresent()) {
                 return List.of(new RoomDto[]{roomMapper.toRoomDto(room.get())});
             }
@@ -81,7 +81,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto update(Integer roomId, RoomDto roomDto) {
-        Room updatedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
+        Room updatedRoom = roomRepository.findByIsActivatedTrueAndId(roomId)
                 .map(existingRoom -> {
                     existingRoom = roomMapper.toRoom(roomDto);
                     return roomRepository.save(existingRoom);
@@ -91,7 +91,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void delete(Integer roomId) {
-        Room deletedRoom = Optional.ofNullable(roomRepository.findByIsActivatedTrueAndId(roomId))
+        Room deletedRoom = roomRepository.findByIsActivatedTrueAndId(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
         deletedRoom.setStatus(3);
         deletedRoom.setIsActivated(false);

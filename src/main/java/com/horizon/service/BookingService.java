@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingDto create(HttpServletRequest request, String url) throws UnsupportedEncodingException;
+    BookingDto create(HttpServletRequest request,BookingDto bookingDto, String url) throws UnsupportedEncodingException;
 
     void checkRoomAvailable(List<Integer> roomIds, LocalDate checkIn, LocalDate checkOut);
 

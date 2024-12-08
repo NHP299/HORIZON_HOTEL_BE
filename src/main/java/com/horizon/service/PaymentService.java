@@ -13,5 +13,5 @@ public interface PaymentService {
 
     Payment create(String url, Booking booking) throws UnsupportedEncodingException;
 
-    Payment updateSuccessPayment(HttpServletRequest request);
+    void updateSuccessPayment(HttpServletRequest request);
 }

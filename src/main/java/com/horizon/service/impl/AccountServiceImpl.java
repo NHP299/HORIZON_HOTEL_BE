@@ -10,6 +10,7 @@ import com.horizon.repository.AccountRepository;
 import com.horizon.repository.RoleRepository;
 import com.horizon.service.AccountService;
 import com.horizon.service.CloudinaryService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,20 +19,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final CloudinaryService cloudinaryService;
     private final AccountMapper accountMapper;
     private final RoleRepository roleRepository;
-
-    @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, CloudinaryService cloudinaryService, AccountMapper accountMapper, RoleRepository roleRepository) {
-        this.accountRepository = accountRepository;
-        this.cloudinaryService = cloudinaryService;
-        this.accountMapper = accountMapper;
-        this.roleRepository = roleRepository;
-    }
 
     public AccountDto parseAccountDto(String accountDtoJson) {
         try {

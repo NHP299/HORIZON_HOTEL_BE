@@ -14,12 +14,14 @@ import org.springframework.stereotype.Repository;
 
 import com.horizon.domain.Room;
 
+import javax.swing.text.html.Option;
+
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     Optional<Room> findByName(String name);
 
-    Room findByIsActivatedTrueAndId(Integer id);
+    Optional<Room> findByIsActivatedTrueAndId(Integer id);
 
     List<Room> findByIsActivatedTrue();
 

@@ -1,6 +1,7 @@
 package com.horizon.controller.wallet;
 
 import com.horizon.domain.Payment;
+import com.horizon.dto.BookingDto;
 import com.horizon.dto.PaymentDTO;
 import com.horizon.response.ResponseObject;
 import com.horizon.service.BookingService;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,9 +24,12 @@ public class PaymentController {
     private final BookingService bookingService;
 
     @GetMapping("/vn-pay")
-    public ResponseObject<PaymentDTO.VNPayResponse> pay(HttpServletRequest request) throws UnsupportedEncodingException {
+    public ResponseObject<PaymentDTO.VNPayResponse> pay(HttpServletRequest request,@RequestBody BookingDto bookingDto) throws UnsupportedEncodingException {
         PaymentDTO.VNPayResponse response = paymentService.createVnPayPayment(request);
-        bookingService.create(request, response.paymentUrl);
+        if (response.paymentUrl == null) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+        }
+        bookingService.create(request, bookingDto, response.paymentUrl);
         return new ResponseObject<>(HttpStatus.OK, "Success", response);
     }
 

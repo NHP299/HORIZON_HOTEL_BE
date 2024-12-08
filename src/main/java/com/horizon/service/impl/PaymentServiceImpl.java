@@ -81,10 +81,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment updateSuccessPayment(HttpServletRequest request) {
+    public void updateSuccessPayment(HttpServletRequest request) {
         Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));
         if (payment == null) {
-            return null;
+            return;
         }
         payment.setStatus(2);
         payment.setPaymentTime(paymentMapper.toTimestamp(request.getParameter("vnp_PayDate")));
@@ -92,7 +92,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setExtraData("BankTranNo: " + request.getParameter("vnp_BankTranNo")
                 + " - TransactionNo: " + request.getParameter("vnp_TransactionNo")
                 +" - TransactionStatus: " + request.getParameter("vnp_TransactionStatus"));
-        return paymentRepository.save(payment);
+        paymentRepository.save(payment);
     }
 
 

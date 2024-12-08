@@ -20,9 +20,9 @@ public class BookingMapperImpl implements BookingMapper {
         BookingDto dto = new BookingDto();
         dto.setId(booking.getId());
         dto.setAccountId(booking.getAccount() != null ? booking.getAccount().getId() : null);
-        dto.setCheckIn(booking.getCheckIn() != null ? java.sql.Date.valueOf(booking.getCheckIn()) : null);
-        dto.setCheckOut(booking.getCheckOut() != null ? java.sql.Date.valueOf(booking.getCheckOut()) : null);
-        dto.setBookingDate(booking.getBookingDate() != null ? java.sql.Date.valueOf(booking.getBookingDate()) : null);
+        dto.setCheckIn(booking.getCheckIn() != null ? booking.getCheckIn() : null);
+        dto.setCheckOut(booking.getCheckOut() != null ? booking.getCheckOut() : null);
+        dto.setBookingDate(booking.getBookingDate() != null ? booking.getBookingDate() : null);
         dto.setAdult(booking.getAdult());
         dto.setChild(booking.getChild());
         dto.setBaby(booking.getBaby());
@@ -49,9 +49,9 @@ public class BookingMapperImpl implements BookingMapper {
             booking.setAccount(account);
         }
 
-        booking.setCheckIn(dto.getCheckIn() != null ? LocalDate.parse(dto.getCheckIn().toLocaleString()) : null);
-        booking.setCheckOut(dto.getCheckOut() != null ? LocalDate.parse(dto.getCheckOut().toLocaleString()) : null);
-        booking.setBookingDate(dto.getBookingDate() != null ? LocalDate.parse(dto.getBookingDate().toLocaleString()) : null);
+        booking.setCheckIn(dto.getCheckIn() != null ? dto.getCheckIn(): null);
+        booking.setCheckOut(dto.getCheckOut() != null ? dto.getCheckOut() : null);
+        booking.setBookingDate(dto.getBookingDate() != null ? dto.getBookingDate() : null);
         booking.setAdult(dto.getAdult());
         booking.setChild(dto.getChild());
         booking.setBaby(dto.getBaby());

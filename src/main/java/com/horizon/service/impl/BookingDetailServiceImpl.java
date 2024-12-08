@@ -56,4 +56,13 @@ public class BookingDetailServiceImpl implements BookingDetailService {
         }
         return getAllByBookingId(booking.getId());
     }
+
+    @Override
+    public BookingDetailDto create(Integer bookingId, Integer roomId) {
+        BookingDetail bookingDetail = new BookingDetail();
+        bookingDetail.setBooking(bookingMapper.toBooking(bookingService.getById(bookingId)));
+        bookingDetail.setRoom(roomRepository.getById(roomId));
+        bookingDetailRepository.save(bookingDetail);
+        return bookingDetailMapper.toBookingDetailDto(bookingDetail);
+    }
 }

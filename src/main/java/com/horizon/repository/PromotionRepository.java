@@ -39,4 +39,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     @Modifying
     @Query("UPDATE Promotion p SET p.maxUsage = p.maxUsage - 1 WHERE p.id = :promotionId")
     int decrementMaxUsage(@Param("promotionId") Integer promotionId);
+
+
+
 }
