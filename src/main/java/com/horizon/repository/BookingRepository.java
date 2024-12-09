@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> getByAccountId(Integer accountId);
+
+    Optional<Booking> findByPaymentId(Integer paymentId);
 }

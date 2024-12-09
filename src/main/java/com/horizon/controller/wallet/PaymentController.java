@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("${spring.application.api-prefix}/payment")
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
@@ -38,6 +38,7 @@ public class PaymentController {
         String status = request.getParameter("vnp_ResponseCode");
         if (status.equals("00")) {
             paymentService.updateSuccessPayment(request);
+            bookingService.confirmBooking(request);
             return new ResponseObject<>(HttpStatus.OK, "Success", null);
         } else {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);

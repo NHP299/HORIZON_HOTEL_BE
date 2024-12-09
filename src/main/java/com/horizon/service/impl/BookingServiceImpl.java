@@ -2,7 +2,6 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.*;
 import com.horizon.dto.BookingDto;
-import com.horizon.dto.PromotionDto;
 import com.horizon.mapper.BookingMapper;
 import com.horizon.mapper.PaymentMapper;
 import com.horizon.mapper.PromotionMapper;
@@ -17,16 +16,11 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
-    private final PromotionMapper promotionMapper;
-
-    private final PaymentMapper paymentMapper;
 
     private final BookingMapper bookingMapper;
 
@@ -38,21 +32,18 @@ public class BookingServiceImpl implements BookingService {
 
     private final RoomRepository roomRepository;
 
-    private final PromotionRepository promotionRepository;
-
-    private final AccountRepository accountRepository;
-
-    private final PromotionTypeRepository promotionTypeRepository;
-
-    private final PromotionService promotionService;
-
     private final PaymentService paymentService;
 
     @Override
     public BookingDto create(HttpServletRequest request,BookingDto bookingDto, String url) throws UnsupportedEncodingException {
         List<Integer> roomIds = bookingDto.getRoomIds();
         checkRoomAvailable(roomIds, bookingDto.getCheckIn(), bookingDto.getCheckOut());
+        int totalPeople = bookingDto.getAdult() + bookingDto.getChild() + bookingDto.getBaby();
+        if (!checkValidCapacity(roomIds, totalPeople)) {
+            throw new IllegalStateException("Total capacity of selected rooms is less than the required capacity.");
+        }
         Booking booking = bookingMapper.toBooking(bookingDto);
+        booking.setTotalPrice(Double.valueOf(request.getParameter("amount")));
         bookingRepository.save(booking);
 
         for (int roomId : roomIds) {
@@ -69,6 +60,17 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
 
         return bookingMapper.toBookingDto(booking);
+    }
+
+    @Override
+    public Boolean checkValidCapacity(List<Integer> roomIds, Integer capacity) {
+        int totalCapacity = 0;
+        for (int roomId : roomIds) {
+          int i = roomRepository.findByIsActivatedTrueAndId(roomId)
+              .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getCapacity();
+            totalCapacity += i;
+        }
+        return totalCapacity >= capacity;
     }
 
 
@@ -104,6 +106,15 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getByAccountId(Integer accountId) {
         List<Booking> bookings = bookingRepository.getByAccountId(accountId);
         return bookings.stream().map(bookingMapper::toBookingDto).toList();
+    }
+
+    @Override
+    public void confirmBooking(HttpServletRequest request) {
+        Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));
+        Booking booking = bookingRepository.findByPaymentId(payment.getId())
+                .orElseThrow(() -> new IllegalStateException("Booking not found with payment id: " + request.getParameter("vnp_TxnRef")));
+        booking.setStatus(2);
+        bookingRepository.save(booking);
     }
 
 }

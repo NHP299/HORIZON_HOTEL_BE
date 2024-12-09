@@ -13,7 +13,4 @@ public interface BookingDetailService {
 
     List<BookingDetailDto> getAllByBookingId(Integer bookingId);
 
-    List<BookingDetailDto> createByBooking(List<Integer> roomIds, Booking booking);
-
-    BookingDetailDto create(Integer bookingId, Integer roomId);
 }

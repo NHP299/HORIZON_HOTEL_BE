@@ -46,23 +46,4 @@ public class BookingDetailServiceImpl implements BookingDetailService {
         return bookingDetails.stream().map(bookingDetailMapper::toBookingDetailDto).toList();
     }
 
-    @Override
-    public List<BookingDetailDto> createByBooking(List<Integer> roomIds, Booking booking){
-        for (int roomId : roomIds) {
-            BookingDetail bookingDetail = new BookingDetail();
-            bookingDetail.setBooking(booking);
-            bookingDetail.setRoom(roomRepository.getById(roomId));
-            bookingDetailRepository.save(bookingDetail);
-        }
-        return getAllByBookingId(booking.getId());
-    }
-
-    @Override
-    public BookingDetailDto create(Integer bookingId, Integer roomId) {
-        BookingDetail bookingDetail = new BookingDetail();
-        bookingDetail.setBooking(bookingMapper.toBooking(bookingService.getById(bookingId)));
-        bookingDetail.setRoom(roomRepository.getById(roomId));
-        bookingDetailRepository.save(bookingDetail);
-        return bookingDetailMapper.toBookingDetailDto(bookingDetail);
-    }
 }

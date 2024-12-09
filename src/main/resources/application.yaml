@@ -14,7 +14,7 @@ payment:
     url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     tmnCode: L82AKXJV
     secretKey: 7HEC579IA49DCIQWQM9XACLCO7WDVXMD
-    returnUrl: http://localhost:8080/payment/vn-pay-callback
+    returnUrl: http://localhost:8080/horizon/v1/payment/vn-pay-callback
     version: 2.1.0
     command: pay
     orderType: other

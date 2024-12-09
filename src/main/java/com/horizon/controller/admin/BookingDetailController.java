@@ -31,11 +31,5 @@ public class BookingDetailController {
         return new ResponseEntity<>(bookingDetail, HttpStatus.CREATED);
     }
 
-    @PostMapping("/create-by-booking")
-    public ResponseEntity<BookingDetailDto> create(@RequestParam("roomId") Integer roomId, @RequestParam("bookingId") Integer bookingId) {
-        BookingDetailDto bookingDetail = bookingDetailService.create(bookingId, roomId);
-        return new ResponseEntity<>(bookingDetail, HttpStatus.CREATED);
-    }
-
 
 }
