@@ -41,6 +41,7 @@ public class PaymentController {
             bookingService.confirmBooking(request);
             return new ResponseObject<>(HttpStatus.OK, "Success", null);
         } else {
+            paymentService.updateFailPayment(request);
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
         }
     }

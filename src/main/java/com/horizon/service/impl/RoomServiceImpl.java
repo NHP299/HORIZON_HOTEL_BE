@@ -1,14 +1,17 @@
 package com.horizon.service.impl;
 
+import com.horizon.domain.BookingDetail;
 import com.horizon.domain.Room;
 import com.horizon.domain.status.RoomStatus;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.RoomMapper;
+import com.horizon.repository.BookingDetailRepository;
 import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +26,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomRepository roomRepository;
     private RoomTypeRepository roomTypeRepository;
     private RoomMapper roomMapper;
+    private BookingDetailRepository bookingDetailRepository;
 
     @Override
     public List<RoomDto> getAll() {
@@ -139,6 +143,28 @@ public class RoomServiceImpl implements RoomService {
     }
 
 
+    @Override
+    @Scheduled(fixedRate = 60000)
+    public void updateRoomStatuses() {
+        LocalDate currentDate = LocalDate.now();
+        List<Room> rooms = roomRepository.findAll();
 
+        rooms.forEach(room -> {
+            List<BookingDetail> reservedBookingDetails = bookingDetailRepository.findBookingDetailReserved(room.getId(), currentDate);
+            List<BookingDetail> occupiedBookingDetails = bookingDetailRepository.findBookingDetailOccupied(room.getId(), currentDate);
+
+            if (!reservedBookingDetails.isEmpty()) {
+                room.setStatus(2);
+            } else if (!occupiedBookingDetails.isEmpty()) {
+                room.setStatus(1);
+            } else {
+                room.setStatus(0);
+            }
+        });
+
+        roomRepository.saveAll(rooms);
+
+        System.out.println("Room statuses updated.");
+    }
 
 }

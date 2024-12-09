@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.horizon.dto.RoomDto;
+import org.springframework.scheduling.annotation.Scheduled;
 
 public interface RoomService {
 
@@ -35,4 +36,7 @@ public interface RoomService {
     List<Map<String, Object>> getRoomDetail();
 
     List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount);
+
+    @Scheduled(fixedRate = 60000)
+    void updateRoomStatuses();
 }

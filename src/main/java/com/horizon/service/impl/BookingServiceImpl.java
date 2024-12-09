@@ -3,14 +3,12 @@ package com.horizon.service.impl;
 import com.horizon.domain.*;
 import com.horizon.dto.BookingDto;
 import com.horizon.mapper.BookingMapper;
-import com.horizon.mapper.PaymentMapper;
-import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.*;
 import com.horizon.service.BookingService;
 import com.horizon.service.PaymentService;
-import com.horizon.service.PromotionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -115,6 +113,43 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new IllegalStateException("Booking not found with payment id: " + request.getParameter("vnp_TxnRef")));
         booking.setStatus(2);
         bookingRepository.save(booking);
+    }
+
+    @Override
+    public void cancelBooking(Integer id) {
+        Booking booking = bookingRepository.getById(id);
+        booking.setStatus(3);
+        bookingRepository.save(booking);
+    }
+
+    @Override
+    @Scheduled(fixedRate = 60000)
+    public void updateBookingStatus() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Booking> expiredBookings = bookingRepository.findAllByStatusAndCheckOutBefore(2, currentDate);
+
+        expiredBookings.forEach(booking -> {
+            booking.setStatus(4);
+            bookingRepository.save(booking);
+        });
+
+        System.out.println("Updated expired bookings to Complete.");
+    }
+
+    @Override
+    @Scheduled(fixedRate = 60000)
+    public void cancelExpiredBookings() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Booking> expiredBookings = bookingRepository.findAllByStatusAndCheckInBefore(1, currentDate);
+
+        expiredBookings.forEach(booking -> {
+            booking.setStatus(3);
+            bookingRepository.save(booking);
+        });
+
+        System.out.println("Cancelled expired bookings.");
     }
 
 }

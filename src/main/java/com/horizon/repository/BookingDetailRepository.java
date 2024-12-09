@@ -21,4 +21,19 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, In
     List<BookingDetail> findConflictingBookings(@Param("roomId") int roomId,
                                                 @Param("checkIn") LocalDate checkIn,
                                                 @Param("checkOut") LocalDate checkOut);
+
+    @Query("SELECT bd FROM BookingDetail bd " +
+            "JOIN Booking b ON bd.booking.id = b.id " +
+            "WHERE bd.room.id = :roomId AND " +
+            "(b.checkIn <= :date AND b.checkOut > :date)")
+    List<BookingDetail> findBookingDetailOccupied(@Param("roomId") int roomId,
+                                                  @Param("date") LocalDate date);
+
+    @Query("SELECT bd FROM BookingDetail bd " +
+            "JOIN Booking b ON bd.booking.id = b.id " +
+            "WHERE bd.room.id = :roomId AND " +
+            "(b.bookingDate <= :date AND b.checkIn > :date)")
+    List<BookingDetail> findBookingDetailReserved(@Param("roomId") int roomId,
+                                                  @Param("date") LocalDate date);
+
 }

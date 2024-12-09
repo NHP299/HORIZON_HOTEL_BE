@@ -6,6 +6,7 @@ import com.horizon.domain.Payment;
 import com.horizon.dto.PaymentDTO;
 import com.horizon.dto.PaymentTransactionDto;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -19,4 +20,8 @@ public interface PaymentService {
 
     List<PaymentTransactionDto> getAll();
 
+    void updateFailPayment(HttpServletRequest request);
+
+    @Scheduled(fixedRate = 60000)
+    void updateFailPayment();
 }

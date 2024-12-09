@@ -11,11 +11,13 @@ import com.horizon.service.PaymentService;
 import com.horizon.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +104,33 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findAll().stream()
                 .map(paymentMapper::toPaymentDto)
                 .toList();
+    }
+
+    @Override
+    public void updateFailPayment(HttpServletRequest request) {
+        Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));
+        if (payment == null) {
+            return;
+        }
+        payment.setStatus(3);
+        payment.setExtraData("TransactionNo: " + request.getParameter("vnp_TransactionNo")
+                + " - Message: " + request.getParameter("vnp_Message"));
+        paymentRepository.save(payment);
+    }
+
+
+    @Override
+    @Scheduled(fixedRate = 60000)
+    public void updateFailPayment() {
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        List<Payment> expiredPayments = paymentRepository.findExpiredPayments(currentTimestamp);
+
+        expiredPayments.forEach(payment -> {
+            payment.setStatus(3);
+            paymentRepository.save(payment);
+        });
+
+        System.out.println("Expired payments updated.");
     }
 
 
