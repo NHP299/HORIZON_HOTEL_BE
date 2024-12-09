@@ -1,38 +1,42 @@
 package com.horizon.service;
 
-import com.horizon.dto.RoomDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.horizon.dto.RoomDto;
+import org.springframework.scheduling.annotation.Scheduled;
+
 public interface RoomService {
 
-    List<RoomDto> getAllRooms();
+    List<RoomDto> getAll();
 
-    Page<RoomDto> getAllRooms(Pageable pageable);
+    List<RoomDto> getAllIsActivated();
 
-    RoomDto createRoom(RoomDto roomDto);
+    RoomDto create(RoomDto roomDto);
 
-    RoomDto getRoomById(Integer id);
+    RoomDto getById(Integer id);
 
-    Page<RoomDto> findRoomByName(String name, Pageable pageable);
+    List<RoomDto> findByName(String name);
 
-    Page<RoomDto> findRoom(String input, Pageable pageable);
+    List<RoomDto> find(String input);
 
-    RoomDto updateRoom(Integer roomId, RoomDto roomDto);
+    RoomDto update(Integer roomId, RoomDto roomDto);
 
-    void deleteRoom(Integer roomId);
+    void delete(Integer roomId);
 
-    Page<RoomDto> getRoomsByRoomTypeName(String roomTypeName, Pageable pageable);
+    List<RoomDto> getByRoomTypeName(String roomTypeName);
 
-    Page<RoomDto> getRoomsByStatus(String statusDescription, Pageable pageable);
+    List<RoomDto> getByStatus(String statusDescription);
 
-    Page<RoomDto> getRoomsIsAvailable(Pageable pageable);
+    List<RoomDto> getIsAvailable();
 
-    Page<RoomDto> findAvailableRooms(LocalDate startDate, LocalDate endDate, Pageable pageable);
+    List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate);
 
     List<Map<String, Object>> getRoomDetail();
+
+    List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount);
+
+    @Scheduled(fixedRate = 60000)
+    void updateRoomStatuses();
 }

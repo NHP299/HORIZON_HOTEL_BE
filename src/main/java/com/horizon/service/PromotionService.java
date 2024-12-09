@@ -17,4 +17,6 @@ public interface PromotionService {
     List<PromotionDto> getByNameAndAvailable(String name);
     List<PromotionDto> getApplicable(Integer daysOfBooking, Integer roomsOfBooking);
     void apply(Integer promotionId);
+
+    Double apply(Integer promotionId, Double totalPrice);
 }

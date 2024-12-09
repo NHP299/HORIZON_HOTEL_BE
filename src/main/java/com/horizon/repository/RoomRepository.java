@@ -1,6 +1,10 @@
 package com.horizon.repository;
 
-import com.horizon.domain.Room;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,26 +12,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.horizon.domain.Room;
+
+import javax.swing.text.html.Option;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     Optional<Room> findByName(String name);
 
-    Room findByIsActivatedTrueAndId(Integer id);
+    Optional<Room> findByIsActivatedTrueAndId(Integer id);
 
-    Page<Room> findByIsActivatedTrue(Pageable pageable);
+    List<Room> findByIsActivatedTrue();
 
-    Page<Room> findByNameContainingIgnoreCaseAndIsActivatedTrue(String keywords, Pageable pageable);
+    List<Room> findByNameContainingIgnoreCaseAndIsActivatedTrue(String keywords);
 
     @Query("SELECT r FROM Room r WHERE LOWER(r.roomType.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))")
-    Page<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName, Pageable pageable);
+    List<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName);
 
-    Page<Room> findByStatusAndIsActivatedTrue(Integer status, Pageable pageable);
+    List<Room> findByStatusAndIsActivatedTrue(Integer status);
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN BookingDetail bd ON r.id = bd.room.id " +
@@ -37,9 +40,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "AND (b.id IS NULL " +
             "OR b.checkIn NOT BETWEEN :startDate AND :endDate " +
             "OR b.checkOut NOT BETWEEN :startDate AND :endDate)")
-    Page<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
-                                             @Param("endDate") LocalDate endDate,
-                                             Pageable pageable);
+    List<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
     @Query(value = "SELECT " +
             "r.id , " +
@@ -57,8 +59,34 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "LEFT JOIN utilities u ON rt.id = u.room_type_id " +
             "LEFT JOIN media m ON rt.id = m.room_type_id " +
             "WHERE r.is_activated = true " +
-            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description",
-            nativeQuery = true)
+            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description", nativeQuery = true)
     List<Map<String, Object>> getRoomDetail();
+
+
+    @Query("SELECT r FROM Room r JOIN r.roomType rt WHERE rt.capacity >= :numberOfPeople")
+    List<Room> findByCapacity(@Param("numberOfPeople") int numberOfPeople);
+
+    @Query("""
+        SELECT r 
+        FROM Room r 
+        JOIN r.roomType rt 
+        WHERE (:roomTypeName IS NULL OR LOWER(rt.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))) 
+          AND rt.capacity >= :avgGuestCount
+          AND r.isActivated = true
+          AND r.status = 0
+          AND r.id NOT IN (
+              SELECT bd.room.id 
+              FROM BookingDetail bd 
+              JOIN bd.booking b 
+              WHERE b.checkIn < :checkOutDate 
+                AND b.checkOut > :checkInDate
+          )
+    """)
+    List<Room> searchAvailableRooms(
+            @Param("roomTypeName") String roomTypeName,
+            @Param("checkInDate") LocalDate checkInDate,
+            @Param("checkOutDate") LocalDate checkOutDate,
+            @Param("avgGuestCount") int avgGuestCount
+    );
 
 }

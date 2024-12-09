@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 public class PromotionMapperImpl implements PromotionMapper {
 
     @Override
-    public PromotionDto maptoPromotionDto(Promotion promotion) {
+    public PromotionDto toPromotionDto(Promotion promotion) {
         if (promotion == null) {
             return null;
         }
+
         PromotionDto promotionDto = new PromotionDto();
         promotionDto.setId(promotion.getId());
         promotionDto.setName(promotion.getName());
@@ -26,23 +27,19 @@ public class PromotionMapperImpl implements PromotionMapper {
     }
 
     @Override
-    public Promotion maptoPromotion(PromotionDto promotionDto, Promotion existingPromotion) {
+    public Promotion toPromotion(PromotionDto promotionDto) {
         if (promotionDto == null) {
             return null;
         }
 
-        Promotion promotion = (existingPromotion != null) ? existingPromotion : new Promotion();
-        if (existingPromotion == null) {
-            promotion.setId(promotionDto.getId());
-        }
-
+        Promotion promotion =  new Promotion();
+        promotion.setId(promotionDto.getId());
         promotion.setName(promotionDto.getName());
         promotion.setDescription(promotionDto.getDescription());
         promotion.setStartTime(promotionDto.getStartTime());
         promotion.setEndTime(promotionDto.getEndTime());
         promotion.setMaxUsage(promotionDto.getMaxUsage());
         promotion.setMaxAmount(promotionDto.getMaxAmount());
-
         return promotion;
     }
 }
