@@ -32,6 +32,12 @@ public class RoomController {
 
     @GetMapping("/all")
     public ResponseEntity<List<RoomDto>> getAll() {
+        List<RoomDto> rooms = roomService.getAll();
+        return ResponseEntity.ok(rooms);
+    }
+
+    @GetMapping("/all-activated")
+    public ResponseEntity<List<RoomDto>> getAllIsActivated() {
         List<RoomDto> rooms = roomService.getAllIsActivated();
         return ResponseEntity.ok(rooms);
     }
@@ -92,6 +98,10 @@ public class RoomController {
         List<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate);
         return ResponseEntity.ok(availableRooms);
     }
+
+
+
+
 
 
 }
