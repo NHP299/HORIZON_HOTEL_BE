@@ -85,8 +85,8 @@ public class AccountServiceImpl implements AccountService {
     public void delete(Integer id) {
         Optional<Account> accountOpt = accountRepository.findById(id);
         accountOpt.ifPresent(account -> {
-            cloudinaryService.delete(cloudinaryService.getPublicId(account.getProfilePicture()));
-            accountRepository.delete(account);
+            account.setIsActivated(false);
+            accountRepository.save(account);
         });
     }
 
