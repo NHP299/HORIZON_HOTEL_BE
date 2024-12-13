@@ -15,6 +15,7 @@ import java.util.List;
 public class BookingDto {
     private Integer id;
     private Integer accountId;
+    private Integer paymentId;
     private LocalDate checkIn;
     private LocalDate checkOut;
     private LocalDate bookingDate;

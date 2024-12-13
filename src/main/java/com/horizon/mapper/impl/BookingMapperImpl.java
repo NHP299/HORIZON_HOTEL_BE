@@ -19,6 +19,7 @@ public class BookingMapperImpl implements BookingMapper {
 
         BookingDto dto = new BookingDto();
         dto.setId(booking.getId());
+        dto.setPaymentId(booking.getPayment() != null ? booking.getPayment().getId() : null);
         dto.setAccountId(booking.getAccount() != null ? booking.getAccount().getId() : null);
         dto.setCheckIn(booking.getCheckIn() != null ? booking.getCheckIn() : null);
         dto.setCheckOut(booking.getCheckOut() != null ? booking.getCheckOut() : null);
@@ -47,6 +48,12 @@ public class BookingMapperImpl implements BookingMapper {
             Account account = new Account();
             account.setId(dto.getAccountId());
             booking.setAccount(account);
+        }
+
+        if (dto.getPaymentId() != null) {
+            Payment payment = new Payment();
+            payment.setId(dto.getPaymentId());
+            booking.setPayment(payment);
         }
 
         booking.setCheckIn(dto.getCheckIn() != null ? dto.getCheckIn(): null);
