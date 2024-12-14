@@ -133,6 +133,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Map<String, Object> getRoomDetailById(Integer id) {
+        return roomRepository.getRoomDetailById(id);
+    }
+
+    @Override
     public List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount) {
         int avgGuestCount = (int) Math.ceil((double) guestCount / roomCount);
         List<Room> availableRooms = roomRepository.searchAvailableRooms(roomTypeName, checkIn, checkOut, avgGuestCount);
