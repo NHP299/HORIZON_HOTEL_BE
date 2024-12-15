@@ -35,6 +35,8 @@ public interface RoomService {
 
     List<Map<String, Object>> getRoomDetail();
 
+    Map<String, Object> getRoomDetailById(Integer id);
+
     List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount);
 
     @Scheduled(fixedRate = 60000)

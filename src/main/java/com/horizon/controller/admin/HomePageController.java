@@ -6,10 +6,7 @@ import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +19,7 @@ public class HomePageController {
     private RoomTypeService roomTypeService;
     private RoomService roomService;
 
-    @GetMapping("/roomtypeAndMedia")
+    @GetMapping("/roomTypeAndMedia")
     public List<Map<String, Object>> getRoomTypeMedia() {
         return roomTypeService.getRoomTypeMedia();
     }
@@ -30,6 +27,11 @@ public class HomePageController {
     @GetMapping("/roomDetail")
     public List<Map<String, Object>> getRoomDetail() {
         return roomService.getRoomDetail();
+    }
+
+    @GetMapping("/roomDetailById/{id}")
+    public Map<String, Object> getRoomDetailById(@PathVariable Integer id) {
+        return roomService.getRoomDetailById(id);
     }
 
     @GetMapping("/search")
