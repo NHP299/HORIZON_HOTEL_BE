@@ -41,6 +41,7 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Total capacity of selected rooms is less than the required capacity.");
         }
         Booking booking = bookingMapper.toBooking(bookingDto);
+        booking.setBookingDate(LocalDate.now());
         booking.setTotalPrice(Double.valueOf(request.getParameter("amount")));
         bookingRepository.save(booking);
 
