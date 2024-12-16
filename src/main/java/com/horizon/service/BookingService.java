@@ -1,7 +1,6 @@
 package com.horizon.service;
 
 
-import com.horizon.domain.Booking;
 import com.horizon.dto.BookingDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,10 +27,8 @@ public interface BookingService {
 
     void confirmBooking(HttpServletRequest request);
 
-    void cancelBooking(Integer id);
-
     @Scheduled(fixedRate = 3600000)
-    void updateBookingStatus();
+    void completeBooking();
 
     @Scheduled(fixedRate = 60000)
     void cancelExpiredBookings();

@@ -92,13 +92,14 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE (:roomTypeName IS NULL OR LOWER(rt.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))) 
           AND rt.capacity >= :avgGuestCount
           AND r.isActivated = true
-          AND r.status = 0
+          AND r.status <> 3
           AND r.id NOT IN (
               SELECT bd.room.id 
               FROM BookingDetail bd 
               JOIN bd.booking b 
               WHERE b.checkIn < :checkOutDate 
                 AND b.checkOut > :checkInDate
+                AND b.status <> 3
           )
     """)
     List<Room> searchAvailableRooms(

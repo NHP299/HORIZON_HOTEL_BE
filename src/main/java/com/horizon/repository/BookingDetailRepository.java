@@ -17,7 +17,8 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, In
     @Query("SELECT bd FROM BookingDetail bd " +
             "JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE bd.room.id = :roomId AND" +
-            "(b.checkIn < :checkOut AND b.checkOut > :checkIn)")
+            "(b.checkIn < :checkOut AND b.checkOut > :checkIn)" +
+            "AND b.status <> 3")
     List<BookingDetail> findConflictingBookings(@Param("roomId") int roomId,
                                                 @Param("checkIn") LocalDate checkIn,
                                                 @Param("checkOut") LocalDate checkOut);
@@ -25,14 +26,16 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, In
     @Query("SELECT bd FROM BookingDetail bd " +
             "JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE bd.room.id = :roomId AND " +
-            "(b.checkIn <= :date AND b.checkOut > :date)")
+            "(b.checkIn <= :date AND b.checkOut > :date)"+
+            "AND b.status <> 3")
     List<BookingDetail> findBookingDetailOccupied(@Param("roomId") int roomId,
                                                   @Param("date") LocalDate date);
 
     @Query("SELECT bd FROM BookingDetail bd " +
             "JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE bd.room.id = :roomId AND " +
-            "(b.bookingDate <= :date AND b.checkIn > :date)")
+            "(b.bookingDate <= :date AND b.checkIn > :date)" +
+            "AND b.status <> 3")
     List<BookingDetail> findBookingDetailReserved(@Param("roomId") int roomId,
                                                   @Param("date") LocalDate date);
 

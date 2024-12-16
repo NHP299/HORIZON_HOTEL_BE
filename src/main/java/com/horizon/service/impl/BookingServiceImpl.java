@@ -117,15 +117,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void cancelBooking(Integer id) {
-        Booking booking = bookingRepository.getById(id);
-        booking.setStatus(3);
-        bookingRepository.save(booking);
-    }
-
-    @Override
     @Scheduled(fixedRate = 60000)
-    public void updateBookingStatus() {
+    public void completeBooking() {
         LocalDate currentDate = LocalDate.now();
 
         List<Booking> expiredBookings = bookingRepository.findAllByStatusAndCheckOutBefore(2, currentDate);
@@ -141,9 +134,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Scheduled(fixedRate = 60000)
     public void cancelExpiredBookings() {
-        LocalDate currentDate = LocalDate.now();
-
-        List<Booking> expiredBookings = bookingRepository.findAllByStatusAndCheckInBefore(1, currentDate);
+        List<Booking> expiredBookings = bookingRepository.findBookingByPaymentStatusFailed();
 
         expiredBookings.forEach(booking -> {
             booking.setStatus(3);
