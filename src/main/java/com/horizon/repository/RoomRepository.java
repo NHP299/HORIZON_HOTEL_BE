@@ -69,6 +69,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "r.floor, " +
             "r.price, " +
             "r.description, " +
+            "rt.capacity, " +
             "STRING_AGG(DISTINCT s.description, ', ') AS services, " +
             "STRING_AGG(DISTINCT u.name, ', ') AS utilities, " +
             "STRING_AGG(DISTINCT m.path, ', ') AS paths " +
@@ -78,8 +79,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "LEFT JOIN utilities u ON rt.id = u.room_type_id " +
             "LEFT JOIN media m ON rt.id = m.room_type_id " +
             "WHERE r.is_activated = true AND r.id = :id " +
-            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description", nativeQuery = true)
+            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity",
+            nativeQuery = true)
     Map<String, Object> getRoomDetailById(@Param("id") Integer id);
+
 
 
     @Query("SELECT r FROM Room r JOIN r.roomType rt WHERE rt.capacity >= :numberOfPeople")
