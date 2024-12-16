@@ -10,7 +10,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class AccountDto {
     private Integer id;
     private Integer roleId;
@@ -19,6 +18,7 @@ public class AccountDto {
     private String email;
     private String firstName;
     private String lastName;
+    private String password;
     private String phone;
     private String accessToken;
     private Timestamp createdDate;

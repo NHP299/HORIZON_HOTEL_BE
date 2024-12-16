@@ -13,17 +13,18 @@ import java.util.stream.Collectors;
 public class AccountMapperImpl implements AccountMapper {
 
     @Override
-    public Account toEntity(AccountDto accountDto) {
+    public Account toAccount(AccountDto accountDto) {
         Account account = new Account();
         account.setId(accountDto.getId());
         account.setGoogleId(null);
         account.setEmail(accountDto.getEmail());
         account.setFirstName(accountDto.getFirstName());
         account.setLastName(accountDto.getLastName());
+        account.setPassword(accountDto.getPassword());
         account.setPhone(accountDto.getPhone());
-        account.setAccessToken(null);
-        account.setCreatedDate(null);
-        account.setLastLogin(null);
+        account.setAccessToken(accountDto.getAccessToken());
+        account.setCreatedDate(accountDto.getCreatedDate());
+        account.setLastLogin(accountDto.getLastLogin());
         account.setGender(accountDto.getGender());
         account.setDateOfBirth(accountDto.getDateOfBirth());
         account.setProfilePicture(accountDto.getProfilePicture());
@@ -39,7 +40,7 @@ public class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
-    public AccountDto toDto(Account account) {
+    public AccountDto toAccountDto(Account account) {
         String roleName = null;
         if (account.getRole() != null) {
             roleName = account.getRole().getRoleName();
@@ -53,6 +54,7 @@ public class AccountMapperImpl implements AccountMapper {
                 account.getEmail(),
                 account.getFirstName(),
                 account.getLastName(),
+                account.getPassword(),
                 account.getPhone(),
                 account.getAccessToken(),
                 account.getCreatedDate(),
@@ -67,7 +69,7 @@ public class AccountMapperImpl implements AccountMapper {
     @Override
     public List<AccountDto> toDtoList(List<Account> accounts) {
         return accounts.stream()
-                .map(this::toDto)
+                .map(this::toAccountDto)
                 .collect(Collectors.toList());
     }
 }
