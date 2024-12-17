@@ -47,7 +47,7 @@ public class VNPayUtil {
     }
 
     public static String getRandomNumber(int len) {
-        Random rnd = new Random();
+        Random rnd = new Random(System.nanoTime());
         String chars = "0123456789";
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
@@ -55,6 +55,8 @@ public class VNPayUtil {
         }
         return sb.toString();
     }
+
+
     public static String getPaymentURL(Map<String, String> paramsMap, boolean encodeKey) {
         return paramsMap.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
