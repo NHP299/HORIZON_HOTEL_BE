@@ -27,7 +27,7 @@ public class ServicesServiceImpl implements ServicesService {
         return servicesMapper.mapToServicesDto(saveServices);
     }
 
-
+    @Override
     public ServicesDto update(Integer serviceId, ServicesDto servicesDto) {
         Services existingServices = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
