@@ -8,14 +8,13 @@ import com.horizon.response.ResponseObject;
 import com.horizon.service.BookingService;
 import com.horizon.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;
 
-    @GetMapping("/vn-pay")
+    @PostMapping("/vn-pay")
     public ResponseObject<PaymentDTO.VNPayResponse> pay(HttpServletRequest request,@RequestBody BookingDto bookingDto) throws UnsupportedEncodingException {
         PaymentDTO.VNPayResponse response = paymentService.createVnPayPayment(request);
         bookingService.create(request, bookingDto, response.paymentUrl);
@@ -34,14 +33,16 @@ public class PaymentController {
     }
 
     @GetMapping("/vn-pay-callback")
-    public ResponseObject<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request) {
+    public ResponseObject<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request,  HttpServletResponse response) throws IOException {
         String status = request.getParameter("vnp_ResponseCode");
         if (status.equals("00")) {
             paymentService.updateSuccessPayment(request);
             bookingService.confirmBooking(request);
+            response.sendRedirect("http://localhost:3000/bookingCart");
             return new ResponseObject<>(HttpStatus.OK, "Success", null);
         } else {
             paymentService.updateFailPayment(request);
+            response.sendRedirect("http://localhost:3000/payment-fail");
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
         }
     }
