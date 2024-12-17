@@ -15,6 +15,8 @@ public interface AccountService {
 
     boolean changePassword(String oldPassword, String newPassword, HttpSession session);
 
+    boolean changePassword(String newPassword, Integer accountId);
+
     AccountDto create(AccountDto accountDto, MultipartFile profilePicture);
 
     AccountDto update(Integer id, AccountDto accountDto, MultipartFile profilePicture);

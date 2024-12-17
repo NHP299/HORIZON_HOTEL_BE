@@ -61,6 +61,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public boolean changePassword(String newPassword, Integer accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+
+        account.setPassword(encodedNewPassword);
+        accountRepository.save(account);
+
+        return true;
+    }
+
+    @Override
     public void register(String email, String password, String firstName, String lastName) {
         if (accountRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists!");

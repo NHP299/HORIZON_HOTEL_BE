@@ -1,13 +1,12 @@
 package com.horizon.controller.admin;
 
+import com.horizon.constant.AccountList;
 import com.horizon.domain.Account;
 import com.horizon.dto.AccountDto;
-import com.horizon.mapper.AccountMapper;
 import com.horizon.repository.AccountRepository;
 import com.horizon.service.AccountService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+
+
 
 @RestController
 @AllArgsConstructor
@@ -105,6 +107,26 @@ public class AccountController {
         try {
             Boolean response = accountService.changePassword(oldPassword, newPassword, session);
             return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/change-password-with-accountId")
+    public ResponseEntity<?> changePasswordWithAccountId(
+            @RequestParam String newPassword,
+            @RequestBody AccountList accountIdList) {
+        try {
+            if (accountIdList.getAccounts() == null || accountIdList.getAccounts().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Account list cannot be null or empty.");
+            }
+
+            for (Integer accountId : accountIdList.getAccounts()) {
+                accountService.changePassword(newPassword, accountId);
+            }
+
+            return ResponseEntity.ok("Password changed successfully!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
