@@ -14,6 +14,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/home")
 public class HomePageController {
     private RoomTypeService roomTypeService;

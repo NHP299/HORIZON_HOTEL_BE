@@ -17,6 +17,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/admin/rooms")
 @Validated
 public class RoomController {

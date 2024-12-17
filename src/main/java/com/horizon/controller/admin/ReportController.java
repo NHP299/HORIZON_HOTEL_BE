@@ -6,14 +6,12 @@ import com.horizon.response.ReportRoomResponse;
 import com.horizon.response.ReportUserResponse;
 import com.horizon.service.ReportService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/admin/reports")
 public class ReportController {
     private final ReportService reportService;

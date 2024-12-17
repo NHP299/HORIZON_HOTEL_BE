@@ -12,6 +12,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/admin/promotion-type")
 @Validated
 public class PromotionTypeController {

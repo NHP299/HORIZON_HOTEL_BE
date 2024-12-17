@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${spring.application.api-prefix}/payment")
+@CrossOrigin
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
