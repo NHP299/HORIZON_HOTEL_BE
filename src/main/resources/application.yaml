@@ -1,6 +1,7 @@
 spring:
   application:
-    api-prefix: /horizon/v1
+    api-prefix-home: /horizon/v2/home
+    api-prefix-admin: /horizon/v2/admin
     name: spring-boot-rest-api
   jpa:
     hibernate:
