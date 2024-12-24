@@ -1,6 +1,7 @@
 package com.horizon.repository;
 
 import com.horizon.domain.Promotion;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,33 +13,21 @@ import java.util.Optional;
 
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
-    List<Promotion> findByNameContainingIgnoreCase(String name);
+    Optional<Promotion> findByIdAndStatus(Integer id, Promotion.Status status);
+    List<Promotion> findByNameContainingIgnoreCaseAndStatus(String name, Promotion.Status status);
+    List<Promotion> findAllByStatus(Promotion.Status status);
 
-    @Query("SELECT p FROM Promotion p WHERE p.id = :promotionId AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
-    Optional<Promotion> findByIdAndAvailable(@Param("promotionId") Integer promotionId);
 
-    @Query("SELECT p FROM Promotion p WHERE CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
-    List<Promotion> findAllAvailable();
+    @Query("SELECT p FROM Promotion p WHERE p.status = 'ACTIVE' AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE AND p.id = :promotionId")
+    Promotion findAvailableById(@Param("promotionId") Integer promotionId);
 
-    @Query("SELECT p FROM Promotion p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :promotionName, '%')) AND CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0")
-    List<Promotion> findByNameContainingAndAvailable(@Param("promotionName") String promotionName);
+    @Query("SELECT p FROM Promotion p WHERE p.status = 'ACTIVE' AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE AND (p.roomType.id = :roomTypeId OR p.roomType IS NULL)")
+    List<Promotion> findAllAvailable(@Param("roomTypeId") Integer roomTypeId);
 
-    @Query("SELECT p FROM Promotion p " +
-            "JOIN PromotionCondition pc ON pc.promotion = p " +
-            "JOIN pc.promotionType pt " +
-            "WHERE " +
-            "(CURRENT_TIMESTAMP BETWEEN p.startTime AND p.endTime AND p.maxUsage > 0) AND " +
-            "(" +
-            "   (pt.name = 'days_of_booking' AND :daysOfBooking >= pc.value) OR " +
-            "   (pt.name = 'rooms_of_booking' AND :roomsOfBooking >= pc.value) OR " +
-            "   (pt.name = 'booking_time_range' AND CURRENT_TIME BETWEEN pc.startTime AND pc.endTime)" +
-            ")")
-    List<Promotion> findApplicable(@Param("daysOfBooking") int daysOfBooking,
-                                             @Param("roomsOfBooking") int roomsOfBooking);
-
+    @Transactional
     @Modifying
-    @Query("UPDATE Promotion p SET p.maxUsage = p.maxUsage - 1 WHERE p.id = :promotionId")
-    int decrementMaxUsage(@Param("promotionId") Integer promotionId);
+    @Query("UPDATE Promotion p SET p.status = 'INACTIVE' WHERE (p.endDate < CURRENT_DATE OR p.startDate > CURRENT_DATE) AND p.status = 'ACTIVE'")
+    void updateStatusIfExpired();
 
 
 

@@ -1,11 +1,11 @@
 package com.horizon.controller.admin;
 
 import com.horizon.dto.PromotionDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,20 +13,28 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @CrossOrigin
-@RequestMapping("/admin/promotion")
-@Validated
+@RequestMapping("${spring.application.api-prefix-admin}/promotion")
 public class PromotionController {
     private PromotionService promotionService;
 
     @PostMapping
-    public ResponseEntity<PromotionDto> create(@RequestBody PromotionDto promotionDto) {
+    public ResponseObject<?> create(@RequestBody PromotionDto promotionDto) {
         PromotionDto savePromotion = promotionService.create(promotionDto);
-        return new ResponseEntity<>(savePromotion, HttpStatus.CREATED);
+        if (savePromotion == null) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Addition failed!", null);
+        }
+        return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", savePromotion);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PromotionDto> getById(@PathVariable("id") Integer promotionId) {
         PromotionDto promotionDto = promotionService.getById(promotionId);
+        return ResponseEntity.ok(promotionDto);
+    }
+
+    @GetMapping("/by-name")
+    public ResponseEntity<List<PromotionDto>> getByName(@RequestParam String name ) {
+        List<PromotionDto> promotionDto = promotionService.getByName(name);
         return ResponseEntity.ok(promotionDto);
     }
 
@@ -37,9 +45,12 @@ public class PromotionController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PromotionDto> update(@PathVariable("id") Integer promotionId, @RequestBody PromotionDto updatePromotionDto) {
+    public ResponseObject<?> update(@PathVariable("id") Integer promotionId, @RequestBody PromotionDto updatePromotionDto) {
         PromotionDto promotionDto = promotionService.update(promotionId, updatePromotionDto);
-        return ResponseEntity.ok(promotionDto);
+        if (promotionDto == null) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Update failed!", null);
+        }
+        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", promotionDto);
     }
 
     @DeleteMapping("{id}")
@@ -48,36 +59,16 @@ public class PromotionController {
         return new ResponseEntity<>("Promotion deleted successfully",HttpStatus.OK);
     }
 
-    @GetMapping("/by-id-available/{id}")
-    public ResponseEntity<PromotionDto> getByIdAndAvailable(@PathVariable("id") Integer promotionId) {
-        PromotionDto promotionDto = promotionService.getByIdAndAvailable(promotionId);
+    @GetMapping("available-by-id/{id}")
+    public ResponseEntity<PromotionDto> getAvailableById(@PathVariable("id") Integer promotionId) {
+        PromotionDto promotionDto = promotionService.getAvailableById(promotionId);
         return ResponseEntity.ok(promotionDto);
     }
 
-    @GetMapping("/all-available")
-    public ResponseEntity<List<PromotionDto>> getAllAvailable() {
-        List<PromotionDto> promotionDto = promotionService.getAllAvailable();
+    @GetMapping("/all-available-{id}")
+    public ResponseEntity<List<PromotionDto>> getAllAvailable(@PathVariable("id")Integer roomTypeId) {
+        List<PromotionDto> promotionDto = promotionService.getAllAvailable(roomTypeId);
         return ResponseEntity.ok(promotionDto);
-    }
-
-    @GetMapping("/by-name-available")
-    public ResponseEntity<List<PromotionDto>> getByNameAndAvailable(@RequestParam String name ) {
-        List<PromotionDto> promotionDto = promotionService.getByNameAndAvailable(name);
-        return ResponseEntity.ok(promotionDto);
-    }
-
-    @GetMapping("/applicable")
-    public ResponseEntity<List<PromotionDto>> getApplicable(
-            @RequestParam("days_of_booking") Integer daysOfBooking,
-            @RequestParam("rooms_of_booking") Integer roomsOfBooking) {
-        List<PromotionDto> promotions = promotionService.getApplicable(daysOfBooking, roomsOfBooking);
-        return ResponseEntity.ok(promotions);
-    }
-
-    @PostMapping("apply/{id}")
-    public ResponseEntity<Double> applyPromotion(@PathVariable("id") Integer promotionId,@RequestParam Double totalPrice) {
-        Double discountedPrice = promotionService.apply(promotionId, totalPrice);
-        return ResponseEntity.ok(discountedPrice);
     }
 
 }

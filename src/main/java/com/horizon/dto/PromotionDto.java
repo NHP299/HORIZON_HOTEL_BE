@@ -1,41 +1,48 @@
 package com.horizon.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.horizon.domain.Promotion;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PromotionDto {
+
     private Integer id;
 
     @NotBlank(message = "Name cannot be blank")
     @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
 
+    @Size(max = 255, message = "Description must be less than 255 characters")
     private String description;
+    @NotNull(message = "Discount Type must be null")
+    private Promotion.DiscountType discountType;
 
-    @NotNull(message = "Start time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    private LocalDateTime startTime;
+    @DecimalMin(value = "0.01", message = "Discount value must be at least 0.01")
+    @NotNull(message = "Discount Value must be null")
+    private BigDecimal discountValue;
 
-    @NotNull(message = "End time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    private LocalDateTime endTime;
+    @NotNull(message = "Start date must be null")
+    private LocalDate startDate;
 
-    @NotNull(message = "Maximum usage cannot be null")
-    @Positive(message = "Maximum amount must be greater than 0")
-    private Integer maxUsage;
+    @NotNull(message = "End date must be null")
+    private LocalDate endDate;
 
-    @NotNull(message = "Maximum amount cannot be null")
-    @Positive(message = "Maximum amount must be greater than 0")
-    private Integer maxAmount;
+    @NotNull(message = "RoomType must be null")
+    private Integer roomTypeId;
+
+    private Promotion.Status status;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
 }

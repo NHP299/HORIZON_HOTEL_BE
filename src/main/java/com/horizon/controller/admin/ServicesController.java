@@ -1,34 +1,43 @@
 package com.horizon.controller.admin;
 
 import com.horizon.dto.ServicesDto;
+import com.horizon.response.ResponseObject;
+import com.horizon.service.RoomTypeServicesService;
 import com.horizon.service.ServicesService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
 @CrossOrigin
-@RequestMapping("/admin/services")
-@Validated
+@RequestMapping("${spring.application.api-prefix-admin}/services")
 public class ServicesController {
     private ServicesService servicesService;
+    private RoomTypeServicesService rtServicesService;
 
     @PostMapping
-    public ResponseEntity<ServicesDto> create(@RequestBody ServicesDto servicesDto) {
+    public ResponseObject<?> create(@RequestBody ServicesDto servicesDto) {
         ServicesDto saveServices = servicesService.create(servicesDto);
-        return new ResponseEntity<>(saveServices, HttpStatus.CREATED);
+        if (saveServices == null) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Addition failed!", null);
+        }
+        return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveServices);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<ServicesDto> getById(@PathVariable("id") Integer servicesId) {
         ServicesDto servicesDto = servicesService.getById(servicesId);
         return ResponseEntity.ok(servicesDto);
+    }
+
+    @GetMapping("/by-name")
+    public ResponseEntity<List<ServicesDto>> getByName(@RequestParam String name) {
+        List<ServicesDto> listServices = servicesService.getByName(name);
+        return ResponseEntity.ok(listServices);
     }
 
     @GetMapping("/all")
@@ -38,9 +47,12 @@ public class ServicesController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ServicesDto> update(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
+    public ResponseObject<?> update(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
         ServicesDto servicesDto = servicesService.update(servicesId, updateServices);
-        return ResponseEntity.ok(servicesDto);
+        if (servicesDto == null) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Update failed!", null);
+        }
+        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", servicesDto);
     }
 
     @DeleteMapping("{id}")
@@ -49,22 +61,26 @@ public class ServicesController {
         return new ResponseEntity<>("Services deleted successfully", HttpStatus.OK);
     }
 
-    @GetMapping("/by-room-type-name")
-    public ResponseEntity<List<ServicesDto>> getByRoomTypeName(@RequestParam String roomTypeName) {
-        List<ServicesDto> servicesDtoPage = servicesService.getByRoomTypeName(roomTypeName);
-        return ResponseEntity.ok(servicesDtoPage);
+
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateServicesForRoomType(@RequestParam Integer roomTypeId, @RequestParam String listServices) {
+        try {
+            rtServicesService.updateServicesForRoomType(roomTypeId, listServices);
+            return ResponseEntity.ok("Services updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/by-room-id/{id}")
-    public ResponseEntity<List<ServicesDto>> getByRoomId(@PathVariable("id") Integer roomId) {
-        List<ServicesDto> servicesDtoPage = servicesService.getByRoomId(roomId);
-        return ResponseEntity.ok(servicesDtoPage);
+    @GetMapping("/getAllRTS")
+    public List<Map<String, Object>> getAllRoomTypeService() {
+        return rtServicesService.getAll();
     }
 
-    @GetMapping("/by-room-name")
-    public ResponseEntity<List<ServicesDto>> getByRoomName(@RequestParam String roomName) {
-        List<ServicesDto> servicesDtoPage = servicesService.getByRoomName(roomName);
-        return ResponseEntity.ok(servicesDtoPage);
+    @GetMapping("/by-rtId/{id}")
+    public Map<String, Object> getByRoomTypeId(@PathVariable("id") Integer roomTypeId) {
+        return rtServicesService.getByRoomTypeId(roomTypeId);
     }
 
 }

@@ -1,13 +1,19 @@
 package com.horizon.mapper.impl;
 
 import com.horizon.domain.Promotion;
+import com.horizon.domain.RoomType;
 import com.horizon.dto.PromotionDto;
+import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.PromotionMapper;
+import com.horizon.repository.RoomTypeRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@AllArgsConstructor
 public class PromotionMapperImpl implements PromotionMapper {
+    private RoomTypeRepository roomTypeRepository;
 
     @Override
     public PromotionDto toPromotionDto(Promotion promotion) {
@@ -19,10 +25,14 @@ public class PromotionMapperImpl implements PromotionMapper {
         promotionDto.setId(promotion.getId());
         promotionDto.setName(promotion.getName());
         promotionDto.setDescription(promotion.getDescription());
-        promotionDto.setStartTime(promotion.getStartTime());
-        promotionDto.setEndTime(promotion.getEndTime());
-        promotionDto.setMaxUsage(promotion.getMaxUsage());
-        promotionDto.setMaxAmount(promotion.getMaxAmount());
+        promotionDto.setDiscountType(promotion.getDiscountType());
+        promotionDto.setDiscountValue(promotion.getDiscountValue());
+        promotionDto.setStartDate(promotion.getStartDate());
+        promotionDto.setEndDate(promotion.getEndDate());
+        promotionDto.setRoomTypeId(promotion.getRoomType().getId());
+        promotionDto.setStatus(promotion.getStatus());
+        promotionDto.setCreatedAt(promotion.getCreatedAt());
+        promotionDto.setUpdatedAt(promotion.getUpdatedAt());
         return promotionDto;
     }
 
@@ -36,10 +46,15 @@ public class PromotionMapperImpl implements PromotionMapper {
         promotion.setId(promotionDto.getId());
         promotion.setName(promotionDto.getName());
         promotion.setDescription(promotionDto.getDescription());
-        promotion.setStartTime(promotionDto.getStartTime());
-        promotion.setEndTime(promotionDto.getEndTime());
-        promotion.setMaxUsage(promotionDto.getMaxUsage());
-        promotion.setMaxAmount(promotionDto.getMaxAmount());
+        promotion.setDiscountType(promotionDto.getDiscountType());
+        promotion.setDiscountValue(promotionDto.getDiscountValue());
+        promotion.setStartDate(promotionDto.getStartDate());
+        promotion.setEndDate(promotionDto.getEndDate());
+        promotion.setRoomType(findRoomTypeById(promotionDto.getRoomTypeId()));
         return promotion;
+    }
+
+    private RoomType findRoomTypeById(Integer id) {
+        return roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("RoomType not found with id: " + id));
     }
 }

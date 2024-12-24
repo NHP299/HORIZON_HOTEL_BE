@@ -1,13 +1,13 @@
 package com.horizon.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,23 +24,54 @@ public class Promotion {
     @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
 
+    @Size(max = 255, message = "Description must be less than 255 characters")
     private String description;
 
-    @NotNull(message = "Start time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    private LocalDateTime startTime;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Discount Type must be null")
+    private DiscountType discountType;
 
-    @NotNull(message = "End time cannot be null")
-    @DateTimeFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    @JsonFormat(pattern = "HH:mm:ss, dd-MM-yyyy")
-    private LocalDateTime endTime;
+    @Column(precision = 10, scale = 2)
+    @NotNull(message = "Discount Value must be null")
+    @DecimalMin(value = "0.01", message = "Discount value must be at least 0.01")
+    private BigDecimal discountValue;
 
-    @NotNull(message = "Maximum usage cannot be null")
-    @Positive(message = "Maximum usage must be greater than 0")
-    private Integer maxUsage;
+    @NotNull(message = "Start date must be null")
+    private LocalDate startDate;
 
-    @NotNull(message = "Maximum amount cannot be null")
-    @Positive(message = "Maximum amount must be greater than 0")
-    private Integer maxAmount;
+    @NotNull(message = "End date must be null")
+    private LocalDate endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "room_type_id")
+    @NotNull(message = "RoomType must be null")
+    private RoomType roomType;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public enum DiscountType {
+        PERCENTAGE, FIXED
+    }
+
+    public enum Status {
+        ACTIVE, INACTIVE
+    }
 }

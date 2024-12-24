@@ -1,5 +1,6 @@
 package com.horizon.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ServicesDto {
     private Integer id;
-    private Integer roomTypeId;
-    private String description;
+
+    @NotBlank(message = "Name must not be blank")
+    @Size(max = 100, message = "Name must be less than 100 characters")
+    private String name;
+
+    @NotNull(message = "Start time must not be null")
     private LocalDateTime startedTime;
+
+    @NotNull(message = "End time must not be null")
     private LocalDateTime endTime;
 }

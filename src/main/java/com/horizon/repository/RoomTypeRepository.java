@@ -21,4 +21,5 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
             "GROUP BY rt.id, rt.name",
             nativeQuery = true)
     List<Map<String, Object>> findRoomTypeMedia();
+
 }

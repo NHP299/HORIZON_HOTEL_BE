@@ -1,8 +1,6 @@
 package com.horizon.service;
 
-
 import com.horizon.dto.PromotionDto;
-
 import java.util.List;
 
 public interface PromotionService {
@@ -12,11 +10,8 @@ public interface PromotionService {
     PromotionDto getById(Integer promotionId);
     List<PromotionDto> getAll();
     List<PromotionDto> getByName(String name);
-    PromotionDto getByIdAndAvailable(Integer promotionId);
-    List<PromotionDto> getAllAvailable();
-    List<PromotionDto> getByNameAndAvailable(String name);
-    List<PromotionDto> getApplicable(Integer daysOfBooking, Integer roomsOfBooking);
-    void apply(Integer promotionId);
 
-    Double apply(Integer promotionId, Double totalPrice);
+    PromotionDto getAvailableById(Integer promotionId);
+    List<PromotionDto> getAllAvailable(Integer roomTypeId);
+
 }

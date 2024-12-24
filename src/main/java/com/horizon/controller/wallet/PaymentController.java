@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
-@RequestMapping("${spring.application.api-prefix}/payment")
+@RequestMapping("${spring.application.api-prefix-admin}/payment")
 @CrossOrigin
 @RequiredArgsConstructor
 public class PaymentController {
