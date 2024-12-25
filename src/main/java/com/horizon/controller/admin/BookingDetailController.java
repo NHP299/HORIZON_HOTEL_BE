@@ -21,11 +21,6 @@ public class BookingDetailController {
         return new ResponseEntity<>(bookingDetailService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/by-booking-id/{bookingId}")
-    public ResponseEntity<List<BookingDetailDto>> getAllByBookingId(@PathVariable Integer bookingId) {
-        return new ResponseEntity<>(bookingDetailService.getAllByBookingId(bookingId), HttpStatus.OK);
-    }
-
     @PostMapping("/create")
     public ResponseEntity<BookingDetailDto> create(@RequestBody BookingDetailDto bookingDetailDto) {
         BookingDetailDto bookingDetail = bookingDetailService.create(bookingDetailDto);

@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @CrossOrigin
-@RequestMapping("/admin/rooms")
+@RequestMapping("${spring.application.api-prefix-admin}/rooms")
 @Validated
 public class RoomController {
 
@@ -99,10 +99,4 @@ public class RoomController {
         List<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate);
         return ResponseEntity.ok(availableRooms);
     }
-
-
-
-
-
-
 }
