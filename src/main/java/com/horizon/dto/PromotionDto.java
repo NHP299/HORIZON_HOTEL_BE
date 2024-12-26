@@ -39,7 +39,7 @@ public class PromotionDto {
     @NotNull(message = "RoomType must be null")
     private Integer roomTypeId;
 
-    private Promotion.Status status;
+    private Boolean isActivated;
 
     private LocalDateTime createdAt;
 

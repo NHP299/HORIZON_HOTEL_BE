@@ -27,4 +27,6 @@ public class Services {
 
     @NotNull(message = "End time must not be null")
     private LocalDateTime endTime;
+
+    private Boolean isActivated;
 }

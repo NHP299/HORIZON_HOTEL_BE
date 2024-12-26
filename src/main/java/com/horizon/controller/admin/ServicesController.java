@@ -19,13 +19,23 @@ public class ServicesController {
     private ServicesService servicesService;
     private RoomTypeServicesService rtServicesService;
 
+
     @PostMapping
     public ResponseObject<?> create(@RequestBody ServicesDto servicesDto) {
         ServicesDto saveServices = servicesService.create(servicesDto);
-        if (saveServices == null) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Addition failed!", null);
-        }
         return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveServices);
+    }
+
+    @PutMapping("{id}")
+    public ResponseObject<?> update(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
+        ServicesDto servicesDto = servicesService.update(servicesId, updateServices);
+        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", servicesDto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Integer servicesId) {
+        servicesService.delete(servicesId);
+        return new ResponseEntity<>("Services deleted successfully", HttpStatus.OK);
     }
 
     @GetMapping("{id}")
@@ -46,20 +56,6 @@ public class ServicesController {
         return ResponseEntity.ok(listServices);
     }
 
-    @PutMapping("{id}")
-    public ResponseObject<?> update(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
-        ServicesDto servicesDto = servicesService.update(servicesId, updateServices);
-        if (servicesDto == null) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Update failed!", null);
-        }
-        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", servicesDto);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer servicesId) {
-        servicesService.delete(servicesId);
-        return new ResponseEntity<>("Services deleted successfully", HttpStatus.OK);
-    }
 
 
 

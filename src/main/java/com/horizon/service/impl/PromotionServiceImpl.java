@@ -7,7 +7,6 @@ import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +20,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public PromotionDto create(PromotionDto promotionDto) {
         Promotion promotion = promotionMapper.toPromotion(promotionDto);
+        promotion.setIsActivated(true);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return promotionMapper.toPromotionDto(savedPromotion);
     }
@@ -39,25 +39,25 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public void delete(Integer promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
-        promotion.setStatus(Promotion.Status.INACTIVE);
+        promotion.setIsActivated(false);
         promotionRepository.save(promotion);
     }
 
     @Override
     public PromotionDto getById(Integer promotionId) {
-        Promotion promotion = promotionRepository.findByIdAndStatus(promotionId, Promotion.Status.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found " + promotionId));
         return promotionMapper.toPromotionDto(promotion);
     }
 
     @Override
     public List<PromotionDto> getAll() {
-        List<Promotion> promotions = promotionRepository.findAllByStatus(Promotion.Status.ACTIVE);
+        List<Promotion> promotions = promotionRepository.findAllByIsActivatedTrue();
         return promotions.stream().map(promotionMapper::toPromotionDto).toList();
     }
 
     @Override
     public List<PromotionDto> getByName(String name) {
-        List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndStatus(name, Promotion.Status.ACTIVE);
+        List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
         return promotions.stream().map(promotionMapper::toPromotionDto).toList();
     }
 
@@ -73,10 +73,21 @@ public class PromotionServiceImpl implements PromotionService {
         return promotions.stream().map(promotionMapper::toPromotionDto).toList();
     }
 
-    @Scheduled(cron = "0 * * * * ?")
-    public void updatePromotionStatus() {
-        promotionRepository.updateStatusIfExpired();
-        System.out.println("Promotion statuses updated.");
+    @Override
+    public Double apply(Integer promotionId, Double totalPrice) {
+        double discount = 0;
+        if (promotionId != null) {
+            Promotion promotion = promotionRepository.findById(promotionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Promotion with ID " + promotionId + " not found."));
+            if ("PERCENTAGE".equalsIgnoreCase(promotion.getDiscountType().name())) {
+                discount = totalPrice * promotion.getDiscountValue().doubleValue();
+            } else if ("FIXED".equalsIgnoreCase(promotion.getDiscountType().name())) {
+                discount = promotion.getDiscountValue().doubleValue();
+            }
+            totalPrice -= discount;
+        }
+        return totalPrice;
     }
+
 
 }

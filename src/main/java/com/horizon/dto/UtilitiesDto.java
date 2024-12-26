@@ -17,4 +17,6 @@ public class UtilitiesDto {
 
     @Size(max = 255, message = "Description must be less than 255 characters")
     private String description;
+
+    private Boolean isActivated;
 }

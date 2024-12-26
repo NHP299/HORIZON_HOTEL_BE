@@ -22,10 +22,19 @@ public class UtilitiesController {
     @PostMapping
     public ResponseObject<?> create(@RequestBody UtilitiesDto utilitiesDto) {
         UtilitiesDto saveUtilities = utilitiesService.create(utilitiesDto);
-        if (saveUtilities == null) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Addition failed!", null);
-        }
         return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveUtilities);
+    }
+
+    @PutMapping("{id}")
+    public ResponseObject<?> update(@PathVariable("id") Integer utilitiesId, @RequestBody UtilitiesDto updateUtilities) {
+        UtilitiesDto utilitiesDto = utilitiesService.update(utilitiesId, updateUtilities);
+        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", utilitiesDto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Integer utilitiesId) {
+        utilitiesService.delete(utilitiesId);
+        return new ResponseEntity<>("Deleted utilities successfully",HttpStatus.OK);
     }
 
     @GetMapping("{id}")
@@ -44,21 +53,6 @@ public class UtilitiesController {
     public ResponseEntity<List<UtilitiesDto>> getAll() {
         List<UtilitiesDto> listUtilities = utilitiesService.getAll();
         return ResponseEntity.ok(listUtilities);
-    }
-
-    @PutMapping("{id}")
-    public ResponseObject<?> update(@PathVariable("id") Integer utilitiesId, @RequestBody UtilitiesDto updateUtilities) {
-        UtilitiesDto utilitiesDto = utilitiesService.update(utilitiesId, updateUtilities);
-        if (utilitiesDto == null) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Update failed!", null);
-        }
-        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", utilitiesDto);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer utilitiesId) {
-        utilitiesService.delete(utilitiesId);
-        return new ResponseEntity<>("Deleted utilities successfully",HttpStatus.OK);
     }
 
 

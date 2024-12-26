@@ -19,6 +19,7 @@ public class UtilitiesMapperImpl implements UtilitiesMapper {
         utilitiesDto.setId(utilities.getId());
         utilitiesDto.setName(utilities.getName());
         utilitiesDto.setDescription(utilities.getDescription());
+        utilitiesDto.setIsActivated(utilities.getIsActivated());
         return utilitiesDto;
     }
 
@@ -31,6 +32,7 @@ public class UtilitiesMapperImpl implements UtilitiesMapper {
         utilities.setId(utilitiesDto.getId());
         utilities.setName(utilitiesDto.getName());
         utilities.setDescription(utilitiesDto.getDescription());
+        utilities.setIsActivated(utilitiesDto.getIsActivated());
         return utilities;
     }
 }

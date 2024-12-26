@@ -14,4 +14,5 @@ public interface PromotionService {
     PromotionDto getAvailableById(Integer promotionId);
     List<PromotionDto> getAllAvailable(Integer roomTypeId);
 
+    Double apply(Integer promotionId, Double totalPrice);
 }

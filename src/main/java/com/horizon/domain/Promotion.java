@@ -47,8 +47,7 @@ public class Promotion {
     @NotNull(message = "RoomType must be null")
     private RoomType roomType;
 
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Boolean isActivated;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -71,7 +70,4 @@ public class Promotion {
         PERCENTAGE, FIXED
     }
 
-    public enum Status {
-        ACTIVE, INACTIVE
-    }
 }

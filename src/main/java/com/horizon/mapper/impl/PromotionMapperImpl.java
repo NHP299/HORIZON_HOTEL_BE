@@ -30,7 +30,7 @@ public class PromotionMapperImpl implements PromotionMapper {
         promotionDto.setStartDate(promotion.getStartDate());
         promotionDto.setEndDate(promotion.getEndDate());
         promotionDto.setRoomTypeId(promotion.getRoomType().getId());
-        promotionDto.setStatus(promotion.getStatus());
+        promotionDto.setIsActivated(promotion.getIsActivated());
         promotionDto.setCreatedAt(promotion.getCreatedAt());
         promotionDto.setUpdatedAt(promotion.getUpdatedAt());
         return promotionDto;
@@ -51,6 +51,7 @@ public class PromotionMapperImpl implements PromotionMapper {
         promotion.setStartDate(promotionDto.getStartDate());
         promotion.setEndDate(promotionDto.getEndDate());
         promotion.setRoomType(findRoomTypeById(promotionDto.getRoomTypeId()));
+        promotion.setIsActivated(promotionDto.getIsActivated());
         return promotion;
     }
 

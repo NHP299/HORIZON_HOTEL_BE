@@ -20,6 +20,7 @@ public class ServicesMapperImpl implements ServicesMapper {
         servicesDto.setName(services.getName());
         servicesDto.setStartedTime(services.getStartedTime());
         servicesDto.setEndTime(services.getEndTime());
+        servicesDto.setIsActivated(services.getIsActivated());
         return servicesDto;
     }
 
@@ -33,6 +34,7 @@ public class ServicesMapperImpl implements ServicesMapper {
         services.setName(servicesDto.getName());
         services.setStartedTime(servicesDto.getStartedTime());
         services.setEndTime(servicesDto.getEndTime());
+        services.setIsActivated(servicesDto.getIsActivated());
         return services;
     }
 
