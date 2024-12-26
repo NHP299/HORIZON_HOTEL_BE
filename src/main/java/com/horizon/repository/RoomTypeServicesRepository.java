@@ -33,7 +33,7 @@ public interface RoomTypeServicesRepository extends JpaRepository<RoomTypeServic
             "FROM room_type rt " +
             "JOIN room_type_services rts ON rt.Id = rts.room_type_Id " +
             "JOIN services s ON rts.service_Id = s.Id " +
-            "WHERE rts.is_activated = true " +
+            "WHERE rts.is_activated = true AND s.is_activated = true" +
             "GROUP BY rt.Id, rt.name;",
             nativeQuery = true)
     List<Map<String, Object>> findRoomTypeService();
@@ -44,7 +44,7 @@ public interface RoomTypeServicesRepository extends JpaRepository<RoomTypeServic
             "FROM room_type rt " +
             "JOIN room_type_services rts ON rt.Id = rts.room_type_Id " +
             "JOIN services s ON rts.service_Id = s.Id " +
-            "WHERE rts.is_activated = true " +
+            "WHERE rts.is_activated = true AND s.is_activated = true" +
             "AND rt.Id = :roomTypeId " +
             "GROUP BY rt.Id, rt.name;",
             nativeQuery = true)
