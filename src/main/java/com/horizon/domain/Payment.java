@@ -24,7 +24,7 @@ public class Payment {
 
     private String transactionId;
     private Double amount;
-    private Integer status;
+    private Payment.Status status;
     private Timestamp paymentTime;
     private Timestamp createdTime;
     private Timestamp expiredTime;
@@ -34,4 +34,7 @@ public class Payment {
     private String cardType;
     private String extraData;
 
+    public enum Status {
+        PENDING, SUCCESS, FAILED;
+    }
 }

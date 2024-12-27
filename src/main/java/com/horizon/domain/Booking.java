@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
@@ -32,7 +31,7 @@ public class Booking {
     private Integer adult;
     private Integer child;
     private Integer baby;
-    private Integer status;
+    private Booking.Status status;
     private String note;
     private Double totalPrice;
 
@@ -40,4 +39,7 @@ public class Booking {
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
+    public enum Status {
+        PENDING, CONFIRMED, CANCELLED, COMPLETED;
+    }
 }

@@ -1,5 +1,6 @@
 package com.horizon.dto;
 
+import com.horizon.domain.Booking;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class BookingDto {
     private Integer adult;
     private Integer child;
     private Integer baby;
-    private String status;
+    private Booking.Status status;
     private String note;
     private Double totalPrice;
     private Integer promotionId;

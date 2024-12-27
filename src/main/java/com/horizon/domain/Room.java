@@ -1,12 +1,7 @@
 package com.horizon.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +20,16 @@ public class Room {
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
     private String name;
-    private Integer status;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Discount Type must be null")
+    private Room.Status status;
     private Integer floor;
     private Double price;
     private String description;
     private Boolean isActivated;
+
+    public enum Status {
+        AVAILABLE, OCCUPIED, RESERVED, MAINTENANCE;
+    }
 }
