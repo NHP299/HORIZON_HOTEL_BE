@@ -15,11 +15,16 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
 
     Optional<RoomType> findByName(String name);
 
-    @Query(value = "SELECT rt.id, rt.name, STRING_AGG(m.path, ', ') AS paths " +
-            "FROM room_type rt " +
-            "LEFT JOIN media m ON rt.id = m.room_type_id " +
-            "GROUP BY rt.id, rt.name",
-            nativeQuery = true)
+    @Query(value = """
+        SELECT rt.id AS id, 
+               rt.name AS name, 
+               rt.description AS description, 
+               rt.capacity AS capacity, 
+               STRING_AGG(m.path, ', ') AS paths
+        FROM room_type rt
+        LEFT JOIN media m ON rt.id = m.room_type_id
+        GROUP BY rt.id, rt.name, rt.description, rt.capacity
+        """, nativeQuery = true)
     List<Map<String, Object>> findRoomTypeMedia();
 
 }

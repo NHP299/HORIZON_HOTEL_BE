@@ -5,16 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.horizon.domain.Room;
-
-import javax.swing.text.html.Option;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
@@ -43,46 +39,71 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<Room> findAvailableRoomsInDateRange(@Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    @Query(value = "SELECT " +
-            "r.id , " +
-            "r.name , " +
-            "r.status , " +
-            "r.floor , " +
-            "r.price , " +
-            "r.description , " +
-            "STRING_AGG(DISTINCT s.description, ', ') AS services, " +
-            "STRING_AGG(DISTINCT u.name, ', ') AS utilities, " +
-            "STRING_AGG(DISTINCT m.path, ', ') AS paths " +
-            "FROM room r " +
-            "LEFT JOIN room_type rt ON r.room_type_id = rt.id " +
-            "LEFT JOIN services s ON rt.id = s.room_type_id " +
-            "LEFT JOIN utilities u ON rt.id = u.room_type_id " +
-            "LEFT JOIN media m ON rt.id = m.room_type_id " +
-            "WHERE r.is_activated = true " +
-            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description", nativeQuery = true)
+    @Query(value = """
+        SELECT
+            r.id,
+            r.name,
+            r.status,
+            r.floor,
+            r.price,
+            r.description,
+            rt.capacity,
+            STRING_AGG(DISTINCT s.name, ', ') AS services,
+            STRING_AGG(DISTINCT u.name, ', ') AS utilities,
+            STRING_AGG(DISTINCT m.path, ', ') AS paths
+        FROM
+            room r
+        LEFT JOIN
+            room_type rt ON r.room_type_id = rt.id
+        LEFT JOIN
+            room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
+        LEFT JOIN
+            services s ON rts.service_id = s.id AND s.is_activated = true
+        LEFT JOIN
+            room_type_utilities rtu ON rt.id = rtu.room_type_id AND rtu.is_activated = true
+        LEFT JOIN
+            utilities u ON rtu.utility_id = u.id AND u.is_activated = true
+        LEFT JOIN
+            media m ON rt.id = m.room_type_id
+        WHERE
+            r.is_activated = true
+        GROUP BY
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+        """, nativeQuery = true)
     List<Map<String, Object>> getRoomDetail();
 
-    @Query(value = "SELECT " +
-            "r.id, " +
-            "r.name, " +
-            "r.status, " +
-            "r.floor, " +
-            "r.price, " +
-            "r.description, " +
-            "rt.capacity, " +
-            "STRING_AGG(DISTINCT s.description, ', ') AS services, " +
-            "STRING_AGG(DISTINCT u.name, ', ') AS utilities, " +
-            "STRING_AGG(DISTINCT m.path, ', ') AS paths " +
-            "FROM room r " +
-            "LEFT JOIN room_type rt ON r.room_type_id = rt.id " +
-            "LEFT JOIN services s ON rt.id = s.room_type_id " +
-            "LEFT JOIN utilities u ON rt.id = u.room_type_id " +
-            "LEFT JOIN media m ON rt.id = m.room_type_id " +
-            "WHERE r.is_activated = true AND r.id = :id " +
-            "GROUP BY r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity",
-            nativeQuery = true)
+    @Query(value = """
+        SELECT
+            r.id,
+            r.name,
+            r.status,
+            r.floor,
+            r.price,
+            r.description,
+            rt.capacity,
+            STRING_AGG(DISTINCT s.name, ', ') AS services,
+            STRING_AGG(DISTINCT u.name, ', ') AS utilities,
+            STRING_AGG(DISTINCT m.path, ', ') AS paths
+        FROM
+            room r
+        LEFT JOIN
+            room_type rt ON r.room_type_id = rt.id
+        LEFT JOIN
+            room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
+        LEFT JOIN
+            services s ON rts.service_id = s.id AND s.is_activated = true
+        LEFT JOIN
+            room_type_utilities rtu ON rt.id = rtu.room_type_id AND rtu.is_activated = true
+        LEFT JOIN
+            utilities u ON rtu.utility_id = u.id AND u.is_activated = true
+        LEFT JOIN
+            media m ON rt.id = m.room_type_id
+        WHERE
+            r.is_activated = true AND r.id =:id
+        GROUP BY
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+        """, nativeQuery = true)
     Map<String, Object> getRoomDetailById(@Param("id") Integer id);
-
 
 
     @Query("SELECT r FROM Room r JOIN r.roomType rt WHERE rt.capacity >= :numberOfPeople")

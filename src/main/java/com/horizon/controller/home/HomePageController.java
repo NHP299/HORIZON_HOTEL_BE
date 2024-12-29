@@ -1,4 +1,4 @@
-package com.horizon.controller.admin;
+package com.horizon.controller.home;
 
 import com.horizon.dto.RoomDto;
 import com.horizon.service.RoomService;
@@ -15,7 +15,7 @@ import java.util.Map;
 @AllArgsConstructor
 @RestController
 @CrossOrigin
-@RequestMapping("/home")
+@RequestMapping("${spring.application.api-prefix-home}/home")
 public class HomePageController {
     private RoomTypeService roomTypeService;
     private RoomService roomService;
