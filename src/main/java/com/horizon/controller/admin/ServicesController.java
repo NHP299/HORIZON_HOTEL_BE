@@ -21,7 +21,7 @@ public class ServicesController {
     public ResponseObject<?> create(@RequestBody ServicesDto servicesDto) {
         try {
             ServicesDto saveServices = servicesService.create(servicesDto);
-            return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveServices);
+            return new ResponseObject<>(HttpStatus.OK, "Success", saveServices);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
@@ -31,7 +31,7 @@ public class ServicesController {
     public ResponseObject<?> update(@PathVariable("id") Integer servicesId, @RequestBody ServicesDto updateServices) {
         try{
             ServicesDto servicesDto = servicesService.update(servicesId, updateServices);
-            return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", servicesDto);
+            return new ResponseObject<>(HttpStatus.OK, "Success", servicesDto);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
@@ -41,7 +41,7 @@ public class ServicesController {
     public ResponseObject<?> delete(@PathVariable("id") Integer servicesId) {
         try{
             servicesService.delete(servicesId);
-            return new ResponseObject<>(HttpStatus.OK,"Deleted successfully", null);
+            return new ResponseObject<>(HttpStatus.OK,"Success", null);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
@@ -82,7 +82,7 @@ public class ServicesController {
     public ResponseObject<?> updateServicesForRoomType(@RequestParam Integer roomTypeId, @RequestParam String listServices) {
         try {
             rtServicesService.updateServicesForRoomType(roomTypeId, listServices);
-            return new ResponseObject<>(HttpStatus.OK,"Services updated success", null);
+            return new ResponseObject<>(HttpStatus.OK,"Success", null);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
