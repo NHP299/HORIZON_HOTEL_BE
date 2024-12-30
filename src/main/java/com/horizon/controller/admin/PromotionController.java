@@ -18,7 +18,7 @@ public class PromotionController {
     public ResponseObject<?> create(@RequestBody PromotionDto promotionDto) {
         try {
             PromotionDto savePromotion = promotionService.create(promotionDto);
-            return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", savePromotion);
+            return new ResponseObject<>(HttpStatus.OK, "Success", savePromotion);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
@@ -28,7 +28,7 @@ public class PromotionController {
     public ResponseObject<?> update(@PathVariable("id") Integer promotionId, @RequestBody PromotionDto updatePromotionDto) {
         try {
             PromotionDto promotionDto = promotionService.update(promotionId, updatePromotionDto);
-            return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", promotionDto);
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionDto);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
@@ -38,7 +38,7 @@ public class PromotionController {
     public ResponseObject<?> delete(@PathVariable("id") Integer promotionId) {
         try {
             promotionService.delete(promotionId);
-            return new ResponseObject<>(HttpStatus.OK, "Deleted successfully!", null);
+            return new ResponseObject<>(HttpStatus.OK, "Success", null);
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
