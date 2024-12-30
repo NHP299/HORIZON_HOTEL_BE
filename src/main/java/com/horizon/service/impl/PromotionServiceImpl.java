@@ -81,9 +81,9 @@ public class PromotionServiceImpl implements PromotionService {
             Promotion promotion = promotionRepository.findById(promotionId)
                     .orElseThrow(() -> new IllegalArgumentException("Promotion with ID " + promotionId + " not found."));
             if ("PERCENTAGE".equalsIgnoreCase(promotion.getDiscountType().name())) {
-                discount = totalPrice * promotion.getDiscountValue().doubleValue();
+                discount = totalPrice * promotion.getDiscountValue();
             } else if ("FIXED".equalsIgnoreCase(promotion.getDiscountType().name())) {
-                discount = promotion.getDiscountValue().doubleValue();
+                discount = promotion.getDiscountValue();
             }
             totalPrice -= discount;
         }
