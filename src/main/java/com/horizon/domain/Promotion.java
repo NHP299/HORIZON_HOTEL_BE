@@ -31,7 +31,7 @@ public class Promotion {
     private DiscountType discountType;
 
     @NotNull(message = "Discount Value must be null")
-    @Digits(integer = 10, fraction = 2)
+    @Positive(message = "Discount value must be greater than 0")
     private Double discountValue;
 
     @NotNull(message = "Start date must be null")
