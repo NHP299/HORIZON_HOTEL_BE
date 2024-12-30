@@ -1,12 +1,11 @@
 package com.horizon.controller.home;
 
-import com.horizon.dto.PromotionDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @AllArgsConstructor
 @RestController("homeController")
@@ -16,20 +15,30 @@ public class PromotionController {
     private PromotionService promotionService;
 
     @GetMapping("available-by-id/{id}")
-    public ResponseEntity<PromotionDto> getAvailableById(@PathVariable("id") Integer promotionId) {
-        PromotionDto promotionDto = promotionService.getAvailableById(promotionId);
-        return ResponseEntity.ok(promotionDto);
+    public ResponseObject<?> getAvailableById(@PathVariable("id") Integer promotionId) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAvailableById(promotionId));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
-    @GetMapping("/all-available-{id}")
-    public ResponseEntity<List<PromotionDto>> getAllAvailable(@PathVariable("id")Integer roomTypeId) {
-        List<PromotionDto> promotionDto = promotionService.getAllAvailable(roomTypeId);
-        return ResponseEntity.ok(promotionDto);
+    @GetMapping("/all-available-and-roomType/{id}")
+    public ResponseObject<?> getAllAvailable(@PathVariable("id")Integer roomTypeId) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAllAvailable(roomTypeId));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @PostMapping("apply/{id}")
-    public ResponseEntity<Double> apply(@PathVariable("id") Integer promotionId, @RequestParam Double totalPrice) {
-        Double discountedPrice = promotionService.apply(promotionId, totalPrice);
-        return ResponseEntity.ok(discountedPrice);
+    public ResponseObject<?> apply(@PathVariable("id") Integer promotionId, @RequestParam Double totalPrice) {
+        try {
+            Double discountedPrice = promotionService.apply(promotionId, totalPrice);
+            return new ResponseObject<>(HttpStatus.OK, "Success", discountedPrice);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 }

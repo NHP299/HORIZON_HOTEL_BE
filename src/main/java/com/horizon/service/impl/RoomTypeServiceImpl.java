@@ -65,4 +65,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         return roomTypeRepository.findRoomTypeMedia();
     }
 
+    @Override
+    public List<Map<String, Object>> getAllDetail() {
+        return roomTypeRepository.findAllRoomTypeService();
+    }
+
 }

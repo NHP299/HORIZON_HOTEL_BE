@@ -27,4 +27,25 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
         """, nativeQuery = true)
     List<Map<String, Object>> findRoomTypeMedia();
 
+    @Query(value = """
+            SELECT 
+                rt.id, 
+                rt.name, 
+                rt.description, 
+                rt.capacity, 
+                STRING_AGG(DISTINCT s.name, ', ') AS services, 
+                STRING_AGG(DISTINCT u.name, ', ') AS utilities 
+            FROM room_type rt 
+            LEFT JOIN room_type_services rts 
+                ON rt.id = rts.room_type_id AND rts.is_activated = true 
+            LEFT JOIN services s 
+                ON rts.service_id = s.id AND s.is_activated = true 
+            LEFT JOIN room_type_utilities rtu 
+                ON rt.id = rtu.room_type_id AND rtu.is_activated = true 
+            LEFT JOIN utilities u 
+                ON rtu.utility_id = u.id AND u.is_activated = true 
+            GROUP BY 
+                rt.id, rt.name, rt.description, rt.capacity
+    """, nativeQuery = true)
+    List<Map<String, Object>> findAllRoomTypeService();
 }

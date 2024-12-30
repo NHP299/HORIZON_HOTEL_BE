@@ -6,10 +6,7 @@ import com.horizon.service.RoomTypeUtilitiesService;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -21,60 +18,90 @@ public class UtilitiesController {
 
     @PostMapping
     public ResponseObject<?> create(@RequestBody UtilitiesDto utilitiesDto) {
-        UtilitiesDto saveUtilities = utilitiesService.create(utilitiesDto);
-        return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveUtilities);
+        try {
+            UtilitiesDto saveUtilities = utilitiesService.create(utilitiesDto);
+            return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", saveUtilities);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @PutMapping("{id}")
     public ResponseObject<?> update(@PathVariable("id") Integer utilitiesId, @RequestBody UtilitiesDto updateUtilities) {
-        UtilitiesDto utilitiesDto = utilitiesService.update(utilitiesId, updateUtilities);
-        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", utilitiesDto);
+        try {
+            UtilitiesDto utilitiesDto = utilitiesService.update(utilitiesId, updateUtilities);
+            return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", utilitiesDto);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
+
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer utilitiesId) {
-        utilitiesService.delete(utilitiesId);
-        return new ResponseEntity<>("Deleted utilities successfully",HttpStatus.OK);
+    public ResponseObject<?> delete(@PathVariable("id") Integer utilitiesId) {
+        try {
+            utilitiesService.delete(utilitiesId);
+            return new ResponseObject<>(HttpStatus.OK,"Deleted successfully!", null);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UtilitiesDto> getById(@PathVariable("id") Integer utilitiesId) {
-        UtilitiesDto utilitiesDto = utilitiesService.getById(utilitiesId);
-        return ResponseEntity.ok(utilitiesDto);
+    public ResponseObject<?> getById(@PathVariable("id") Integer utilitiesId) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", utilitiesService.getById(utilitiesId));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("/by-name")
-    public ResponseEntity<List<UtilitiesDto>> getByName(@RequestParam String name) {
-        List<UtilitiesDto> listUtilities = utilitiesService.getByName(name);
-        return ResponseEntity.ok(listUtilities);
+    public ResponseObject<?> getByName(@RequestParam String name) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", utilitiesService.getByName(name));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UtilitiesDto>> getAll() {
-        List<UtilitiesDto> listUtilities = utilitiesService.getAll();
-        return ResponseEntity.ok(listUtilities);
+    public ResponseObject<?> getAll() {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", utilitiesService.getAll());
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
 
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateUtilitiesForRoomType(@RequestParam Integer roomTypeId, @RequestParam String listUtilities) {
+    public ResponseObject<?> updateUtilitiesForRoomType(@RequestParam Integer roomTypeId, @RequestParam String listUtilities) {
         try {
             rtUtilitiesService.updateUtilitiesForRoomType(roomTypeId, listUtilities);
-            return ResponseEntity.ok("Utilities updated successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            return new ResponseObject<>(HttpStatus.OK,"Utilities updated success", null);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
     @GetMapping("/getAllRTU")
-    public List<Map<String, Object>> getAllRoomTypeUtility() {
-        return rtUtilitiesService.getAll();
+    public ResponseObject<?> getAllRoomTypeUtility() {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", rtUtilitiesService.getAll());
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("/by-rtId/{id}")
-    public Map<String, Object> getByRoomTypeId(@PathVariable("id") Integer roomTypeId) {
-        return rtUtilitiesService.getByRoomTypeId(roomTypeId);
+    public ResponseObject<?> getByRoomTypeId(@PathVariable("id") Integer roomTypeId) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", rtUtilitiesService.getByRoomTypeId(roomTypeId));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
 }

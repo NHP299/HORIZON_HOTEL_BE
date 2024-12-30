@@ -46,6 +46,7 @@ public class ServicesServiceImpl implements ServicesService {
                 .map(existingServices -> {
                     existingServices = servicesMapper.mapToService(servicesDto);
                     existingServices.setId(serviceId);
+                    existingServices.setIsActivated(true);
                     return servicesRepository.save(existingServices);
                 }).orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
         return servicesMapper.mapToServicesDto(updatedServices);

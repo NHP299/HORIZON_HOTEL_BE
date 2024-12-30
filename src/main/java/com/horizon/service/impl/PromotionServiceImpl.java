@@ -31,6 +31,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .map(existingPromotion -> {
                     existingPromotion = promotionMapper.toPromotion(promotionDto);
                     existingPromotion.setId(promotionId);
+                    existingPromotion.setIsActivated(true);
                     return promotionRepository.save(existingPromotion);
                 }).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
         return promotionMapper.toPromotionDto(updatedPromotion);
@@ -63,7 +64,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public PromotionDto getAvailableById(Integer promotionId) {
-        Promotion promotion = promotionRepository.findAvailableById(promotionId);
+        Promotion promotion = promotionRepository.findAvailableById(promotionId).orElseThrow(() -> new ResourceNotFoundException("Promotion not found" + promotionId));
         return promotionMapper.toPromotionDto(promotion);
     }
 

@@ -16,7 +16,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     List<Promotion> findAllByIsActivatedTrue();
 
     @Query("SELECT p FROM Promotion p WHERE p.isActivated = true AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE AND p.id = :promotionId")
-    Promotion findAvailableById(@Param("promotionId") Integer promotionId);
+    Optional<Promotion> findAvailableById(@Param("promotionId") Integer promotionId);
 
     @Query("SELECT p FROM Promotion p WHERE p.isActivated = true AND p.startDate <= CURRENT_DATE AND p.endDate >= CURRENT_DATE AND (p.roomType.id = :roomTypeId OR p.roomType IS NULL)")
     List<Promotion> findAllAvailable(@Param("roomTypeId") Integer roomTypeId);

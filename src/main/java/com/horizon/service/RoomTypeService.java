@@ -16,5 +16,6 @@ public interface RoomTypeService {
 
     List<RoomTypeDto> getAll();
     List<Map<String, Object>> getRoomTypeMedia();
+    List<Map<String, Object>> getAllDetail();
 
 }

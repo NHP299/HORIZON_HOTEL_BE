@@ -5,10 +5,7 @@ import com.horizon.response.ResponseObject;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @AllArgsConstructor
 @RestController("adminController")
@@ -19,38 +16,59 @@ public class PromotionController {
 
     @PostMapping
     public ResponseObject<?> create(@RequestBody PromotionDto promotionDto) {
-        PromotionDto savePromotion = promotionService.create(promotionDto);
-        return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", savePromotion);
+        try {
+            PromotionDto savePromotion = promotionService.create(promotionDto);
+            return new ResponseObject<>(HttpStatus.CREATED, "Added successfully!", savePromotion);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @PutMapping("{id}")
     public ResponseObject<?> update(@PathVariable("id") Integer promotionId, @RequestBody PromotionDto updatePromotionDto) {
-        PromotionDto promotionDto = promotionService.update(promotionId, updatePromotionDto);
-        return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", promotionDto);
+        try {
+            PromotionDto promotionDto = promotionService.update(promotionId, updatePromotionDto);
+            return new ResponseObject<>(HttpStatus.OK, "Updated successfully!", promotionDto);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer promotionId) {
-        promotionService.delete(promotionId);
-        return new ResponseEntity<>("Promotion deleted successfully",HttpStatus.OK);
+    public ResponseObject<?> delete(@PathVariable("id") Integer promotionId) {
+        try {
+            promotionService.delete(promotionId);
+            return new ResponseObject<>(HttpStatus.OK, "Deleted successfully!", null);
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PromotionDto> getById(@PathVariable("id") Integer promotionId) {
-        PromotionDto promotionDto = promotionService.getById(promotionId);
-        return ResponseEntity.ok(promotionDto);
+    public ResponseObject<?> getById(@PathVariable("id") Integer promotionId) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getById(promotionId));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("/by-name")
-    public ResponseEntity<List<PromotionDto>> getByName(@RequestParam String name ) {
-        List<PromotionDto> promotionDto = promotionService.getByName(name);
-        return ResponseEntity.ok(promotionDto);
+    public ResponseObject<?> getByName(@RequestParam String name ) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getByName(name));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PromotionDto>> getAll() {
-        List<PromotionDto> promotionDto = promotionService.getAll();
-        return ResponseEntity.ok(promotionDto);
+    public ResponseObject<?> getAll() {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAll());
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
 }

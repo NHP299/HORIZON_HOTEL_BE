@@ -36,16 +36,6 @@ public class RoomTypeServicesServiceImpl implements RoomTypeServicesService {
         }
     }
 
-    @Override
-    public List<Map<String, Object>> getAll() {
-        return rtServicesRepository.findRoomTypeService();
-    }
-
-    @Override
-    public Map<String, Object> getByRoomTypeId(Integer roomTypeId) {
-        return rtServicesRepository.findByRoomTypeId(roomTypeId);
-    }
-
     private Set<Integer> parseServiceIds(String listServices) {
         return Arrays.stream(listServices.split(","))
                 .map(Integer::parseInt)
@@ -69,6 +59,16 @@ public class RoomTypeServicesServiceImpl implements RoomTypeServicesService {
             roomTypeService.setIsActivated(true);
             rtServicesRepository.save(roomTypeService);
         }
+    }
+
+    @Override
+    public List<Map<String, Object>> getAll() {
+        return rtServicesRepository.findRoomTypeService();
+    }
+
+    @Override
+    public Map<String, Object> getByRoomTypeId(Integer roomTypeId) {
+        return rtServicesRepository.findByRoomTypeId(roomTypeId);
     }
 
 }

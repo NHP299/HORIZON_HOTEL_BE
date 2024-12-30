@@ -35,17 +35,6 @@ public class RoomTypeUtilitiesServiceImpl implements RoomTypeUtilitiesService {
         }
     }
 
-    @Override
-    public List<Map<String, Object>> getAll() {
-        return rtUtilitiesRepository.findRoomTypeUtilities();
-    }
-
-    @Override
-    public Map<String, Object> getByRoomTypeId(Integer roomTypeId) {
-        return rtUtilitiesRepository.findByRoomTypeId(roomTypeId);
-    }
-
-
     private Set<Integer> parseUtilityIds(String listUtilities) {
         return Arrays.stream(listUtilities.split(","))
                 .map(Integer::parseInt)
@@ -69,5 +58,15 @@ public class RoomTypeUtilitiesServiceImpl implements RoomTypeUtilitiesService {
             roomTypeUtilities.setIsActivated(true);
             rtUtilitiesRepository.save(roomTypeUtilities);
         }
+    }
+
+    @Override
+    public List<Map<String, Object>> getAll() {
+        return rtUtilitiesRepository.findRoomTypeUtilities();
+    }
+
+    @Override
+    public Map<String, Object> getByRoomTypeId(Integer roomTypeId) {
+        return rtUtilitiesRepository.findByRoomTypeId(roomTypeId);
     }
 }
