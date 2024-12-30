@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -31,10 +30,9 @@ public class Promotion {
     @NotNull(message = "Discount Type must be null")
     private DiscountType discountType;
 
-    @Column(precision = 10, scale = 2)
     @NotNull(message = "Discount Value must be null")
-    @DecimalMin(value = "0.01", message = "Discount value must be at least 0.01")
-    private BigDecimal discountValue;
+    @Digits(integer = 10, fraction = 2)
+    private Double discountValue;
 
     @NotNull(message = "Start date must be null")
     private LocalDate startDate;

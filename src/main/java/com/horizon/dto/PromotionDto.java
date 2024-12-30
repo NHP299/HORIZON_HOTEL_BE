@@ -26,9 +26,9 @@ public class PromotionDto {
     @NotNull(message = "Discount Type must be null")
     private Promotion.DiscountType discountType;
 
-    @DecimalMin(value = "0.01", message = "Discount value must be at least 0.01")
     @NotNull(message = "Discount Value must be null")
-    private BigDecimal discountValue;
+    @Digits(integer = 10, fraction = 2)
+    private Double discountValue;
 
     @NotNull(message = "Start date must be null")
     private LocalDate startDate;
