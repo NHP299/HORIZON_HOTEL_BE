@@ -29,7 +29,7 @@ public class PaymentMapperImpl implements PaymentMapper {
         dto.setBookingId(payment.getBooking().getId());
         dto.setTransactionId(payment.getTransactionId());
         dto.setAmount(payment.getAmount());
-        dto.setStatus(PaymentStatus.fromCode(payment.getStatus()).getDescription());
+        dto.setStatus(payment.getStatus() != null ? payment.getStatus() : null);
         dto.setPaymentTime(payment.getPaymentTime() != null ? toTimeString(payment.getPaymentTime()) : null);
         dto.setCreatedTime(payment.getCreatedTime() != null ? toTimeString(payment.getCreatedTime()) : null);
         dto.setExpiredTime(payment.getExpiredTime() != null ? toTimeString(payment.getExpiredTime()) : null);
@@ -52,7 +52,7 @@ public class PaymentMapperImpl implements PaymentMapper {
         payment.setBooking(bookingRepository.findById(paymentTransactionDto.getBookingId()).orElse(null));
         payment.setTransactionId(paymentTransactionDto.getTransactionId());
         payment.setAmount(paymentTransactionDto.getAmount());
-        payment.setStatus(PaymentStatus.fromDescription(paymentTransactionDto.getStatus()).getCode());
+        payment.setStatus(paymentTransactionDto.getStatus() != null ? paymentTransactionDto.getStatus() : null);
         payment.setPaymentTime(paymentTransactionDto.getPaymentTime() != null ? toTimestamp(paymentTransactionDto.getPaymentTime()) : null);
         payment.setCreatedTime(paymentTransactionDto.getCreatedTime() != null ? toTimestamp(paymentTransactionDto.getCreatedTime()) : null);
         payment.setExpiredTime(paymentTransactionDto.getExpiredTime() != null ? toTimestamp(paymentTransactionDto.getExpiredTime()) : null);

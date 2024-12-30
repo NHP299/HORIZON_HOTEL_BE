@@ -27,7 +27,7 @@ public class BookingMapperImpl implements BookingMapper {
         dto.setAdult(booking.getAdult());
         dto.setChild(booking.getChild());
         dto.setBaby(booking.getBaby());
-        dto.setStatus(BookingStatus.fromCode(booking.getStatus()).getDescription());
+        dto.setStatus(booking.getStatus() != null ? booking.getStatus() : null);
         dto.setNote(booking.getNote());
         dto.setTotalPrice(booking.getTotalPrice() != null ? booking.getTotalPrice() : null);
         dto.setPromotionId(booking.getPromotion() != null ? booking.getPromotion().getId() : null);
@@ -62,7 +62,7 @@ public class BookingMapperImpl implements BookingMapper {
         booking.setAdult(dto.getAdult());
         booking.setChild(dto.getChild());
         booking.setBaby(dto.getBaby());
-        booking.setStatus(BookingStatus.fromDescription(dto.getStatus()));
+        booking.setStatus(dto.getStatus() != null ? dto.getStatus() : null);
         booking.setNote(dto.getNote());
         booking.setTotalPrice(dto.getTotalPrice() != null ? dto.getTotalPrice() : null);
 
