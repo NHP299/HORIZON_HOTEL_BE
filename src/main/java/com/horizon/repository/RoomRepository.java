@@ -30,13 +30,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("SELECT r FROM Room r WHERE LOWER(r.roomType.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))")
     List<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName);
 
-    List<Room> findByStatusAndIsActivatedTrue(Integer status);
+    List<Room> findByStatusAndIsActivatedTrue(String status);
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN BookingDetail bd ON r.id = bd.room.id " +
             "LEFT JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE r.isActivated = true " +
-            "AND r.status = 0 " +
+            "AND r.status = 'AVAILABLE' " +
             "AND (b.id IS NULL " +
             "OR b.checkIn NOT BETWEEN :startDate AND :endDate " +
             "OR b.checkOut NOT BETWEEN :startDate AND :endDate)")
@@ -95,14 +95,14 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE (:roomTypeName IS NULL OR LOWER(rt.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))) 
           AND rt.capacity >= :avgGuestCount
           AND r.isActivated = true
-          AND r.status <> 3
+          AND r.status <> 'MAINTENANCE'
           AND r.id NOT IN (
               SELECT bd.room.id 
               FROM BookingDetail bd 
               JOIN bd.booking b 
               WHERE b.checkIn < :checkOutDate 
                 AND b.checkOut > :checkInDate
-                AND b.status <> 3
+                AND b.status <> 'CANCELLED'
           )
     """)
     List<Room> searchAvailableRooms(

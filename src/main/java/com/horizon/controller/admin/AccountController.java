@@ -14,10 +14,10 @@ import java.util.List;
 
 
 
-@RestController
+@RestController("AdminAccountController")
 @AllArgsConstructor
 @CrossOrigin
-@RequestMapping("/admin/accounts")
+@RequestMapping("${spring.application.api-prefix-admin}/accounts")
 public class AccountController {
 
     private final AccountService accountService;

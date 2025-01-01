@@ -12,7 +12,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface PaymentService {
-    PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request);
+    PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request, Double bookingPrice);
+
+    Payment createCashPayment(Booking booking);
 
     Payment create(String url, Booking booking) throws UnsupportedEncodingException;
 

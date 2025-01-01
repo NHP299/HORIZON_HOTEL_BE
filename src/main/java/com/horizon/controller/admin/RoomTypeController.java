@@ -11,44 +11,38 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("AdminRoomTypeController")
 @AllArgsConstructor
 @NoArgsConstructor
 @CrossOrigin
-@RequestMapping("/admin/room-type")
+@RequestMapping("${spring.application.api-prefix-admin}/room-type")
 public class RoomTypeController {
-    @Autowired
     private RoomTypeService roomTypeService;
 
-    //Add room type
     @PostMapping
     public ResponseEntity<RoomTypeDto> createRoomType(@RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto saveRoomType = roomTypeService.createRoomType(roomTypeDto);
         return new ResponseEntity<>(saveRoomType, HttpStatus.CREATED);
     }
 
-    //Get room type by id
     @GetMapping("/{id}")
     public ResponseEntity<RoomTypeDto> getRoomTypeById(@PathVariable("id") Integer id) {
         RoomTypeDto roomTypeDto = roomTypeService.getRoomTypeById(id);
         return ResponseEntity.ok(roomTypeDto);
     }
 
-    //Get all room type
     @GetMapping
     public ResponseEntity<List<RoomTypeDto>> getAllRoomType() {
         List<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType();
         return ResponseEntity.ok(roomTypeDtos);
     }
 
-    //Update room type
     @PutMapping("/{id}")
     public ResponseEntity<RoomTypeDto> updateRoomType(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto updateRoomType = roomTypeService.updateRoom(roomTypeId, roomTypeDto);
         return ResponseEntity.ok(updateRoomType);
     }
 
-    //Delete room type
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRoomType(@PathVariable("id") Integer roomTypeId) {
         roomTypeService.deleteRoomType(roomTypeId);

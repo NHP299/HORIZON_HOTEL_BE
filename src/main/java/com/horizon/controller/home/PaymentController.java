@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-@RestController
+@RestController("HomePaymentController")
 @RequestMapping("${spring.application.api-prefix-home}/payment")
 @CrossOrigin
 @RequiredArgsConstructor
@@ -25,11 +25,25 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;
 
+    @PostMapping("/cash")
+    public ResponseObject<?> payCash(@RequestBody BookingDto bookingDto) {
+        try {
+            BookingDto booking = bookingService.create(null, bookingDto, null);
+            return new ResponseObject<>(HttpStatus.OK, "Success", booking);
+        } catch (Exception e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+        }
+    }
+
     @PostMapping("/vn-pay")
     public ResponseObject<PaymentDTO.VNPayResponse> pay(HttpServletRequest request,@RequestBody BookingDto bookingDto) throws UnsupportedEncodingException {
-        PaymentDTO.VNPayResponse response = paymentService.createVnPayPayment(request);
-        bookingService.create(request, bookingDto, response.paymentUrl);
-        return new ResponseObject<>(HttpStatus.OK, "Success", response);
+        try {
+            PaymentDTO.VNPayResponse response = paymentService.createVnPayPayment(request, bookingDto.getTotalPrice());
+            bookingService.create(request, bookingDto, response.paymentUrl);
+            return new ResponseObject<>(HttpStatus.OK, "Success", response);
+        }catch (Exception e){
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+        }
     }
 
     @GetMapping("/vn-pay-callback")
@@ -47,8 +61,4 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<PaymentTransactionDto>> getAll() {
-        return ResponseEntity.ok(paymentService.getAll());
-    }
 }

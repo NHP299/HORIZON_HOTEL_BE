@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@RestController
+@RestController("AdminBookingController")
 @CrossOrigin
-@RequestMapping("/admin/bookings")
+@RequestMapping("${spring.application.api-prefix-admin}/bookings")
 public class BookingController {
 
     private BookingService bookingService;

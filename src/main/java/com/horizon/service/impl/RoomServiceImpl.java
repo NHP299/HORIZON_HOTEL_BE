@@ -2,7 +2,6 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.BookingDetail;
 import com.horizon.domain.Room;
-import com.horizon.domain.status.RoomStatus;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.RoomMapper;
@@ -47,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDto create(RoomDto roomDto) {
         Room room = roomMapper.toRoom(roomDto);
-        room.setStatus(1);
+        room.setStatus(Room.Status.AVAILABLE);
         room.setIsActivated(true);
         Room saveRoom = roomRepository.save(room);
         return roomMapper.toRoomDto(saveRoom);
@@ -97,7 +96,7 @@ public class RoomServiceImpl implements RoomService {
     public void delete(Integer roomId) {
         Room deletedRoom = roomRepository.findByIsActivatedTrueAndId(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
-        deletedRoom.setStatus(3);
+        deletedRoom.setStatus(Room.Status.MAINTENANCE);
         deletedRoom.setIsActivated(false);
         roomRepository.save(deletedRoom);
     }
@@ -110,14 +109,13 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomDto> getByStatus(String statusDescription) {
-        Integer statusCode = RoomStatus.fromDescription(statusDescription);
-        return roomRepository.findByStatusAndIsActivatedTrue(statusCode)
+        return roomRepository.findByStatusAndIsActivatedTrue(statusDescription)
                 .stream().map(roomMapper::toRoomDto).toList();
     }
 
     @Override
     public List<RoomDto> getIsAvailable() {
-        return roomRepository.findByStatusAndIsActivatedTrue(0)
+        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE.name())
                 .stream().map(roomMapper::toRoomDto).toList();
     }
 
@@ -159,11 +157,11 @@ public class RoomServiceImpl implements RoomService {
             List<BookingDetail> occupiedBookingDetails = bookingDetailRepository.findBookingDetailOccupied(room.getId(), currentDate);
 
             if (!reservedBookingDetails.isEmpty()) {
-                room.setStatus(2);
+                room.setStatus(Room.Status.RESERVED);
             } else if (!occupiedBookingDetails.isEmpty()) {
-                room.setStatus(1);
+                room.setStatus(Room.Status.OCCUPIED);
             } else {
-                room.setStatus(0);
+                room.setStatus(Room.Status.AVAILABLE);
             }
         });
 

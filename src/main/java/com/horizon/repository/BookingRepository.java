@@ -17,11 +17,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Optional<Booking> findByPaymentId(Integer paymentId);
 
-    List<Booking> findAllByStatusAndCheckOutBefore(Integer status, LocalDate date);
+    List<Booking> findAllByStatusAndCheckOutBefore(String status, LocalDate date);
 
     @Query("SELECT b FROM Booking b " +
             "JOIN b.payment p " +
-            "WHERE b.status = 1 " +
-            "AND p.status = 3 ")
+            "WHERE b.status = 'PENDING' " +
+            "AND p.status = 'FAILED' ")
     List<Booking> findBookingByPaymentStatusFailed();
 }

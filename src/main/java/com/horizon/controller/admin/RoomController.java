@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @AllArgsConstructor
-@RestController
+@RestController("AdminRoomController")
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-admin}/rooms")
 @Validated
