@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -22,19 +23,32 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public ServicesDto create(ServicesDto servicesDto) {
-        Services services = servicesMapper.mapToService(servicesDto, null);
-        Services saveServices = servicesRepository.save(services);
-        return servicesMapper.mapToServicesDto(saveServices);
+        Optional<Services> existingService = servicesRepository.findByNameIgnoreCaseAndIsActivatedFalse(servicesDto.getName());
+
+        Services services;
+
+        if (existingService.isPresent()) {
+            services = servicesMapper.mapToService(servicesDto);
+            services.setId(existingService.get().getId());
+            services.setIsActivated(true);
+        } else {
+            services = servicesMapper.mapToService(servicesDto);
+            services.setIsActivated(true);
+        }
+
+        Services savedServices = servicesRepository.save(services);
+        return servicesMapper.mapToServicesDto(savedServices);
     }
 
     @Override
     public ServicesDto update(Integer serviceId, ServicesDto servicesDto) {
-        Services existingServices = servicesRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
-
-        Services updatedServices = servicesMapper.mapToService(servicesDto, existingServices);
-
-        updatedServices = servicesRepository.save(updatedServices);
+        Services updatedServices = servicesRepository.findById(serviceId)
+                .map(existingServices -> {
+                    existingServices = servicesMapper.mapToService(servicesDto);
+                    existingServices.setId(serviceId);
+                    existingServices.setIsActivated(true);
+                    return servicesRepository.save(existingServices);
+                }).orElseThrow(() -> new ResourceNotFoundException("Service not found " + serviceId));
         return servicesMapper.mapToServicesDto(updatedServices);
     }
 
@@ -44,7 +58,8 @@ public class ServicesServiceImpl implements ServicesService {
         Services services = servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found " + serviceId)
         );
-        servicesRepository.delete(services);
+        services.setIsActivated(false);
+        servicesRepository.save(services);
     }
 
     @Override
@@ -57,31 +72,13 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public List<ServicesDto> getAll() {
-        List<Services> servicesPage = servicesRepository.findAll();
+        List<Services> servicesPage = servicesRepository.findAllByIsActivatedTrue();
         return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 
     @Override
     public List<ServicesDto> getByName(String name) {
-        List<Services> servicesPage = servicesRepository.findByDescriptionContainingIgnoreCase(name);
-        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
-    }
-
-    @Override
-    public List<ServicesDto> getByRoomTypeName(String roomTypeName) {
-        List<Services> servicesPage = servicesRepository.findByRoomType_NameContainingIgnoreCase(roomTypeName);
-        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
-    }
-
-    @Override
-    public List<ServicesDto> getByRoomId(Integer roomId) {
-        List<Services> servicesPage = servicesRepository.findByRoomId(roomId);
-        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
-    }
-
-    @Override
-    public List<ServicesDto> getByRoomName(String roomName) {
-        List<Services> servicesPage = servicesRepository.findByRoomName(roomName);
+        List<Services> servicesPage = servicesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
         return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
     }
 

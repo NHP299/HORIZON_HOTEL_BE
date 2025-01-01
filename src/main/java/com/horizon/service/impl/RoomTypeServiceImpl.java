@@ -6,8 +6,6 @@ import com.horizon.mapper.RoomTypeMapper;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     //Create room type
     @Override
-    public RoomTypeDto createRoomType(RoomTypeDto roomTypeDto) {
+    public RoomTypeDto create(RoomTypeDto roomTypeDto) {
         RoomType roomType = roomTypeMapper.mapToRoomType(roomTypeDto);
         RoomType saveRoomType = roomTypeRepository.save(roomType);
         return roomTypeMapper.mapToRoomTypeDto(saveRoomType);
@@ -31,21 +29,15 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     //Get room type by id
     @Override
-    public RoomTypeDto getRoomTypeById(Integer id) {
-        RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new RuntimeException("Room type not found"));
+    public RoomTypeDto getById(Integer id) {
+        RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
         return roomTypeMapper.mapToRoomTypeDto(roomType);
     }
 
-    //Get all room type
-    @Override
-    public Page<RoomTypeDto> getAllRoomType(Pageable pageable) {
-        Page<RoomType> roomTypes = roomTypeRepository.findAll(pageable);
-        return roomTypes.map(roomTypeMapper::mapToRoomTypeDto);
-    }
 
     //Update room type
     @Override
-    public RoomTypeDto updateRoom(Integer roomId, RoomTypeDto roomTypeDto) {
+    public RoomTypeDto update(Integer roomId, RoomTypeDto roomTypeDto) {
         RoomType roomType = roomTypeRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
         roomType.setName(roomType.getName());
         roomType.setDescription(roomType.getDescription());
@@ -56,14 +48,14 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     //Delete room type
     @Override
-    public void deleteRoomType(Integer id) {
+    public void delete(Integer id) {
         RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
         roomTypeRepository.delete(roomType);
 
     }
 
     @Override
-    public List<RoomTypeDto> getAllRoomType() {
+    public List<RoomTypeDto> getAll() {
         List<RoomType> roomType = roomTypeRepository.findAll();
         return roomType.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
     }
@@ -71,6 +63,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     @Override
     public List<Map<String, Object>> getRoomTypeMedia() {
         return roomTypeRepository.findRoomTypeMedia();
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllDetail() {
+        return roomTypeRepository.findAllRoomTypeService();
     }
 
 }

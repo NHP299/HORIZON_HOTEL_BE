@@ -5,6 +5,6 @@ import com.horizon.dto.ServicesDto;
 
 public interface ServicesMapper {
     ServicesDto mapToServicesDto(Services services);
-    Services mapToService(ServicesDto servicesDto, Services existingServices);
+    Services mapToService(ServicesDto servicesDto);
 
 }

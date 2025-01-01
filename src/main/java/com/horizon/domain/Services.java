@@ -1,6 +1,7 @@
 package com.horizon.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,10 +18,18 @@ public class Services {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "room_type_id")
-    private RoomType roomType;
+    @NotBlank(message = "Name must not be blank")
+    @Size(max = 100, message = "Name must be less than 100 characters")
+    private String name;
+
+    @Size(max = 255, message = "Description must be less than 255 characters")
     private String description;
+
+    @NotNull(message = "Start time must not be null")
     private LocalDateTime startedTime;
+
+    @NotNull(message = "End time must not be null")
     private LocalDateTime endTime;
+
+    private Boolean isActivated;
 }
