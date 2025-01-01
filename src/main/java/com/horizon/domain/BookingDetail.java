@@ -16,14 +16,11 @@ public class BookingDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
-
     @ManyToOne
     @JoinColumn(name = "booking_id")
     private Booking booking;
-
     private Double priceAtBooking;
 }

@@ -24,6 +24,7 @@ public class Payment {
 
     private String transactionId;
     private Double amount;
+    @Enumerated(EnumType.STRING)
     private Payment.Status status;
     private Timestamp paymentTime;
     private Timestamp createdTime;

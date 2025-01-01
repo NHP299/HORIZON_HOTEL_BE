@@ -108,14 +108,14 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> getByStatus(String statusDescription) {
+    public List<RoomDto> getByStatus(Room.Status statusDescription) {
         return roomRepository.findByStatusAndIsActivatedTrue(statusDescription)
                 .stream().map(roomMapper::toRoomDto).toList();
     }
 
     @Override
     public List<RoomDto> getIsAvailable() {
-        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE.name())
+        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE)
                 .stream().map(roomMapper::toRoomDto).toList();
     }
 

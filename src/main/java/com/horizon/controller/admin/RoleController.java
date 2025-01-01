@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @AllArgsConstructor
-@RequestMapping("/admin/roles")
+@RequestMapping("${spring.application.api-prefix-admin}/roles")
 public class RoleController {
 
     private RoleService roleService;

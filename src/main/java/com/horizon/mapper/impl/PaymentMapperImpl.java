@@ -1,7 +1,6 @@
 package com.horizon.mapper.impl;
 
 import com.horizon.domain.Payment;
-import com.horizon.domain.status.PaymentStatus;
 import com.horizon.dto.PaymentTransactionDto;
 import com.horizon.mapper.PaymentMapper;
 import com.horizon.repository.BookingRepository;

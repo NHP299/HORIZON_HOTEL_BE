@@ -1,6 +1,7 @@
 package com.horizon.controller.admin;
 
 
+import com.horizon.domain.Room;
 import com.horizon.dto.RoomDto;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
@@ -81,7 +82,7 @@ public class RoomController {
 
     @GetMapping("/filter-by-status")
     public ResponseEntity<List<RoomDto>> getByStatus(
-            @RequestParam String status) {
+            @RequestParam Room.Status status) {
         List<RoomDto> rooms = roomService.getByStatus(status);
         return ResponseEntity.ok(rooms);
     }

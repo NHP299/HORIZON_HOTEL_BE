@@ -31,6 +31,7 @@ public class Booking {
     private Integer adult;
     private Integer child;
     private Integer baby;
+    @Enumerated(EnumType.STRING)
     private Booking.Status status;
     private String note;
     private Double totalPrice;

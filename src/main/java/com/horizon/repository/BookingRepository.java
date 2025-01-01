@@ -3,10 +3,8 @@ package com.horizon.repository;
 import com.horizon.domain.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +15,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Optional<Booking> findByPaymentId(Integer paymentId);
 
-    List<Booking> findAllByStatusAndCheckOutBefore(String status, LocalDate date);
+    List<Booking> findAllByStatusAndCheckOutBefore(Booking.Status status, LocalDate checkOut);
 
     @Query("SELECT b FROM Booking b " +
             "JOIN b.payment p " +
-            "WHERE b.status = 'PENDING' " +
-            "AND p.status = 'FAILED' ")
+            "WHERE b.status = com.horizon.domain.Booking.Status.PENDING " +
+            "AND p.status = com.horizon.domain.Payment.Status.FAILED ")
     List<Booking> findBookingByPaymentStatusFailed();
 }

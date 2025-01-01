@@ -18,7 +18,6 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-admin}/bookings")
 public class BookingController {
-
     private BookingService bookingService;
 
     @GetMapping("/all")

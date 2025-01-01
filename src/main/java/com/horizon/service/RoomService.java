@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.horizon.domain.Room;
 import com.horizon.dto.RoomDto;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -27,7 +28,7 @@ public interface RoomService {
 
     List<RoomDto> getByRoomTypeName(String roomTypeName);
 
-    List<RoomDto> getByStatus(String statusDescription);
+    List<RoomDto> getByStatus(Room.Status statusDescription);
 
     List<RoomDto> getIsAvailable();
 

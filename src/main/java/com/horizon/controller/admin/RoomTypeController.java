@@ -18,6 +18,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-admin}/room-type")
 public class RoomTypeController {
+    @Autowired
     private RoomTypeService roomTypeService;
 
     @PostMapping

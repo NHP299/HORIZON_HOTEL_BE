@@ -13,7 +13,7 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     Payment findByTransactionId(String transactionId);
 
-    @Query("SELECT p FROM Payment p WHERE p.expiredTime < :currentTime AND p.status = 'PENDING' ")
+    @Query("SELECT p FROM Payment p WHERE p.expiredTime < :currentTime AND p.status = com.horizon.domain.Payment.Status.PENDING ")
     List<Payment> findExpiredPayments(@Param("currentTime") Timestamp currentTime);
 
 }

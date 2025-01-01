@@ -1,13 +1,10 @@
 package com.horizon.mapper.impl;
 
 import com.horizon.domain.*;
-import com.horizon.domain.status.BookingStatus;
 import com.horizon.dto.BookingDto;
 import com.horizon.mapper.BookingMapper;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Service
 public class BookingMapperImpl implements BookingMapper {

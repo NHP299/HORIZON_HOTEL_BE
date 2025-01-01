@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,13 +27,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("SELECT r FROM Room r WHERE LOWER(r.roomType.name) LIKE LOWER(CONCAT('%', :roomTypeName, '%'))")
     List<Room> findByRoomTypeName(@Param("roomTypeName") String roomTypeName);
 
-    List<Room> findByStatusAndIsActivatedTrue(String status);
+    List<Room> findByStatusAndIsActivatedTrue(Room.Status status);
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN BookingDetail bd ON r.id = bd.room.id " +
             "LEFT JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE r.isActivated = true " +
-            "AND r.status = 'AVAILABLE' " +
+            "AND r.status = com.horizon.domain.Room.Status.AVAILABLE " +
             "AND (b.id IS NULL " +
             "OR b.checkIn NOT BETWEEN :startDate AND :endDate " +
             "OR b.checkOut NOT BETWEEN :startDate AND :endDate)")
@@ -123,7 +124,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
               JOIN bd.booking b 
               WHERE b.checkIn < :checkOutDate 
                 AND b.checkOut > :checkInDate
-                AND b.status <> 'CANCELLED'
+                AND b.status <> com.horizon.domain.Booking.Status.CANCELLED
           )
     """)
     List<Room> searchAvailableRooms(

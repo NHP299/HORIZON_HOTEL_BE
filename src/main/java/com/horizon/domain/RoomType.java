@@ -17,6 +17,8 @@ public class RoomType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private Integer capacity;
+    private Integer adultCapacity;
+    private Integer childCapacity;
+    private Integer babyCapacity;
     private String description;
 }

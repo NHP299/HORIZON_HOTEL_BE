@@ -2,13 +2,14 @@ package com.horizon.controller.home;
 
 
 import com.horizon.domain.Account;
+import com.horizon.dto.AccountDto;
+import com.horizon.dto.ChangePasswordRequest;
 import com.horizon.repository.AccountRepository;
 import com.horizon.response.ResponseObject;
 import com.horizon.service.AccountService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("HomeAccountController")
@@ -21,12 +22,9 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @PostMapping("/register")
-    public ResponseObject<?> register(@RequestParam String email,
-                                      @RequestParam String password,
-                                      @RequestParam String firstName,
-                                      @RequestParam String lastName) {
+    public ResponseObject<?> register(@RequestBody AccountDto accountDto) {
         try {
-            accountService.register(email, password, firstName, lastName);
+            accountService.register(accountDto.getEmail(), accountDto.getPassword(), accountDto.getFirstName(), accountDto.getLastName());
             return new ResponseObject<>(HttpStatus.OK, "Success", "User registered successfully!");
         } catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
@@ -34,11 +32,9 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseObject<?> login(@RequestParam String email,
-                                   @RequestParam String password,
-                                   HttpSession session) {
+    public ResponseObject<?> login(@RequestBody AccountDto accountDto, HttpSession session) {
         try {
-            String response = accountService.login(email, password, session);
+            String response = accountService.login(accountDto.getEmail(), accountDto.getPassword(), session);
             return new ResponseObject<>(HttpStatus.OK, "Success", response);
         } catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
@@ -57,18 +53,20 @@ public class AccountController {
 
     @PostMapping("/logout")
     public ResponseObject<?> logout(HttpSession session) {
-        accountService.logout(session);
-        return new ResponseObject<>(HttpStatus.OK, "Success", "Logged out successfully!");
+        try {
+            accountService.logout(session);
+            return new ResponseObject<>(HttpStatus.OK, "Success", "Logged out successfully!");
+        } catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
+
     }
 
     @PostMapping("/change-password")
-    public ResponseObject<?> changePassword(
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword,
-            HttpSession session) {
+    public ResponseObject<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest, HttpSession session) {
         try {
-            Boolean response = accountService.changePassword(oldPassword, newPassword, session);
-            return new ResponseObject<>(HttpStatus.OK, "Success", response);
+            accountService.changePassword(changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword(), session);
+            return new ResponseObject<>(HttpStatus.OK, "Success", "Changed password successfully");
         } catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

@@ -2,8 +2,10 @@ package com.horizon.controller.admin;
 
 import com.horizon.dto.AccountDto;
 import com.horizon.repository.AccountRepository;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.AccountService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
@@ -49,9 +51,13 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AccountDto>> getAll() {
-        List<AccountDto> accounts = accountService.getAll();
-        return ResponseEntity.ok(accounts);
+    public ResponseObject<?> getAll() {
+        try {
+            List<AccountDto> accounts = accountService.getAll();
+            return new ResponseObject<>(HttpStatus.OK, "Success", accounts);
+        } catch (Exception e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 
 }

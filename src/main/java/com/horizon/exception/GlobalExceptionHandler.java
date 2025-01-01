@@ -1,10 +1,14 @@
 package com.horizon.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.horizon.response.ResponseObject;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,36 +19,37 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult().getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .reduce((first, second) -> first + ", " + second)
-                .orElse("Validation error");
+    @ExceptionHandler(Exception.class)
+    public ResponseObject<String> handleAllExceptions(Exception ex) {
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", ex.getMessage());
+    }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseObject<?> handleValidationException(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", errorMessage);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+    public ResponseObject<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", ex.getMessage());
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<List<String>> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseObject<?> handleConstraintViolation(ConstraintViolationException ex) {
         List<String> errorMessages = ex.getConstraintViolations().stream()
                 .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", errorMessages);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<List<String>> handleInvalidFormatException(HttpMessageNotReadableException ex) {
+    public ResponseObject<?> handleInvalidFormatException(HttpMessageNotReadableException ex) {
         List<String> errorMessages = new ArrayList<>();
 
         if (ex.getCause() instanceof JsonMappingException) {
@@ -62,6 +67,8 @@ public class GlobalExceptionHandler {
             errorMessages.add("Invalid request data");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", errorMessages);
     }
+
+
 }

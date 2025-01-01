@@ -131,7 +131,7 @@ public class BookingServiceImpl implements BookingService {
     public void completeBooking() {
         LocalDate currentDate = LocalDate.now();
 
-        List<Booking> bookings = bookingRepository.findAllByStatusAndCheckOutBefore(String.valueOf(Booking.Status.CONFIRMED), currentDate);
+        List<Booking> bookings = bookingRepository.findAllByStatusAndCheckOutBefore(Booking.Status.CONFIRMED, currentDate);
 
         List<Payment> payment = bookings.stream().map(Booking::getPayment)
                 .filter(p -> p.getPaymentMethod() == null || p.getPaymentMethod().equalsIgnoreCase("pay"))
