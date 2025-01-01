@@ -1,6 +1,7 @@
 package com.horizon.controller.admin;
 
 import com.horizon.dto.RoomTypeDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,32 +21,41 @@ public class RoomTypeController {
     private RoomTypeService roomTypeService;
 
     @PostMapping
-    public ResponseEntity<RoomTypeDto> createRoomType(@RequestBody RoomTypeDto roomTypeDto) {
-        RoomTypeDto saveRoomType = roomTypeService.createRoomType(roomTypeDto);
+    public ResponseEntity<RoomTypeDto> create(@RequestBody RoomTypeDto roomTypeDto) {
+        RoomTypeDto saveRoomType = roomTypeService.create(roomTypeDto);
         return new ResponseEntity<>(saveRoomType, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> getRoomTypeById(@PathVariable("id") Integer id) {
-        RoomTypeDto roomTypeDto = roomTypeService.getRoomTypeById(id);
+    public ResponseEntity<RoomTypeDto> getById(@PathVariable("id") Integer id) {
+        RoomTypeDto roomTypeDto = roomTypeService.getById(id);
         return ResponseEntity.ok(roomTypeDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomTypeDto>> getAllRoomType() {
-        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAllRoomType();
+    public ResponseEntity<List<RoomTypeDto>> getAll() {
+        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAll();
         return ResponseEntity.ok(roomTypeDtos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> updateRoomType(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
-        RoomTypeDto updateRoomType = roomTypeService.updateRoom(roomTypeId, roomTypeDto);
+    public ResponseEntity<RoomTypeDto> update(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
+        RoomTypeDto updateRoomType = roomTypeService.update(roomTypeId, roomTypeDto);
         return ResponseEntity.ok(updateRoomType);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteRoomType(@PathVariable("id") Integer roomTypeId) {
-        roomTypeService.deleteRoomType(roomTypeId);
+    public ResponseEntity<String> delete(@PathVariable("id") Integer roomTypeId) {
+        roomTypeService.delete(roomTypeId);
         return new ResponseEntity<>("Room type deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/allDetail")
+    public ResponseObject<?> getAllDetail() {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail());
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 }

@@ -1,9 +1,7 @@
 package com.horizon.service;
 
 import com.horizon.dto.ServicesDto;
-
 import java.util.List;
-
 
 public interface ServicesService {
 
@@ -13,8 +11,5 @@ public interface ServicesService {
     ServicesDto getById(Integer serviceId);
     List<ServicesDto> getAll();
     List<ServicesDto> getByName(String name);
-    List<ServicesDto> getByRoomTypeName(String roomTypeName);
-    List<ServicesDto> getByRoomId(Integer roomId);
-    List<ServicesDto> getByRoomName(String roomName);
 
 }
