@@ -49,7 +49,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             r.floor,
             r.price,
             r.description,
-            rt.capacity,
+            rt.adult_capacity , 
+            rt.child_capacity , 
+            rt.baby_capacity , 
             STRING_AGG(DISTINCT s.name, ', ') AS services,
             STRING_AGG(DISTINCT u.name, ', ') AS utilities,
             STRING_AGG(DISTINCT m.path, ', ') AS paths
@@ -70,7 +72,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE
             r.is_activated = true
         GROUP BY
-            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
         """, nativeQuery = true)
     Page<Map<String, Object>> getRoomDetail(Pageable pageable);
 
@@ -82,7 +84,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             r.floor,
             r.price,
             r.description,
-            rt.capacity,
+            rt.adult_capacity , 
+            rt.child_capacity , 
+            rt.baby_capacity , 
             STRING_AGG(DISTINCT s.name, ', ') AS services,
             STRING_AGG(DISTINCT u.name, ', ') AS utilities,
             STRING_AGG(DISTINCT m.path, ', ') AS paths
@@ -103,7 +107,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE
             r.is_activated = true AND r.id =:id
         GROUP BY
-            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
         """, nativeQuery = true)
     Map<String, Object> getRoomDetailById(@Param("id") Integer id);
 

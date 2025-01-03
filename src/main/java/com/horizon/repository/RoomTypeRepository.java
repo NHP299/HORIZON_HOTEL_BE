@@ -17,14 +17,16 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
     Optional<RoomType> findByName(String name);
 
     @Query(value = """
-        SELECT rt.id AS id, 
-               rt.name AS name, 
-               rt.description AS description, 
-               rt.capacity AS capacity, 
+        SELECT rt.id , 
+               rt.name , 
+               rt.description , 
+               rt.adult_capacity , 
+               rt.child_capacity , 
+               rt.baby_capacity , 
                STRING_AGG(m.path, ', ') AS paths
         FROM room_type rt
         LEFT JOIN media m ON rt.id = m.room_type_id
-        GROUP BY rt.id, rt.name, rt.description, rt.capacity
+        GROUP BY rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity 
         """, nativeQuery = true)
     Page<Map<String, Object>> findRoomTypeMedia(Pageable pageable);
 
@@ -33,7 +35,9 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
                 rt.id, 
                 rt.name, 
                 rt.description, 
-                rt.capacity, 
+                rt.adult_capacity , 
+                rt.child_capacity , 
+                rt.baby_capacity , 
                 STRING_AGG(DISTINCT s.name, ', ') AS services, 
                 STRING_AGG(DISTINCT u.name, ', ') AS utilities 
             FROM room_type rt 
@@ -46,7 +50,7 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
             LEFT JOIN utilities u 
                 ON rtu.utility_id = u.id AND u.is_activated = true 
             GROUP BY 
-                rt.id, rt.name, rt.description, rt.capacity
+                rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
     """, nativeQuery = true)
     Page<Map<String, Object>> findAllRoomTypeService(Pageable pageable);
 }
