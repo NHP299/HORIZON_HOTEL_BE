@@ -11,7 +11,9 @@ public class RoomTypeMapperImpl implements RoomTypeMapper {
     public RoomTypeDto mapToRoomTypeDto(RoomType roomType) {
         return new RoomTypeDto(roomType.getId(),
                 roomType.getName(),
-                roomType.getCapacity(),
+                roomType.getAdultCapacity(),
+                roomType.getChildCapacity(),
+                roomType.getBabyCapacity(),
                 roomType.getDescription());
     }
 
@@ -19,7 +21,9 @@ public class RoomTypeMapperImpl implements RoomTypeMapper {
     public RoomType mapToRoomType(RoomTypeDto roomTypeDto) {
         return new RoomType(roomTypeDto.getId(),
                 roomTypeDto.getName(),
-                roomTypeDto.getCapacity(),
+                roomTypeDto.getAdultCapacity(),
+                roomTypeDto.getChildCapacity(),
+                roomTypeDto.getBabyCapacity(),
                 roomTypeDto.getDescription());
     }
 }

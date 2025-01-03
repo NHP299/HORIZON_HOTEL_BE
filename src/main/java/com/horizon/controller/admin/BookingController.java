@@ -2,6 +2,7 @@ package com.horizon.controller.admin;
 
 import com.horizon.dto.BookingDto;
 import com.horizon.dto.RoomDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.BookingService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,22 +15,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@RestController
+@RestController("AdminBookingController")
 @CrossOrigin
-@RequestMapping("/admin/bookings")
+@RequestMapping("${spring.application.api-prefix-admin}/bookings")
 public class BookingController {
-
     private BookingService bookingService;
 
     @GetMapping("/all")
-    private ResponseEntity<List<BookingDto>> getAll() {
-        return new ResponseEntity<>(bookingService.getAll(), HttpStatus.OK);
+    private ResponseObject<?> getAll(Pageable pageable) {
+        return new ResponseObject<>
+                (HttpStatus.OK, "Success",
+                        bookingService.getAll(pageable));
     }
 
-    @GetMapping("/get-by-account-id/{accountId}")
-    private ResponseEntity<List<BookingDto>> getByAccountId(@PathVariable Integer accountId) {
-        return new ResponseEntity<>(bookingService.getByAccountId(accountId), HttpStatus.OK);
+    @PostMapping("/update")
+    private ResponseObject<?> update(@RequestParam Integer id, @RequestBody BookingDto bookingDto) {
+        return new ResponseObject<>
+                (HttpStatus.OK, "Success",
+                        bookingService.update(id, bookingDto));
     }
-
 
 }

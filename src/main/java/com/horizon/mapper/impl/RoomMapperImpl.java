@@ -1,7 +1,6 @@
 package com.horizon.mapper.impl;
 
 import com.horizon.domain.Room;
-import com.horizon.domain.status.RoomStatus;
 import com.horizon.domain.RoomType;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
@@ -30,7 +29,7 @@ public class RoomMapperImpl implements RoomMapper {
         roomDto.setId(room.getId());
         roomDto.setRoomTypeId(room.getRoomType() != null ? room.getRoomType().getId() : null);
         roomDto.setName(room.getName());
-        roomDto.setStatus(RoomStatus.fromCode(room.getStatus()).getDescription());
+        roomDto.setStatus(room.getStatus() != null ? room.getStatus() : null);
         roomDto.setFloor(room.getFloor());
         roomDto.setPrice(room.getPrice());
         roomDto.setDescription(room.getDescription());
@@ -51,7 +50,7 @@ public class RoomMapperImpl implements RoomMapper {
         RoomType roomType = findRoomTypeById(roomDto.getRoomTypeId());
         room.setRoomType(roomType);
         room.setName(roomDto.getName());
-        room.setStatus(RoomStatus.fromDescription(roomDto.getStatus()));
+        room.setStatus(roomDto.getStatus() != null ? roomDto.getStatus() : null);
         room.setFloor(roomDto.getFloor());
         room.setPrice(roomDto.getPrice());
         room.setDescription(roomDto.getDescription());

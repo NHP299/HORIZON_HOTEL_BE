@@ -1,12 +1,12 @@
 package com.horizon.controller.admin;
 
-import com.horizon.constant.AccountList;
-import com.horizon.domain.Account;
 import com.horizon.dto.AccountDto;
 import com.horizon.repository.AccountRepository;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.AccountService;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,117 +18,46 @@ import java.util.List;
 
 
 
-@RestController
+@RestController("AdminAccountController")
 @AllArgsConstructor
 @CrossOrigin
-@RequestMapping("/admin/accounts")
+@RequestMapping("${spring.application.api-prefix-admin}/accounts")
 public class AccountController {
-
     private final AccountService accountService;
-    private final AccountRepository accountRepository;
 
     @PostMapping
-    public ResponseEntity<AccountDto> create(
+    public ResponseObject<?> create(
             @RequestParam("accountDto") String accountDtoJson,
             @RequestParam("profilePicture") MultipartFile profilePicture) {
         AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
         AccountDto createdAccount = accountService.create(accountDto, profilePicture);
-        return ResponseEntity.ok(createdAccount);
+        return new ResponseObject<>(HttpStatus.OK, "Success", createdAccount);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountDto> update(
+    public ResponseObject<?> update(
             @PathVariable Integer id,
             @RequestPart("accountDto") String accountDtoJson,
             @RequestPart("profilePicture") MultipartFile profilePicture) {
         AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
         AccountDto updatedAccount = accountService.update(id, accountDto, profilePicture);
-        return ResponseEntity.ok(updatedAccount);
+        return new ResponseObject<>(HttpStatus.OK, "Success", updatedAccount);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseObject<?> delete(@PathVariable Integer id) {
         accountService.delete(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
 
     @GetMapping
-    public ResponseEntity<List<AccountDto>> getAll() {
-        List<AccountDto> accounts = accountService.getAll();
-        return ResponseEntity.ok(accounts);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam String email,
-                                      @RequestParam String password,
-                                      @RequestParam String firstName,
-                                      @RequestParam String lastName) {
+    public ResponseObject<?> getAll(Pageable pageable) {
         try {
-            accountService.register(email, password, firstName, lastName);
-            return ResponseEntity.ok("User registered successfully!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Page<AccountDto> accounts = accountService.getAll(pageable);
+            return new ResponseObject<>(HttpStatus.OK, "Success", accounts);
+        } catch (Exception e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String email,
-                                   @RequestParam String password,
-                                   HttpSession session) {
-        try {
-            String response = accountService.login(email, password, session);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/current-user")
-    public ResponseEntity<?> getCurrentUser(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
-        }
-        Account account = accountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return ResponseEntity.ok(account);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        accountService.logout(session);
-        return ResponseEntity.ok("Logged out successfully!");
-    }
-
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword,
-            HttpSession session) {
-        try {
-            Boolean response = accountService.changePassword(oldPassword, newPassword, session);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/change-password-with-accountId")
-    public ResponseEntity<?> changePasswordWithAccountId(
-            @RequestParam String newPassword,
-            @RequestBody AccountList accountIdList) {
-        try {
-            if (accountIdList.getAccounts() == null || accountIdList.getAccounts().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Account list cannot be null or empty.");
-            }
-
-            for (Integer accountId : accountIdList.getAccounts()) {
-                accountService.changePassword(newPassword, accountId);
-            }
-
-            return ResponseEntity.ok("Password changed successfully!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 }

@@ -12,6 +12,8 @@ import com.horizon.service.AccountService;
 import com.horizon.service.CloudinaryService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -165,17 +167,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountDto> getAll() {
-        List<Account> accounts = accountRepository.findAll();
-        List<AccountDto> accountDtos = accountMapper.toDtoList(accounts);
-
-        for (AccountDto accountDto : accountDtos) {
-            Role role = roleRepository.findById(accountDto.getRoleId()).orElse(null);
-            if (role != null) {
-                accountDto.setRoleName(role.getRoleName());
-            }
-        }
-
-        return accountDtos;
+    public Page<AccountDto> getAll(Pageable pageable) {
+        Page<Account> accounts = accountRepository.findAll(pageable);
+        return accounts.map(accountMapper::toAccountDto);
     }
 }

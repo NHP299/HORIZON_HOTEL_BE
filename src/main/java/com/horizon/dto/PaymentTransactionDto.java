@@ -1,5 +1,6 @@
 package com.horizon.dto;
 
+import com.horizon.domain.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class PaymentTransactionDto {
     private Integer bookingId;
     private String transactionId;
     private Double amount;
-    private String status;
+    private Payment.Status status;
     private String paymentTime;
     private String createdTime;
     private String expiredTime;
