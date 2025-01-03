@@ -18,47 +18,44 @@ import java.util.Map;
 @AllArgsConstructor
 public class RoomTypeServiceImpl implements RoomTypeService {
     private final RoomTypeRepository roomTypeRepository;
-    private RoomTypeMapper roomTypeMapper;
+    private final RoomTypeMapper roomTypeMapper;
 
-
-    //Create room type
     @Override
     public RoomTypeDto create(RoomTypeDto roomTypeDto) {
         RoomType roomType = roomTypeMapper.mapToRoomType(roomTypeDto);
+        roomType.setIsActivated(true);
         RoomType saveRoomType = roomTypeRepository.save(roomType);
         return roomTypeMapper.mapToRoomTypeDto(saveRoomType);
     }
 
-    //Get room type by id
     @Override
     public RoomTypeDto getById(Integer id) {
-        RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
+        RoomType roomType = roomTypeRepository.findById(id).stream().filter(RoomType::getIsActivated).findFirst().orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
         return roomTypeMapper.mapToRoomTypeDto(roomType);
     }
 
-
-    //Update room type
     @Override
     public RoomTypeDto update(Integer roomId, RoomTypeDto roomTypeDto) {
         RoomType roomType = roomTypeRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
-        roomType.setName(roomType.getName());
-        roomType.setDescription(roomType.getDescription());
-
+        roomType.setName(roomTypeDto.getName());
+        roomType.setDescription(roomTypeDto.getDescription());
+        roomType.setAdultCapacity(roomTypeDto.getAdultCapacity());
+        roomType.setChildCapacity(roomTypeDto.getChildCapacity());
+        roomType.setBabyCapacity(roomTypeDto.getBabyCapacity());
         RoomType updateRoomtype = roomTypeRepository.save(roomType);
         return roomTypeMapper.mapToRoomTypeDto(updateRoomtype);
     }
 
-    //Delete room type
     @Override
     public void delete(Integer id) {
         RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
-        roomTypeRepository.delete(roomType);
-
+        roomType.setIsActivated(false);
+        roomTypeRepository.save(roomType);
     }
 
     @Override
     public Page<RoomTypeDto> getAll(Pageable pageable) {
-        Page<RoomType> roomType = roomTypeRepository.findAll(pageable);
+        Page<RoomType> roomType = roomTypeRepository.findAllByIsActivatedTrue(pageable);
         return roomType.map(roomTypeMapper::mapToRoomTypeDto);
     }
 

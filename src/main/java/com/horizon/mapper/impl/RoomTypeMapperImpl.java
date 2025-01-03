@@ -14,7 +14,8 @@ public class RoomTypeMapperImpl implements RoomTypeMapper {
                 roomType.getAdultCapacity(),
                 roomType.getChildCapacity(),
                 roomType.getBabyCapacity(),
-                roomType.getDescription());
+                roomType.getDescription(),
+                roomType.getIsActivated());
     }
 
     @Override
@@ -24,6 +25,7 @@ public class RoomTypeMapperImpl implements RoomTypeMapper {
                 roomTypeDto.getAdultCapacity(),
                 roomTypeDto.getChildCapacity(),
                 roomTypeDto.getBabyCapacity(),
-                roomTypeDto.getDescription());
+                roomTypeDto.getDescription(),
+                roomTypeDto.getIsActivated());
     }
 }

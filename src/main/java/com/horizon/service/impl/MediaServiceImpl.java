@@ -8,6 +8,7 @@ import com.horizon.repository.MediaRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.CloudinaryService;
 import com.horizon.service.MediaService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,19 +17,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MediaServiceImpl implements MediaService {
 
-    @Autowired
-    private MediaRepository mediaRepository;
+    private final MediaRepository mediaRepository;
 
-    @Autowired
-    private RoomTypeRepository roomTypeRepository;
+    private final RoomTypeRepository roomTypeRepository;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    private final CloudinaryService cloudinaryService;
 
-    @Autowired
-    private MediaMapper mediaMapper;
+    private final MediaMapper mediaMapper;
 
     @Override
     public MediaDto create(MultipartFile file, Integer roomTypeId) {
