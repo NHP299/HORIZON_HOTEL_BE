@@ -21,7 +21,7 @@ public class PromotionController {
             PromotionDto savePromotion = promotionService.create(promotionDto);
             return new ResponseObject<>(HttpStatus.OK, "Success", savePromotion);
         }catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", "adsfasdfasdf");
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
