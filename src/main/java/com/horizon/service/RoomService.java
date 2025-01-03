@@ -6,13 +6,15 @@ import java.util.Map;
 
 import com.horizon.domain.Room;
 import com.horizon.dto.RoomDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 public interface RoomService {
 
-    List<RoomDto> getAll();
+    Page<RoomDto> getAll(Pageable pageable);
 
-    List<RoomDto> getAllIsActivated();
+    Page<RoomDto> getAllIsActivated(Pageable pageable);
 
     RoomDto create(RoomDto roomDto);
 
@@ -26,19 +28,22 @@ public interface RoomService {
 
     void delete(Integer roomId);
 
-    List<RoomDto> getByRoomTypeName(String roomTypeName);
+    Page<RoomDto> getByRoomTypeName(String roomTypeName,Pageable pageable);
 
-    List<RoomDto> getByStatus(Room.Status statusDescription);
+    Page<RoomDto> getByStatus(Room.Status statusDescription,Pageable pageable);
 
-    List<RoomDto> getIsAvailable();
+    Page<RoomDto> getIsAvailable(Pageable pageable);
 
-    List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate);
+    Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate,Pageable pageable);
 
     List<Map<String, Object>> getRoomDetail();
 
     Map<String, Object> getRoomDetailById(Integer id);
 
-    List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount);
+    Page<RoomDto> search(String roomTypeName,
+                      LocalDate checkIn, LocalDate checkOut,
+                      int adult, int child, int baby, int roomCount,
+                      Pageable pageable);
 
     @Scheduled(fixedRate = 60000)
     void updateRoomStatuses();

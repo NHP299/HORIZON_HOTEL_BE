@@ -10,6 +10,8 @@ import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,19 +30,16 @@ public class RoomServiceImpl implements RoomService {
     private BookingDetailRepository bookingDetailRepository;
 
     @Override
-    public List<RoomDto> getAll() {
-        List<Room> rooms = roomRepository.findAll();
-        return rooms.stream()
-                .map(roomMapper::toRoomDto)
-                .toList();
+    public Page<RoomDto> getAll(Pageable pageable) {
+        Page<Room> rooms = roomRepository.findAll(pageable);
+        return rooms
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getAllIsActivated() {
-        List<Room> rooms = roomRepository.findByIsActivatedTrue();
-        return rooms.stream()
-                .map(roomMapper::toRoomDto)
-                .toList();
+    public Page<RoomDto> getAllIsActivated(Pageable pageable) {
+        Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
+        return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
@@ -102,27 +101,28 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> getByRoomTypeName(String roomTypeName) {
-        return roomRepository.findByRoomTypeName(roomTypeName)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
+        return roomRepository.findByRoomTypeName(roomTypeName,pageable)
+               .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getByStatus(Room.Status statusDescription) {
-        return roomRepository.findByStatusAndIsActivatedTrue(statusDescription)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getByStatus(Room.Status statusDescription, Pageable pageable) {
+        return roomRepository
+                .findByStatusAndIsActivatedTrue(statusDescription, pageable)
+             .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getIsAvailable() {
-        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getIsAvailable( Pageable pageable) {
+        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE,pageable)
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate) {
-        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate,pageable)
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
@@ -136,13 +136,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount) {
-        int avgGuestCount = (int) Math.ceil((double) guestCount / roomCount);
-        List<Room> availableRooms = roomRepository.searchAvailableRooms(roomTypeName, checkIn, checkOut, avgGuestCount);
-        if (availableRooms.size() < roomCount) {
+    public Page<RoomDto> search(String roomTypeName,
+                                LocalDate checkIn, LocalDate checkOut,
+                                int adult, int child, int baby, int roomCount,
+                                Pageable pageable) {
+        int avgAdult = (int) Math.ceil((double) adult / roomCount);
+        int avgChild = (int) Math.ceil((double) child / roomCount);
+        int avgBaby = (int) Math.ceil((double) baby / roomCount);
+        Page<Room> availableRooms = roomRepository
+                .searchAvailableRooms
+                        (roomTypeName, checkIn, checkOut, avgAdult, avgChild, avgBaby, pageable);
+        if (availableRooms.getTotalElements() < roomCount) {
             throw new IllegalArgumentException("Không đủ số phòng đáp ứng yêu cầu!");
         }
-        return availableRooms.stream().map(roomMapper::toRoomDto).toList();
+        return availableRooms.map(roomMapper::toRoomDto);
     }
 
 

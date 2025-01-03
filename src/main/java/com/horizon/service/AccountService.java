@@ -2,6 +2,8 @@ package com.horizon.service;
 
 import com.horizon.dto.AccountDto;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public interface AccountService {
 
     void delete(Integer id);
 
-    List<AccountDto> getAll();
+    Page<AccountDto> getAll(Pageable pageable);
 
     AccountDto parseAccountDto(String accountDtoJson);
 

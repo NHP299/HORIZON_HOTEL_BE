@@ -11,6 +11,8 @@ import com.horizon.service.PaymentService;
 import com.horizon.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request, Double bookingPrice) {
-        long amount = Integer.parseInt(String.valueOf(bookingPrice)) * 100L;
+        long amount = (long) (Double.parseDouble(String.valueOf(bookingPrice)) * 100L);
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_BankCode", "NCB");
@@ -51,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment createCashPayment(Booking booking) {
+    public PaymentTransactionDto createCashPayment(Booking booking) {
         Payment payment = new Payment();
         payment.setBooking(booking);
         payment.setAmount(booking.getTotalPrice());
@@ -62,11 +64,11 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentMethod("cash");
         payment.setDescription("Thanh toan don hang: " + booking.getId());
         paymentRepository.save(payment);
-        return payment;
+        return paymentMapper.toPaymentDto(payment);
     }
 
     @Override
-    public Payment create(String url, Booking booking) throws UnsupportedEncodingException {
+    public PaymentTransactionDto create(String url, Booking booking) throws UnsupportedEncodingException {
         Map<String, String> params = getParameter(url);
         Payment payment = new Payment();
         payment.setBooking(booking);
@@ -79,7 +81,18 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentMethod(params.get("vnp_Command"));
         payment.setBankCode(params.get("vnp_BankCode"));
         paymentRepository.save(payment);
-        return payment;
+        return paymentMapper.toPaymentDto(payment);
+    }
+
+    @Override
+    public PaymentTransactionDto update(Integer id, PaymentTransactionDto paymentTransactionDto) {
+        Payment existingPayment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+        if (existingPayment.getPaymentMethod().equalsIgnoreCase("cash")) {
+            existingPayment.setStatus(paymentTransactionDto.getStatus());
+            return paymentMapper.toPaymentDto(paymentRepository.save(existingPayment));
+        }
+        return null;
     }
 
     private Map<String, String> getParameter(String url) throws UnsupportedEncodingException {
@@ -111,10 +124,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PaymentTransactionDto> getAll(){
-        return paymentRepository.findAll().stream()
-                .map(paymentMapper::toPaymentDto)
-                .toList();
+    public Page<PaymentTransactionDto> getAll(Pageable pageable) {
+        return paymentRepository.findAll(pageable)
+                .map(paymentMapper::toPaymentDto);
     }
 
     @Override
@@ -134,9 +146,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Scheduled(fixedRate = 60000)
     public void updateFailPayment() {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        List<Payment> expiredPayments = paymentRepository.findExpiredPayments(currentTimestamp).stream()
-                .filter(p -> p.getPaymentMethod().equalsIgnoreCase("pay"))
-                .toList();
+        List<Payment> expiredPayments = paymentRepository.findExpiredPayments(currentTimestamp);
 
         expiredPayments.forEach(payment -> {
             payment.setStatus(Payment.Status.FAILED);
@@ -145,5 +155,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         System.out.println("Expired payments updated.");
     }
+
+
 
 }

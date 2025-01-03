@@ -3,6 +3,7 @@ package com.horizon.exception;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.horizon.response.ResponseObject;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -12,6 +13,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +23,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseObject<String> handleAllExceptions(Exception ex) {
+        return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", ex.getMessage());
+    }
+
+    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
+    public ResponseObject<String> handleNotFoundException(ChangeSetPersister.NotFoundException ex) {
+        return new ResponseObject<>(HttpStatus.NOT_FOUND, "Failed", ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseObject<String> handleBadRequestException(HttpClientErrorException.BadRequest ex) {
         return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", ex.getMessage());
     }
 

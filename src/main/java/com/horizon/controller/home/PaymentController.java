@@ -24,23 +24,23 @@ public class PaymentController {
     private final BookingService bookingService;
 
     @PostMapping("/cash")
-    public ResponseObject<?> payCash(@RequestBody BookingDto bookingDto) {
+    public ResponseObject<?> payCash(@RequestBody BookingDto bookingDto, HttpServletResponse response) throws IOException {
         try {
             BookingDto booking = bookingService.create(null, bookingDto, null);
             return new ResponseObject<>(HttpStatus.OK, "Success", booking);
         } catch (Exception e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
     @PostMapping("/vn-pay")
-    public ResponseObject<PaymentDTO.VNPayResponse> pay(HttpServletRequest request,@RequestBody BookingDto bookingDto) throws UnsupportedEncodingException {
+    public ResponseObject<?> pay(HttpServletRequest request,@RequestBody BookingDto bookingDto) throws UnsupportedEncodingException {
         try {
             PaymentDTO.VNPayResponse response = paymentService.createVnPayPayment(request, bookingDto.getTotalPrice());
             bookingService.create(request, bookingDto, response.paymentUrl);
             return new ResponseObject<>(HttpStatus.OK, "Success", response);
         }catch (Exception e){
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 

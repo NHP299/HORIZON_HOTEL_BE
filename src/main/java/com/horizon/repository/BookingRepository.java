@@ -1,6 +1,8 @@
 package com.horizon.repository;
 
 import com.horizon.domain.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    List<Booking> getByAccountId(Integer accountId);
+    Page<Booking> getByAccountId(Integer accountId, Pageable pageable);
 
     Optional<Booking> findByPaymentId(Integer paymentId);
 

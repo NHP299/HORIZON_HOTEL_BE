@@ -3,14 +3,16 @@ package com.horizon.service;
 
 import com.horizon.domain.Booking;
 import com.horizon.dto.BookingDetailDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface BookingDetailService {
     BookingDetailDto create(BookingDetailDto bookingDetailDto);
 
-    List<BookingDetailDto> getAll();
+    Page<BookingDetailDto> getAll(Pageable pageable);
 
-    List<BookingDetailDto> getAllByBookingId(Integer bookingId);
+    Page<BookingDetailDto> getAllByBookingId(Integer bookingId, Pageable pageable);
 
 }

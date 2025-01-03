@@ -2,6 +2,7 @@ package com.horizon.controller.admin;
 
 import com.horizon.dto.BookingDto;
 import com.horizon.dto.RoomDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.BookingService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,10 +22,17 @@ public class BookingController {
     private BookingService bookingService;
 
     @GetMapping("/all")
-    private ResponseEntity<List<BookingDto>> getAll() {
-        return new ResponseEntity<>(bookingService.getAll(), HttpStatus.OK);
+    private ResponseObject<?> getAll(Pageable pageable) {
+        return new ResponseObject<>
+                (HttpStatus.OK, "Success",
+                        bookingService.getAll(pageable));
     }
 
-
+    @PostMapping("/update")
+    private ResponseObject<?> update(@RequestParam Integer id, @RequestBody BookingDto bookingDto) {
+        return new ResponseObject<>
+                (HttpStatus.OK, "Success",
+                        bookingService.update(id, bookingDto));
+    }
 
 }

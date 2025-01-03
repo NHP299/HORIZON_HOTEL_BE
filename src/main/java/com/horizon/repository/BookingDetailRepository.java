@@ -1,6 +1,8 @@
 package com.horizon.repository;
 
 import com.horizon.domain.BookingDetail;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,12 +14,12 @@ import java.util.List;
 @Repository
 public interface BookingDetailRepository extends JpaRepository<BookingDetail, Integer> {
 
-    List<BookingDetail> findByBookingId(Integer bookingId);
+    Page<BookingDetail> findByBookingId(Integer bookingId, Pageable pageable);
 
     @Query("SELECT bd FROM BookingDetail bd " +
             "JOIN Booking b ON bd.booking.id = b.id " +
             "WHERE bd.room.id = :roomId AND" +
-            "(b.checkIn < :checkOut AND b.checkOut > :checkIn)" +
+            "(b.checkIn <= :checkOut AND b.checkOut >= :checkIn)" +
             "AND b.status <> com.horizon.domain.Booking.Status.CANCELLED ")
     List<BookingDetail> findConflictingBookings(@Param("roomId") int roomId,
                                                 @Param("checkIn") LocalDate checkIn,

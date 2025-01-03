@@ -5,6 +5,8 @@ import com.horizon.repository.AccountRepository;
 import com.horizon.response.ResponseObject;
 import com.horizon.service.AccountService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,9 +53,9 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseObject<?> getAll() {
+    public ResponseObject<?> getAll(Pageable pageable) {
         try {
-            List<AccountDto> accounts = accountService.getAll();
+            Page<AccountDto> accounts = accountService.getAll(pageable);
             return new ResponseObject<>(HttpStatus.OK, "Success", accounts);
         } catch (Exception e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());

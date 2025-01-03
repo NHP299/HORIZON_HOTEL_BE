@@ -6,6 +6,8 @@ import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,21 +24,21 @@ public class RoomTypeController {
     private RoomTypeService roomTypeService;
 
     @PostMapping
-    public ResponseEntity<RoomTypeDto> create(@RequestBody RoomTypeDto roomTypeDto) {
+    public ResponseObject<?> create(@RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto saveRoomType = roomTypeService.create(roomTypeDto);
-        return new ResponseEntity<>(saveRoomType, HttpStatus.CREATED);
+        return new ResponseObject<>(HttpStatus.OK, "Success", saveRoomType);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> getById(@PathVariable("id") Integer id) {
+    public ResponseObject<?> getById(@PathVariable("id") Integer id) {
         RoomTypeDto roomTypeDto = roomTypeService.getById(id);
-        return ResponseEntity.ok(roomTypeDto);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomTypeDto>> getAll() {
-        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAll();
-        return ResponseEntity.ok(roomTypeDtos);
+    public ResponseObject<?> getAll(Pageable pageable) {
+        Page<RoomTypeDto> roomTypeDto = roomTypeService.getAll(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeDto);
     }
 
     @PutMapping("/{id}")
