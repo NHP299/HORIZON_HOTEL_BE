@@ -2,12 +2,17 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.*;
 import com.horizon.dto.BookingDto;
+import com.horizon.dto.PaymentTransactionDto;
+import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.BookingMapper;
+import com.horizon.mapper.PaymentMapper;
 import com.horizon.repository.*;
 import com.horizon.service.BookingService;
 import com.horizon.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,44 +37,71 @@ public class BookingServiceImpl implements BookingService {
 
     private final PaymentService paymentService;
 
+    private final PaymentMapper paymentMapper;
+
     @Override
-    public BookingDto create(HttpServletRequest request,BookingDto bookingDto, String url) throws UnsupportedEncodingException {
-        List<Integer> roomIds = bookingDto.getRoomIds();
-        checkRoomAvailable(roomIds, bookingDto.getCheckIn(), bookingDto.getCheckOut());
-        int totalPeople = bookingDto.getAdult() + bookingDto.getChild() + bookingDto.getBaby();
-        if (!checkValidCapacity(roomIds, totalPeople)) {
-            throw new IllegalStateException("Total capacity of selected rooms is less than the required capacity.");
+    public BookingDto create(HttpServletRequest request, BookingDto bookingDto, String url) throws UnsupportedEncodingException {
+        if (!checkBooking(bookingDto)) {
+            throw new IllegalStateException("Booking failed.");
         }
         Booking booking = bookingMapper.toBooking(bookingDto);
+        booking.setStatus(Booking.Status.PENDING);
         booking.setBookingDate(LocalDate.now());
-        booking.setTotalPrice(Double.valueOf(request.getParameter("amount")));
+        booking.setTotalPrice(bookingDto.getTotalPrice());
         bookingRepository.save(booking);
-
-        for (int roomId : roomIds) {
+        for (int roomId : bookingDto.getRoomIds()) {
+            Room room = roomRepository.findByIsActivatedTrueAndId(roomId)
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found."));
             BookingDetail bookingDetail = new BookingDetail();
             bookingDetail.setBooking(booking);
-            bookingDetail.setRoom(roomRepository.findByIsActivatedTrueAndId(roomId)
-                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")));
+            bookingDetail.setRoom(room);
+            bookingDetail.setPriceAtBooking(room.getPrice());
             bookingDetailRepository.save(bookingDetail);
         }
+        PaymentTransactionDto payment;
+        if (request == null && url == null) {
+            payment = paymentService.createCashPayment(booking);
+        } else {
+            payment = paymentService.create(url, booking);
+        }
 
-        Payment payment = paymentService.create(url, booking);
-
-        booking.setPayment(payment);
+        booking.setPayment(paymentMapper.toPayment(payment));
         bookingRepository.save(booking);
 
         return bookingMapper.toBookingDto(booking);
     }
 
     @Override
-    public Boolean checkValidCapacity(List<Integer> roomIds, Integer capacity) {
-        int totalCapacity = 0;
-        for (int roomId : roomIds) {
-          int i = roomRepository.findByIsActivatedTrueAndId(roomId)
-              .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getCapacity();
-            totalCapacity += i;
+    public BookingDto update(Integer id, BookingDto bookingDto) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+        booking.setStatus(bookingDto.getStatus());
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+    }
+
+    public Boolean checkBooking(BookingDto bookingDto) {
+        List<Integer> roomIds = bookingDto.getRoomIds();
+        checkRoomAvailable(roomIds, bookingDto.getCheckIn(), bookingDto.getCheckOut());
+        if (!checkValidCapacity(roomIds, bookingDto.getAdult(), bookingDto.getChild(), bookingDto.getBaby())) {
+            throw new IllegalStateException("Total capacity of selected rooms is less than the required capacity.");
         }
-        return totalCapacity >= capacity;
+        return true;
+    }
+
+    @Override
+    public Boolean checkValidCapacity(List<Integer> roomIds, int adult, int child, int baby) {
+        for (int roomId : roomIds) {
+            int adultCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getAdultCapacity();
+            int childCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getChildCapacity();
+            int babyCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getBabyCapacity();
+            if (adultCapacity <= adult && childCapacity <= child && babyCapacity <= baby) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -96,15 +128,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAll() {
-        List<Booking> bookings = bookingRepository.findAll();
-        return bookings.stream().map(bookingMapper::toBookingDto).toList();
+    public Page<BookingDto> getAll(Pageable pageable) {
+        Page<Booking> bookings = bookingRepository.findAll(pageable);
+        return bookings.map(bookingMapper::toBookingDto);
     }
 
     @Override
-    public List<BookingDto> getByAccountId(Integer accountId) {
-        List<Booking> bookings = bookingRepository.getByAccountId(accountId);
-        return bookings.stream().map(bookingMapper::toBookingDto).toList();
+    public Page<BookingDto> getByAccountId(Integer accountId, Pageable pageable) {
+        Page<Booking> bookings = bookingRepository.getByAccountId(accountId, pageable);
+        return bookings.map(bookingMapper::toBookingDto);
     }
 
     @Override
@@ -112,7 +144,7 @@ public class BookingServiceImpl implements BookingService {
         Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));
         Booking booking = bookingRepository.findByPaymentId(payment.getId())
                 .orElseThrow(() -> new IllegalStateException("Booking not found with payment id: " + request.getParameter("vnp_TxnRef")));
-        booking.setStatus(2);
+        booking.setStatus(Booking.Status.CONFIRMED);
         bookingRepository.save(booking);
     }
 
@@ -121,23 +153,36 @@ public class BookingServiceImpl implements BookingService {
     public void completeBooking() {
         LocalDate currentDate = LocalDate.now();
 
-        List<Booking> expiredBookings = bookingRepository.findAllByStatusAndCheckOutBefore(2, currentDate);
+        List<Booking> bookings = bookingRepository.findAllByStatusAndCheckOutBefore(Booking.Status.CONFIRMED, currentDate);
+
+        List<Payment> payment = bookings.stream().map(Booking::getPayment)
+                .filter(p -> p.getPaymentMethod() == null || p.getPaymentMethod().equalsIgnoreCase("pay"))
+                .toList();
+
+        List<Booking> expiredBookings = payment.stream().map(Payment::getBooking)
+                .toList();
 
         expiredBookings.forEach(booking -> {
-            booking.setStatus(4);
+            booking.setStatus(Booking.Status.COMPLETED);
             bookingRepository.save(booking);
         });
-
         System.out.println("Updated expired bookings to Complete.");
     }
 
     @Override
     @Scheduled(fixedRate = 60000)
     public void cancelExpiredBookings() {
-        List<Booking> expiredBookings = bookingRepository.findBookingByPaymentStatusFailed();
+        List<Booking> bookings = bookingRepository.findBookingByPaymentStatusFailed();
+
+        List<Payment> payment = bookings.stream().map(Booking::getPayment)
+                .filter(p -> p.getPaymentMethod() == null || p.getPaymentMethod().equalsIgnoreCase("pay"))
+                .toList();
+
+        List<Booking> expiredBookings = payment.stream().map(Payment::getBooking)
+                .toList();
 
         expiredBookings.forEach(booking -> {
-            booking.setStatus(3);
+            booking.setStatus(Booking.Status.CANCELLED);
             bookingRepository.save(booking);
         });
 

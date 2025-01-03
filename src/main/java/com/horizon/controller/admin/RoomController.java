@@ -1,7 +1,9 @@
 package com.horizon.controller.admin;
 
 
+import com.horizon.domain.Room;
 import com.horizon.dto.RoomDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,93 +18,90 @@ import java.util.List;
 
 
 @AllArgsConstructor
-@RestController
+@RestController("AdminRoomController")
 @CrossOrigin
-@RequestMapping("/admin/rooms")
+@RequestMapping("${spring.application.api-prefix-admin}/rooms")
 @Validated
 public class RoomController {
 
     private RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomDto> create(
+    public ResponseObject<RoomDto> create(
             @RequestBody RoomDto roomDto) {
         RoomDto room = roomService.create(roomDto);
-        return new ResponseEntity<>(room, HttpStatus.CREATED);
+        return new ResponseObject<>(HttpStatus.OK, "Success", room);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<RoomDto>> getAll() {
-        List<RoomDto> rooms = roomService.getAll();
-        return ResponseEntity.ok(rooms);
-    }
-
-    @GetMapping("/all-activated")
-    public ResponseEntity<List<RoomDto>> getAllIsActivated() {
-        List<RoomDto> rooms = roomService.getAllIsActivated();
-        return ResponseEntity.ok(rooms);
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<RoomDto> getById(
-            @PathVariable("id") Integer roomId) {
-        RoomDto roomDto = roomService.getById(roomId);
-        return ResponseEntity.ok(roomDto);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<RoomDto>> search(
-            @RequestParam String input) {
-        List<RoomDto> rooms = roomService.find(input);
-        return ResponseEntity.ok(rooms);
-    }
-
-    @PutMapping({"{id}"})
-    public ResponseEntity<RoomDto> update(
-            @PathVariable("id") Integer roomId,
-            @RequestBody  RoomDto updateRoom) {
-        RoomDto roomDto = roomService.update(roomId, updateRoom);
-        return ResponseEntity.ok(roomDto);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(
-            @PathVariable("id") Integer roomId) {
-        roomService.delete(roomId);
-        return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
-    }
-
-    @GetMapping("/by-room-type")
-    public ResponseEntity<List<RoomDto>> getByRoomTypeName(
-            @RequestParam String roomTypeName) {
-        List<RoomDto> rooms = roomService.getByRoomTypeName(roomTypeName);
-        return ResponseEntity.ok(rooms);
-    }
-
-    @GetMapping("/filter-by-status")
-    public ResponseEntity<List<RoomDto>> getByStatus(
-            @RequestParam String status) {
-        List<RoomDto> rooms = roomService.getByStatus(status);
-        return ResponseEntity.ok(rooms);
+    public ResponseObject<?> getAll(Pageable pageable) {
+        Page<RoomDto> rooms = roomService.getAll(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomDto>> getIsAvailable() {
-        List<RoomDto> rooms = roomService.getIsAvailable();
-        return ResponseEntity.ok(rooms);
+    public ResponseObject<?> getAllIsActivated(Pageable pageable) {
+        Page<RoomDto> rooms = roomService.getAllIsActivated(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
+    }
+
+    @GetMapping("{id}")
+    public ResponseObject<RoomDto> getById(
+            @PathVariable("id") Integer roomId) {
+        RoomDto roomDto = roomService.getById(roomId);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomDto);
+    }
+
+    @GetMapping("/search")
+    public ResponseObject<List<RoomDto>> search(
+            @RequestParam String input) {
+        List<RoomDto> rooms = roomService.find(input);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
+    }
+
+    @PutMapping({"{id}"})
+    public ResponseObject<RoomDto> update(
+            @PathVariable("id") Integer roomId,
+            @RequestBody  RoomDto updateRoom) {
+        RoomDto roomDto = roomService.update(roomId, updateRoom);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomDto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseObject<String> delete(
+            @PathVariable("id") Integer roomId) {
+        roomService.delete(roomId);
+        return new ResponseObject<>(HttpStatus.OK, "Success", "Room deleted successfully");
+    }
+
+    @GetMapping("/by-room-type")
+    public ResponseObject<?> getByRoomTypeName(
+            @RequestParam String roomTypeName,
+            Pageable pageable) {
+        Page<RoomDto> rooms = roomService.getByRoomTypeName(roomTypeName, pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
+    }
+
+    @GetMapping("/filter-by-status")
+    public ResponseObject<?> getByStatus(
+            @RequestParam Room.Status status,
+            Pageable pageable) {
+        Page<RoomDto> rooms = roomService.getByStatus(status,pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
+    }
+
+    @GetMapping("/is-available")
+    public ResponseObject<?> getIsAvailable(Pageable pageable) {
+        Page<RoomDto> rooms = roomService.getIsAvailable(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
     }
 
     @GetMapping("/range")
-    public ResponseEntity<List<RoomDto>> getAvailable(
+    public ResponseObject<?> getAvailable(
             @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate) {
-        List<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate);
-        return ResponseEntity.ok(availableRooms);
+            @RequestParam LocalDate endDate,
+            Pageable pageable) {
+        Page<RoomDto> availableRooms = roomService.findAvailable(startDate, endDate, pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", availableRooms);
     }
-
-
-
-
-
-
 }

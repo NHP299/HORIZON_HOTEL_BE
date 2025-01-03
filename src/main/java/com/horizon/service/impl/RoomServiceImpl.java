@@ -2,7 +2,6 @@ package com.horizon.service.impl;
 
 import com.horizon.domain.BookingDetail;
 import com.horizon.domain.Room;
-import com.horizon.domain.status.RoomStatus;
 import com.horizon.dto.RoomDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.RoomMapper;
@@ -31,25 +30,22 @@ public class RoomServiceImpl implements RoomService {
     private BookingDetailRepository bookingDetailRepository;
 
     @Override
-    public List<RoomDto> getAll() {
-        List<Room> rooms = roomRepository.findAll();
-        return rooms.stream()
-                .map(roomMapper::toRoomDto)
-                .toList();
+    public Page<RoomDto> getAll(Pageable pageable) {
+        Page<Room> rooms = roomRepository.findAll(pageable);
+        return rooms
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getAllIsActivated() {
-        List<Room> rooms = roomRepository.findByIsActivatedTrue();
-        return rooms.stream()
-                .map(roomMapper::toRoomDto)
-                .toList();
+    public Page<RoomDto> getAllIsActivated(Pageable pageable) {
+        Page<Room> rooms = roomRepository.findByIsActivatedTrue(pageable);
+        return rooms.map(roomMapper::toRoomDto);
     }
 
     @Override
     public RoomDto create(RoomDto roomDto) {
         Room room = roomMapper.toRoom(roomDto);
-        room.setStatus(1);
+        room.setStatus(Room.Status.AVAILABLE);
         room.setIsActivated(true);
         Room saveRoom = roomRepository.save(room);
         return roomMapper.toRoomDto(saveRoom);
@@ -99,34 +95,34 @@ public class RoomServiceImpl implements RoomService {
     public void delete(Integer roomId) {
         Room deletedRoom = roomRepository.findByIsActivatedTrueAndId(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found" + roomId));
-        deletedRoom.setStatus(3);
+        deletedRoom.setStatus(Room.Status.MAINTENANCE);
         deletedRoom.setIsActivated(false);
         roomRepository.save(deletedRoom);
     }
 
     @Override
-    public List<RoomDto> getByRoomTypeName(String roomTypeName) {
-        return roomRepository.findByRoomTypeName(roomTypeName)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getByRoomTypeName(String roomTypeName, Pageable pageable) {
+        return roomRepository.findByRoomTypeName(roomTypeName,pageable)
+               .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getByStatus(String statusDescription) {
-        Integer statusCode = RoomStatus.fromDescription(statusDescription);
-        return roomRepository.findByStatusAndIsActivatedTrue(statusCode)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getByStatus(Room.Status statusDescription, Pageable pageable) {
+        return roomRepository
+                .findByStatusAndIsActivatedTrue(statusDescription, pageable)
+             .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> getIsAvailable() {
-        return roomRepository.findByStatusAndIsActivatedTrue(0)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> getIsAvailable( Pageable pageable) {
+        return roomRepository.findByStatusAndIsActivatedTrue(Room.Status.AVAILABLE,pageable)
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
-    public List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate) {
-        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate)
-                .stream().map(roomMapper::toRoomDto).toList();
+    public Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return roomRepository.findAvailableRoomsInDateRange(startDate, endDate,pageable)
+                .map(roomMapper::toRoomDto);
     }
 
     @Override
@@ -140,13 +136,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> search(String roomTypeName, LocalDate checkIn, LocalDate checkOut, int guestCount, int roomCount) {
-        int avgGuestCount = (int) Math.ceil((double) guestCount / roomCount);
-        List<Room> availableRooms = roomRepository.searchAvailableRooms(roomTypeName, checkIn, checkOut, avgGuestCount);
-        if (availableRooms.size() < roomCount) {
+    public Page<RoomDto> search(String roomTypeName,
+                                LocalDate checkIn, LocalDate checkOut,
+                                int adult, int child, int baby, int roomCount,
+                                Pageable pageable) {
+        int avgAdult = (int) Math.ceil((double) adult / roomCount);
+        int avgChild = (int) Math.ceil((double) child / roomCount);
+        int avgBaby = (int) Math.ceil((double) baby / roomCount);
+        Page<Room> availableRooms = roomRepository
+                .searchAvailableRooms
+                        (roomTypeName, checkIn, checkOut, avgAdult, avgChild, avgBaby, pageable);
+        if (availableRooms.getTotalElements() < roomCount) {
             throw new IllegalArgumentException("Không đủ số phòng đáp ứng yêu cầu!");
         }
-        return availableRooms.stream().map(roomMapper::toRoomDto).toList();
+        return availableRooms.map(roomMapper::toRoomDto);
     }
 
 
@@ -161,11 +164,11 @@ public class RoomServiceImpl implements RoomService {
             List<BookingDetail> occupiedBookingDetails = bookingDetailRepository.findBookingDetailOccupied(room.getId(), currentDate);
 
             if (!reservedBookingDetails.isEmpty()) {
-                room.setStatus(2);
+                room.setStatus(Room.Status.RESERVED);
             } else if (!occupiedBookingDetails.isEmpty()) {
-                room.setStatus(1);
+                room.setStatus(Room.Status.OCCUPIED);
             } else {
-                room.setStatus(0);
+                room.setStatus(Room.Status.AVAILABLE);
             }
         });
 

@@ -57,9 +57,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
-    public List<RoomTypeDto> getAll() {
-        List<RoomType> roomType = roomTypeRepository.findAll();
-        return roomType.stream().map(roomTypeMapper::mapToRoomTypeDto).toList();
+    public Page<RoomTypeDto> getAll(Pageable pageable) {
+        Page<RoomType> roomType = roomTypeRepository.findAll(pageable);
+        return roomType.map(roomTypeMapper::mapToRoomTypeDto);
     }
 
     @Override

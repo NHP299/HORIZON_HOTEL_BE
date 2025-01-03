@@ -17,8 +17,7 @@ public interface RoomTypeService {
 
     void delete(Integer id);
 
-    List<RoomTypeDto> getAll();
+    Page<RoomTypeDto> getAll(Pageable pageable);
     Page<Map<String, Object>> getRoomTypeMedia(Pageable pageable);
     Page<Map<String, Object>> getAllDetail(Pageable pageable);
-
 }

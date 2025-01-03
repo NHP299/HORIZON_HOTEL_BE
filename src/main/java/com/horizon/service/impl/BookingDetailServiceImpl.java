@@ -12,6 +12,8 @@ import com.horizon.service.BookingDetailService;
 import com.horizon.service.BookingService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,15 +37,15 @@ public class BookingDetailServiceImpl implements BookingDetailService {
     }
 
     @Override
-    public List<BookingDetailDto> getAll() {
-        List<BookingDetail> bookingDetails = bookingDetailRepository.findAll();
-        return bookingDetails.stream().map(bookingDetailMapper::toBookingDetailDto).toList();
+    public Page<BookingDetailDto> getAll(Pageable pageable) {
+        Page<BookingDetail> bookingDetails = bookingDetailRepository.findAll(pageable);
+        return bookingDetails.map(bookingDetailMapper::toBookingDetailDto);
     }
 
     @Override
-    public List<BookingDetailDto> getAllByBookingId(Integer bookingId) {
-        List<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingId(bookingId);
-        return bookingDetails.stream().map(bookingDetailMapper::toBookingDetailDto).toList();
+    public Page<BookingDetailDto> getAllByBookingId(Integer bookingId, Pageable pageable) {
+        Page<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingId(bookingId, pageable);
+        return bookingDetails.map(bookingDetailMapper::toBookingDetailDto);
     }
 
 }

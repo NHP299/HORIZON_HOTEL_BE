@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDetailDto {
-    private Integer id;
-    private Integer bookingId;
-    private Integer roomId;
-    private Double priceAtBooking;
+public class ChangePasswordRequest {
+    private String oldPassword;
+    private String newPassword;
 }

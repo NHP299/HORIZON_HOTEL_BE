@@ -11,6 +11,8 @@ import com.horizon.service.PaymentService;
 import com.horizon.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +29,12 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-
     private final VNPAYConfig vnPayConfig;
-
     private final PaymentMapper paymentMapper;
 
     @Override
-    public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request) {
-        long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
+    public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request, Double bookingPrice) {
+        long amount = (long) (Double.parseDouble(String.valueOf(bookingPrice)) * 100L);
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_BankCode", "NCB");
@@ -52,22 +52,47 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentUrl(paymentUrl).build();
     }
 
+    @Override
+    public PaymentTransactionDto createCashPayment(Booking booking) {
+        Payment payment = new Payment();
+        payment.setBooking(booking);
+        payment.setAmount(booking.getTotalPrice());
+        payment.setTransactionId(VNPayUtil.getRandomNumber(8));
+        payment.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+        payment.setExpiredTime(Timestamp.valueOf(booking.getCheckIn().atTime(11, 59, 59)));
+        payment.setStatus(Payment.Status.PENDING);
+        payment.setPaymentMethod("cash");
+        payment.setDescription("Thanh toan don hang: " + booking.getId());
+        paymentRepository.save(payment);
+        return paymentMapper.toPaymentDto(payment);
+    }
 
     @Override
-    public Payment create(String url, Booking booking) throws UnsupportedEncodingException {
+    public PaymentTransactionDto create(String url, Booking booking) throws UnsupportedEncodingException {
         Map<String, String> params = getParameter(url);
         Payment payment = new Payment();
         payment.setBooking(booking);
         payment.setTransactionId(params.get("vnp_TxnRef"));
         payment.setAmount(Double.valueOf(params.get("vnp_Amount")));
-        payment.setStatus(1);
+        payment.setStatus(Payment.Status.PENDING);
         payment.setCreatedTime(paymentMapper.toTimestamp(params.get("vnp_CreateDate")));
         payment.setExpiredTime(paymentMapper.toTimestamp(params.get("vnp_ExpireDate")));
         payment.setDescription(params.get("vnp_OrderInfo"));
         payment.setPaymentMethod(params.get("vnp_Command"));
         payment.setBankCode(params.get("vnp_BankCode"));
         paymentRepository.save(payment);
-        return payment;
+        return paymentMapper.toPaymentDto(payment);
+    }
+
+    @Override
+    public PaymentTransactionDto update(Integer id, PaymentTransactionDto paymentTransactionDto) {
+        Payment existingPayment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+        if (existingPayment.getPaymentMethod().equalsIgnoreCase("cash")) {
+            existingPayment.setStatus(paymentTransactionDto.getStatus());
+            return paymentMapper.toPaymentDto(paymentRepository.save(existingPayment));
+        }
+        return null;
     }
 
     private Map<String, String> getParameter(String url) throws UnsupportedEncodingException {
@@ -89,7 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment == null) {
             return;
         }
-        payment.setStatus(2);
+        payment.setStatus(Payment.Status.SUCCESS);
         payment.setPaymentTime(paymentMapper.toTimestamp(request.getParameter("vnp_PayDate")));
         payment.setCardType(request.getParameter("vnp_CardType"));
         payment.setExtraData("BankTranNo: " + request.getParameter("vnp_BankTranNo")
@@ -99,10 +124,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PaymentTransactionDto> getAll(){
-        return paymentRepository.findAll().stream()
-                .map(paymentMapper::toPaymentDto)
-                .toList();
+    public Page<PaymentTransactionDto> getAll(Pageable pageable) {
+        return paymentRepository.findAll(pageable)
+                .map(paymentMapper::toPaymentDto);
     }
 
     @Override
@@ -111,7 +135,7 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment == null) {
             return;
         }
-        payment.setStatus(3);
+        payment.setStatus(Payment.Status.FAILED);
         payment.setExtraData("TransactionNo: " + request.getParameter("vnp_TransactionNo")
                 + " - Message: " + request.getParameter("vnp_Message"));
         paymentRepository.save(payment);
@@ -125,12 +149,13 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> expiredPayments = paymentRepository.findExpiredPayments(currentTimestamp);
 
         expiredPayments.forEach(payment -> {
-            payment.setStatus(3);
+            payment.setStatus(Payment.Status.FAILED);
             paymentRepository.save(payment);
         });
 
         System.out.println("Expired payments updated.");
     }
+
 
 
 }

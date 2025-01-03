@@ -6,6 +6,7 @@ import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("AdminRoomTypeController")
 @AllArgsConstructor
 @NoArgsConstructor
 @CrossOrigin
@@ -22,39 +23,34 @@ public class RoomTypeController {
     @Autowired
     private RoomTypeService roomTypeService;
 
-    //Add room type
     @PostMapping
-    public ResponseEntity<RoomTypeDto> create(@RequestBody RoomTypeDto roomTypeDto) {
+    public ResponseObject<?> create(@RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto saveRoomType = roomTypeService.create(roomTypeDto);
-        return new ResponseEntity<>(saveRoomType, HttpStatus.CREATED);
+        return new ResponseObject<>(HttpStatus.OK, "Success", saveRoomType);
     }
 
-    //Get room type by id
     @GetMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> getById(@PathVariable("id") Integer id) {
+    public ResponseObject<?> getById(@PathVariable("id") Integer id) {
         RoomTypeDto roomTypeDto = roomTypeService.getById(id);
-        return ResponseEntity.ok(roomTypeDto);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeDto);
     }
 
-    //Get all room type
     @GetMapping
-    public ResponseEntity<List<RoomTypeDto>> getAll() {
-        List<RoomTypeDto> roomTypeDtos = roomTypeService.getAll();
-        return ResponseEntity.ok(roomTypeDtos);
+    public ResponseObject<?> getAll(Pageable pageable) {
+        Page<RoomTypeDto> roomTypeDto = roomTypeService.getAll(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeDto);
     }
 
-    //Update room type
     @PutMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> update(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
+    public ResponseObject<?> update(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto updateRoomType = roomTypeService.update(roomTypeId, roomTypeDto);
-        return ResponseEntity.ok(updateRoomType);
+        return new ResponseObject<>(HttpStatus.OK, "Success", updateRoomType);
     }
 
-    //Delete room type
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer roomTypeId) {
+    public ResponseObject<?> delete(@PathVariable("id") Integer roomTypeId) {
         roomTypeService.delete(roomTypeId);
-        return new ResponseEntity<>("Room type deleted successfully", HttpStatus.OK);
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
 
     @GetMapping("/allDetail")

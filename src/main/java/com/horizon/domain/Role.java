@@ -19,5 +19,4 @@ public class Role {
     @NotBlank(message = "Role Name must not be blank")
     @Size(max = 100, message = "Role Name must be less than 100 characters")
     private String roleName;
-
 }
