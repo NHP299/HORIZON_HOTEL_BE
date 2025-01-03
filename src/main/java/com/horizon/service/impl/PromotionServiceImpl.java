@@ -7,9 +7,9 @@ import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -51,15 +51,15 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public List<PromotionDto> getAll() {
-        List<Promotion> promotions = promotionRepository.findAllByIsActivatedTrue();
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getAll(Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findAllByIsActivatedTrue(pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
-    public List<PromotionDto> getByName(String name) {
-        List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getByName(String name, Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public List<PromotionDto> getAllAvailable(Integer roomTypeId) {
-        List<Promotion> promotions = promotionRepository.findAllAvailable(roomTypeId);
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getAllAvailable(Integer roomTypeId, Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findAllAvailable(roomTypeId, pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class PromotionServiceImpl implements PromotionService {
             Promotion promotion = promotionRepository.findById(promotionId)
                     .orElseThrow(() -> new IllegalArgumentException("Promotion with ID " + promotionId + " not found."));
             if ("PERCENTAGE".equalsIgnoreCase(promotion.getDiscountType().name())) {
-                discount = totalPrice * promotion.getDiscountValue();
+                discount = totalPrice * promotion.getDiscountValue() / 100;
             } else if ("FIXED".equalsIgnoreCase(promotion.getDiscountType().name())) {
                 discount = promotion.getDiscountValue();
             }

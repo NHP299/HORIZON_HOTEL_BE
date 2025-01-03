@@ -6,6 +6,8 @@ import com.horizon.mapper.RoomTypeMapper;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -61,13 +63,13 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
-    public List<Map<String, Object>> getRoomTypeMedia() {
-        return roomTypeRepository.findRoomTypeMedia();
+    public Page<Map<String, Object>> getRoomTypeMedia(Pageable pageable) {
+        return roomTypeRepository.findRoomTypeMedia(pageable);
     }
 
     @Override
-    public List<Map<String, Object>> getAllDetail() {
-        return roomTypeRepository.findAllRoomTypeService();
+    public Page<Map<String, Object>> getAllDetail(Pageable pageable) {
+        return roomTypeRepository.findAllRoomTypeService(pageable);
     }
 
 }

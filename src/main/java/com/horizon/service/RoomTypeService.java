@@ -1,6 +1,9 @@
 package com.horizon.service;
 
 import com.horizon.dto.RoomTypeDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +18,7 @@ public interface RoomTypeService {
     void delete(Integer id);
 
     List<RoomTypeDto> getAll();
-    List<Map<String, Object>> getRoomTypeMedia();
-    List<Map<String, Object>> getAllDetail();
+    Page<Map<String, Object>> getRoomTypeMedia(Pageable pageable);
+    Page<Map<String, Object>> getAllDetail(Pageable pageable);
 
 }

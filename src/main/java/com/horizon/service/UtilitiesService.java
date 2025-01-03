@@ -1,7 +1,8 @@
 package com.horizon.service;
 
 import com.horizon.dto.UtilitiesDto;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UtilitiesService {
 
@@ -9,6 +10,6 @@ public interface UtilitiesService {
     UtilitiesDto update(Integer utilitiesId, UtilitiesDto utilitiesDto);
     void delete(Integer utilitiesId);
     UtilitiesDto getById(Integer utilitiesId);
-    List<UtilitiesDto> getAll();
-    List<UtilitiesDto> getByName(String name);
+    Page<UtilitiesDto> getAll(Pageable pageable);
+    Page<UtilitiesDto> getByName(String name, Pageable pageable);
 }

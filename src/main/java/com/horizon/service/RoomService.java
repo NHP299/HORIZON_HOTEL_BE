@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.horizon.dto.RoomDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 public interface RoomService {
@@ -33,7 +35,7 @@ public interface RoomService {
 
     List<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate);
 
-    List<Map<String, Object>> getRoomDetail();
+    Page<Map<String, Object>> getRoomDetail(Pageable pageable);
 
     Map<String, Object> getRoomDetailById(Integer id);
 

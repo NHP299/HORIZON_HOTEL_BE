@@ -7,11 +7,10 @@ import com.horizon.mapper.ServicesMapper;
 import com.horizon.repository.ServicesRepository;
 import com.horizon.service.ServicesService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @AllArgsConstructor
@@ -71,15 +70,15 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public List<ServicesDto> getAll() {
-        List<Services> servicesPage = servicesRepository.findAllByIsActivatedTrue();
-        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
+    public Page<ServicesDto> getAll(Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findAllByIsActivatedTrue(pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
     @Override
-    public List<ServicesDto> getByName(String name) {
-        List<Services> servicesPage = servicesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
-        return servicesPage.stream().map(servicesMapper::mapToServicesDto).toList();
+    public Page<ServicesDto> getByName(String name, Pageable pageable) {
+        Page<Services> servicesPage = servicesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 
 }

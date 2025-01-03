@@ -5,6 +5,7 @@ import com.horizon.response.ResponseObject;
 import com.horizon.service.RoomService;
 import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +23,18 @@ public class HomePageController {
     private RoomService roomService;
 
     @GetMapping("/roomTypeAndMedia")
-    public ResponseObject<?> getRoomTypeMedia() {
+    public ResponseObject<?> getRoomTypeMedia(Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeService.getRoomTypeMedia());
+            return new ResponseObject<>(HttpStatus.OK, "Success", roomTypeService.getRoomTypeMedia(pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
     @GetMapping("/roomDetail")
-    public ResponseObject<?> getRoomDetail() {
+    public ResponseObject<?> getRoomDetail(Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK, "Success", roomService.getRoomDetail());
+            return new ResponseObject<>(HttpStatus.OK, "Success", roomService.getRoomDetail(pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

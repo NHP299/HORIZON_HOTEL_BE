@@ -11,6 +11,8 @@ import com.horizon.repository.RoomRepository;
 import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.RoomService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -128,8 +130,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Map<String, Object>> getRoomDetail() {
-        return roomRepository.getRoomDetail();
+    public Page<Map<String, Object>> getRoomDetail(Pageable pageable) {
+        return roomRepository.getRoomDetail(pageable);
     }
 
     @Override

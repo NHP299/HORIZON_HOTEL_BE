@@ -3,6 +3,7 @@ package com.horizon.controller.home;
 import com.horizon.response.ResponseObject;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +25,9 @@ public class PromotionController {
     }
 
     @GetMapping("/all-available-and-roomType/{id}")
-    public ResponseObject<?> getAllAvailable(@PathVariable("id")Integer roomTypeId) {
+    public ResponseObject<?> getAllAvailable(@PathVariable("id")Integer roomTypeId, Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAllAvailable(roomTypeId));
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAllAvailable(roomTypeId, pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

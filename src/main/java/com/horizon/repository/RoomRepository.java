@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -70,7 +72,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         GROUP BY
             r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
         """, nativeQuery = true)
-    List<Map<String, Object>> getRoomDetail();
+    Page<Map<String, Object>> getRoomDetail(Pageable pageable);
 
     @Query(value = """
         SELECT
