@@ -6,6 +6,7 @@ import com.horizon.service.RoomTypeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,9 +58,9 @@ public class RoomTypeController {
     }
 
     @GetMapping("/allDetail")
-    public ResponseObject<?> getAllDetail() {
+    public ResponseObject<?> getAllDetail(Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail());
+            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail(pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
