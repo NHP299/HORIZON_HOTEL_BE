@@ -1,6 +1,7 @@
 package com.horizon.controller.admin;
 
 import com.horizon.dto.RoleDto;
+import com.horizon.response.ResponseObject;
 import com.horizon.service.RoleService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,32 +21,32 @@ public class RoleController {
     private RoleService roleService;
 
     @PostMapping
-    public ResponseEntity<RoleDto> createRole(@RequestBody RoleDto roleDto) {
+    public ResponseObject<?> createRole(@RequestBody RoleDto roleDto) {
         RoleDto role = roleService.createRole(roleDto);
-        return new ResponseEntity<>(role, HttpStatus.CREATED);
+        return new ResponseObject<>(HttpStatus.OK, "Success", role);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleDto>>  getAllRoles() {
+    public ResponseObject<?>  getAllRoles() {
         List<RoleDto> roles = roleService.getAllRoles();
-        return ResponseEntity.ok(roles);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roles);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<RoleDto> getRoleById(@PathVariable("id") Integer roleId) {
+    public ResponseObject<?> getRoleById(@PathVariable("id") Integer roleId) {
         RoleDto roleDto = roleService.getRoleById(roleId);
-        return ResponseEntity.ok(roleDto);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roleDto);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<RoleDto> updateRole(@PathVariable("id") Integer roleId, @RequestBody RoleDto updateRole) {
+    public ResponseObject<?> updateRole(@PathVariable("id") Integer roleId, @RequestBody RoleDto updateRole) {
         RoleDto roleDto = roleService.updateRole(updateRole, roleId);
-        return ResponseEntity.ok(roleDto);
+        return new ResponseObject<>(HttpStatus.OK, "Success", roleDto);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteRole(@PathVariable("id") Integer roleId) {
+    public ResponseObject<?> deleteRole(@PathVariable("id") Integer roleId) {
         roleService.deleteRoleById(roleId);
-        return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
 }

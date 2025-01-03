@@ -42,15 +42,15 @@ public class RoomTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomTypeDto> update(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
+    public ResponseObject<?> update(@PathVariable("id") Integer roomTypeId, @RequestBody RoomTypeDto roomTypeDto) {
         RoomTypeDto updateRoomType = roomTypeService.update(roomTypeId, roomTypeDto);
-        return ResponseEntity.ok(updateRoomType);
+        return new ResponseObject<>(HttpStatus.OK, "Success", updateRoomType);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Integer roomTypeId) {
+    public ResponseObject<?> delete(@PathVariable("id") Integer roomTypeId) {
         roomTypeService.delete(roomTypeId);
-        return new ResponseEntity<>("Room type deleted successfully", HttpStatus.OK);
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
 
     @GetMapping("/allDetail")

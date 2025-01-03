@@ -23,33 +23,31 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-admin}/accounts")
 public class AccountController {
-
     private final AccountService accountService;
-    private final AccountRepository accountRepository;
 
     @PostMapping
-    public ResponseEntity<AccountDto> create(
+    public ResponseObject<?> create(
             @RequestParam("accountDto") String accountDtoJson,
             @RequestParam("profilePicture") MultipartFile profilePicture) {
         AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
         AccountDto createdAccount = accountService.create(accountDto, profilePicture);
-        return ResponseEntity.ok(createdAccount);
+        return new ResponseObject<>(HttpStatus.OK, "Success", createdAccount);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountDto> update(
+    public ResponseObject<?> update(
             @PathVariable Integer id,
             @RequestPart("accountDto") String accountDtoJson,
             @RequestPart("profilePicture") MultipartFile profilePicture) {
         AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
         AccountDto updatedAccount = accountService.update(id, accountDto, profilePicture);
-        return ResponseEntity.ok(updatedAccount);
+        return new ResponseObject<>(HttpStatus.OK, "Success", updatedAccount);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseObject<?> delete(@PathVariable Integer id) {
         accountService.delete(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
 
     @GetMapping
