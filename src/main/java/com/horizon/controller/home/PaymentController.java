@@ -1,6 +1,5 @@
-package com.horizon.controller.wallet;
+package com.horizon.controller.home;
 
-import com.horizon.domain.Payment;
 import com.horizon.dto.BookingDto;
 import com.horizon.dto.PaymentDTO;
 import com.horizon.dto.PaymentTransactionDto;
@@ -19,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
-@RequestMapping("${spring.application.api-prefix-admin}/payment")
+@RequestMapping("${spring.application.api-prefix-home}/payment")
 @CrossOrigin
 @RequiredArgsConstructor
 public class PaymentController {
