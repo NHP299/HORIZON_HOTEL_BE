@@ -54,9 +54,9 @@ public class RoomTypeController {
     }
 
     @GetMapping("/allDetail")
-    public ResponseObject<?> getAllDetail() {
+    public ResponseObject<?> getAllDetail(Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail());
+            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail(pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

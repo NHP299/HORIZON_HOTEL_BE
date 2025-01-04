@@ -4,6 +4,7 @@ import com.horizon.dto.PromotionDto;
 import com.horizon.response.ResponseObject;
 import com.horizon.service.PromotionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class PromotionController {
             PromotionDto savePromotion = promotionService.create(promotionDto);
             return new ResponseObject<>(HttpStatus.OK, "Success", savePromotion);
         }catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", "adsfasdfasdf");
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
@@ -54,18 +55,18 @@ public class PromotionController {
     }
 
     @GetMapping("/by-name")
-    public ResponseObject<?> getByName(@RequestParam String name ) {
+    public ResponseObject<?> getByName(@RequestParam String name, Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getByName(name));
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getByName(name, pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }
     }
 
     @GetMapping("/all")
-    public ResponseObject<?> getAll() {
+    public ResponseObject<?> getAll(Pageable pageable) {
         try {
-            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAll());
+            return new ResponseObject<>(HttpStatus.OK, "Success", promotionService.getAll(pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

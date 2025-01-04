@@ -8,13 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @RestController("HomeRoomController")
@@ -42,5 +39,24 @@ public class RoomController {
         } catch (Exception e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
       }
+    }
+
+
+    @GetMapping("/roomDetail")
+    public ResponseObject<?> getRoomDetail(Pageable pageable) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", roomService.getRoomDetail(pageable));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
+    }
+
+    @GetMapping("/roomDetailById/{id}")
+    public ResponseObject<?> getRoomDetailById(@PathVariable Integer id) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK, "Success", roomService.getRoomDetailById(id));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
     }
 }

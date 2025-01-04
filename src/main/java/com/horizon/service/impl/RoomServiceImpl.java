@@ -126,8 +126,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Map<String, Object>> getRoomDetail() {
-        return roomRepository.getRoomDetail();
+    public Page<Map<String, Object>> getRoomDetail(Pageable pageable) {
+        return roomRepository.getRoomDetail(pageable);
     }
 
     @Override

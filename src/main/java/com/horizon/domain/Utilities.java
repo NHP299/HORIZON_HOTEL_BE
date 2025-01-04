@@ -20,7 +20,7 @@ public class Utilities {
     @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
 
-    @Size(max = 255, message = "Description must be less than 255 characters")
+    @Size(max = 500, message = "Description must be less than 255 characters")
     private String description;
 
     private Boolean isActivated;

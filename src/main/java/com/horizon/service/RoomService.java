@@ -36,7 +36,7 @@ public interface RoomService {
 
     Page<RoomDto> findAvailable(LocalDate startDate, LocalDate endDate,Pageable pageable);
 
-    List<Map<String, Object>> getRoomDetail();
+    Page<Map<String, Object>> getRoomDetail(Pageable pageable);
 
     Map<String, Object> getRoomDetailById(Integer id);
 

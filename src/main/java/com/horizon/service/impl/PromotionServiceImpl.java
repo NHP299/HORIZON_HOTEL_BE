@@ -5,8 +5,13 @@ import com.horizon.dto.PromotionDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
+import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.PromotionService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +21,7 @@ import java.util.List;
 public class PromotionServiceImpl implements PromotionService {
     private PromotionRepository promotionRepository;
     private PromotionMapper promotionMapper;
+    private RoomTypeRepository roomTypeRepository;
 
     @Override
     public PromotionDto create(PromotionDto promotionDto) {
@@ -51,15 +57,15 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public List<PromotionDto> getAll() {
-        List<Promotion> promotions = promotionRepository.findAllByIsActivatedTrue();
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getAll(Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findAllByIsActivatedTrue(pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
-    public List<PromotionDto> getByName(String name) {
-        List<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getByName(String name, Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
@@ -69,9 +75,9 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
-    public List<PromotionDto> getAllAvailable(Integer roomTypeId) {
-        List<Promotion> promotions = promotionRepository.findAllAvailable(roomTypeId);
-        return promotions.stream().map(promotionMapper::toPromotionDto).toList();
+    public Page<PromotionDto> getAllAvailable(Integer roomTypeId, Pageable pageable) {
+        Page<Promotion> promotions = promotionRepository.findAllAvailable(roomTypeId, pageable);
+        return promotions.map(promotionMapper::toPromotionDto);
     }
 
     @Override
@@ -81,7 +87,7 @@ public class PromotionServiceImpl implements PromotionService {
             Promotion promotion = promotionRepository.findById(promotionId)
                     .orElseThrow(() -> new IllegalArgumentException("Promotion with ID " + promotionId + " not found."));
             if ("PERCENTAGE".equalsIgnoreCase(promotion.getDiscountType().name())) {
-                discount = totalPrice * promotion.getDiscountValue();
+                discount = totalPrice * promotion.getDiscountValue() / 100;
             } else if ("FIXED".equalsIgnoreCase(promotion.getDiscountType().name())) {
                 discount = promotion.getDiscountValue();
             }
@@ -90,5 +96,13 @@ public class PromotionServiceImpl implements PromotionService {
         return totalPrice;
     }
 
+    @Transactional
+    @Scheduled(fixedRate = 60000)
+    public void updateIsActivated() {
+        List<Integer> inactiveRoomTypeIds = roomTypeRepository.findInactiveRoomTypeIds();
+        if (!inactiveRoomTypeIds.isEmpty()) {
+            promotionRepository.deactivatePromotionsByRoomTypeIds(inactiveRoomTypeIds);
+        }
+    }
 
 }

@@ -1,6 +1,9 @@
 package com.horizon.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,10 +26,15 @@ public class Account {
     private Role role;
 
     private String googleId;
+    @Email(message = "Email must be a valid email address")
     private String email;
+
     private String firstName;
+    @Size(max = 50, message = "First name must not exceed 50 characters")
     private String lastName;
+    @Size(max = 50, message = "Last name must not exceed 50 characters")
     private String password;
+    @Pattern(regexp = "^\\+?[0-9]{10,12}$", message = "Phone must be a valid phone number")
     private String phone;
     private String accessToken;
     private Timestamp createdDate;

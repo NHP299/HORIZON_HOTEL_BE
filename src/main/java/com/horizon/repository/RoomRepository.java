@@ -49,14 +49,16 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             r.floor,
             r.price,
             r.description,
-            rt.capacity,
+            rt.adult_capacity , 
+            rt.child_capacity , 
+            rt.baby_capacity , 
             STRING_AGG(DISTINCT s.name, ', ') AS services,
             STRING_AGG(DISTINCT u.name, ', ') AS utilities,
             STRING_AGG(DISTINCT m.path, ', ') AS paths
         FROM
             room r
-        LEFT JOIN
-            room_type rt ON r.room_type_id = rt.id
+        INNER JOIN
+            room_type rt ON r.room_type_id = rt.id AND rt.is_activated = true
         LEFT JOIN
             room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
         LEFT JOIN
@@ -70,9 +72,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE
             r.is_activated = true
         GROUP BY
-            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
         """, nativeQuery = true)
-    List<Map<String, Object>> getRoomDetail();
+    Page<Map<String, Object>> getRoomDetail(Pageable pageable);
 
     @Query(value = """
         SELECT
@@ -82,14 +84,16 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             r.floor,
             r.price,
             r.description,
-            rt.capacity,
+            rt.adult_capacity , 
+            rt.child_capacity , 
+            rt.baby_capacity , 
             STRING_AGG(DISTINCT s.name, ', ') AS services,
             STRING_AGG(DISTINCT u.name, ', ') AS utilities,
             STRING_AGG(DISTINCT m.path, ', ') AS paths
         FROM
             room r
-        LEFT JOIN
-            room_type rt ON r.room_type_id = rt.id
+        INNER JOIN
+            room_type rt ON r.room_type_id = rt.id AND rt.is_activated = true
         LEFT JOIN
             room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
         LEFT JOIN
@@ -103,7 +107,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         WHERE
             r.is_activated = true AND r.id =:id
         GROUP BY
-            r.id, r.name, r.status, r.floor, r.price, r.description, rt.capacity
+            r.id, r.name, r.status, r.floor, r.price, r.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
         """, nativeQuery = true)
     Map<String, Object> getRoomDetailById(@Param("id") Integer id);
 

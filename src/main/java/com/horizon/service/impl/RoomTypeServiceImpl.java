@@ -60,13 +60,13 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
-    public List<Map<String, Object>> getRoomTypeMedia() {
-        return roomTypeRepository.findRoomTypeMedia();
+    public Page<Map<String, Object>> getRoomTypeMedia(Pageable pageable) {
+        return roomTypeRepository.findRoomTypeMedia(pageable);
     }
 
     @Override
-    public List<Map<String, Object>> getAllDetail() {
-        return roomTypeRepository.findAllRoomTypeService();
+    public Page<Map<String, Object>> getAllDetail(Pageable pageable) {
+        return roomTypeRepository.findAllRoomTypeService(pageable);
     }
 
 }

@@ -7,10 +7,10 @@ import com.horizon.mapper.UtilitiesMapper;
 import com.horizon.repository.UtilitiesRepository;
 import com.horizon.service.UtilitiesService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @AllArgsConstructor
@@ -65,15 +65,15 @@ public class UtilitiesServiceImpl implements UtilitiesService {
     }
 
     @Override
-    public List<UtilitiesDto> getAll() {
-        List<Utilities> utilitiesPage = utilitiesRepository.findAllByIsActivatedTrue();
-        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
+    public Page<UtilitiesDto> getAll(Pageable pageable) {
+        Page<Utilities> utilitiesPage = utilitiesRepository.findAllByIsActivatedTrue(pageable);
+        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
     }
 
     @Override
-    public List<UtilitiesDto> getByName(String name) {
-        List<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name);
-        return utilitiesPage.stream().map(utilitiesMapper::mapToUtilitiesDto).toList();
+    public Page<UtilitiesDto> getByName(String name, Pageable pageable) {
+        Page<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
     }
 
 }

@@ -1,18 +1,19 @@
 package com.horizon.repository;
 
 import com.horizon.domain.Utilities;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UtilitiesRepository extends JpaRepository<Utilities, Integer> {
 
-    List<Utilities> findByNameContainingIgnoreCaseAndIsActivatedTrue(String name);
+    Page<Utilities> findByNameContainingIgnoreCaseAndIsActivatedTrue(String name, Pageable pageable);
 
-    List<Utilities> findAllByIsActivatedTrue();
+    Page<Utilities> findAllByIsActivatedTrue(Pageable pageable);
 
     Optional<Utilities> findByNameIgnoreCaseAndIsActivatedFalse(String name);
 

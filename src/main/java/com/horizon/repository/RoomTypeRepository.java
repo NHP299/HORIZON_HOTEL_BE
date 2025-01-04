@@ -1,6 +1,5 @@
 package com.horizon.repository;
 
-import com.horizon.domain.Room;
 import com.horizon.domain.RoomType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,23 +19,28 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
     Optional<RoomType> findByName(String name);
 
     @Query(value = """
-        SELECT rt.id AS id, 
-               rt.name AS name, 
-               rt.description AS description, 
-               rt.capacity AS capacity, 
+        SELECT rt.id , 
+               rt.name , 
+               rt.description , 
+               rt.adult_capacity , 
+               rt.child_capacity , 
+               rt.baby_capacity , 
                STRING_AGG(m.path, ', ') AS paths
         FROM room_type rt
         LEFT JOIN media m ON rt.id = m.room_type_id
-        GROUP BY rt.id, rt.name, rt.description, rt.capacity
+        WHERE rt.is_activated = true
+        GROUP BY rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity 
         """, nativeQuery = true)
-    List<Map<String, Object>> findRoomTypeMedia();
+    Page<Map<String, Object>> findRoomTypeMedia(Pageable pageable);
 
     @Query(value = """
             SELECT 
                 rt.id, 
                 rt.name, 
                 rt.description, 
-                rt.capacity, 
+                rt.adult_capacity , 
+                rt.child_capacity , 
+                rt.baby_capacity , 
                 STRING_AGG(DISTINCT s.name, ', ') AS services, 
                 STRING_AGG(DISTINCT u.name, ', ') AS utilities 
             FROM room_type rt 
@@ -48,8 +52,12 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
                 ON rt.id = rtu.room_type_id AND rtu.is_activated = true 
             LEFT JOIN utilities u 
                 ON rtu.utility_id = u.id AND u.is_activated = true 
+            WHERE rt.is_activated = true
             GROUP BY 
-                rt.id, rt.name, rt.description, rt.capacity
+                rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
     """, nativeQuery = true)
-    List<Map<String, Object>> findAllRoomTypeService();
+    Page<Map<String, Object>> findAllRoomTypeService(Pageable pageable);
+
+    @Query("SELECT r.id FROM RoomType r WHERE r.isActivated = false")
+    List<Integer> findInactiveRoomTypeIds();
 }

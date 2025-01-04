@@ -18,6 +18,7 @@ public class ServicesMapperImpl implements ServicesMapper {
         ServicesDto servicesDto = new ServicesDto();
         servicesDto.setId(services.getId());
         servicesDto.setName(services.getName());
+        servicesDto.setDescription(services.getDescription());
         servicesDto.setStartedTime(services.getStartedTime());
         servicesDto.setEndTime(services.getEndTime());
         servicesDto.setIsActivated(services.getIsActivated());
@@ -32,6 +33,7 @@ public class ServicesMapperImpl implements ServicesMapper {
         Services services = new Services();
         services.setId(servicesDto.getId());
         services.setName(servicesDto.getName());
+        services.setDescription(servicesDto.getDescription());
         services.setStartedTime(servicesDto.getStartedTime());
         services.setEndTime(servicesDto.getEndTime());
         services.setIsActivated(servicesDto.getIsActivated());
