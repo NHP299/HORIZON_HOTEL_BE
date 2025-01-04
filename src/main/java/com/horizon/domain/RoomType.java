@@ -39,4 +39,6 @@ public class RoomType {
 
     @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
+
+    private Boolean isActivated;
 }

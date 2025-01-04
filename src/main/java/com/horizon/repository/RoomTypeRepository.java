@@ -1,5 +1,6 @@
 package com.horizon.repository;
 
+import com.horizon.domain.Room;
 import com.horizon.domain.RoomType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
+    Page<RoomType> findAllByIsActivatedTrue(Pageable pageable);
 
     Optional<RoomType> findByName(String name);
 

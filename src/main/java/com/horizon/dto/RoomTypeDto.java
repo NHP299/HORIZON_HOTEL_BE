@@ -14,4 +14,5 @@ public class RoomTypeDto {
     private Integer childCapacity;
     private Integer babyCapacity;
     private String description;
+    private Boolean isActivated;
 }

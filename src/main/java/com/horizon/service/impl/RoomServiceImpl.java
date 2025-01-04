@@ -177,4 +177,15 @@ public class RoomServiceImpl implements RoomService {
         System.out.println("Room statuses updated.");
     }
 
+    @Scheduled(fixedRate = 600000)
+    public void updateRoomIsActivated(){
+        List<Room> rooms = roomRepository.findAll();
+        rooms.forEach(room -> {
+            if(room.getRoomType().getIsActivated() == false){
+                room.setIsActivated(false);
+            }
+        });
+        roomRepository.saveAll(rooms);
+    }
+
 }
