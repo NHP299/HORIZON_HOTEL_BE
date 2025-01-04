@@ -1,6 +1,5 @@
 package com.horizon.repository;
 
-import com.horizon.domain.Room;
 import com.horizon.domain.RoomType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,6 +28,7 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
                STRING_AGG(m.path, ', ') AS paths
         FROM room_type rt
         LEFT JOIN media m ON rt.id = m.room_type_id
+        WHERE rt.is_activated = true
         GROUP BY rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity 
         """, nativeQuery = true)
     Page<Map<String, Object>> findRoomTypeMedia(Pageable pageable);
@@ -51,8 +52,12 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
                 ON rt.id = rtu.room_type_id AND rtu.is_activated = true 
             LEFT JOIN utilities u 
                 ON rtu.utility_id = u.id AND u.is_activated = true 
+            WHERE rt.is_activated = true
             GROUP BY 
                 rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
     """, nativeQuery = true)
     Page<Map<String, Object>> findAllRoomTypeService(Pageable pageable);
+
+    @Query("SELECT r.id FROM RoomType r WHERE r.isActivated = false")
+    List<Integer> findInactiveRoomTypeIds();
 }

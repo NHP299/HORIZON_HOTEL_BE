@@ -5,17 +5,23 @@ import com.horizon.dto.PromotionDto;
 import com.horizon.exception.ResourceNotFoundException;
 import com.horizon.mapper.PromotionMapper;
 import com.horizon.repository.PromotionRepository;
+import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.PromotionService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class PromotionServiceImpl implements PromotionService {
     private PromotionRepository promotionRepository;
     private PromotionMapper promotionMapper;
+    private RoomTypeRepository roomTypeRepository;
 
     @Override
     public PromotionDto create(PromotionDto promotionDto) {
@@ -90,5 +96,13 @@ public class PromotionServiceImpl implements PromotionService {
         return totalPrice;
     }
 
+    @Transactional
+    @Scheduled(fixedRate = 60000)
+    public void updateIsActivated() {
+        List<Integer> inactiveRoomTypeIds = roomTypeRepository.findInactiveRoomTypeIds();
+        if (!inactiveRoomTypeIds.isEmpty()) {
+            promotionRepository.deactivatePromotionsByRoomTypeIds(inactiveRoomTypeIds);
+        }
+    }
 
 }

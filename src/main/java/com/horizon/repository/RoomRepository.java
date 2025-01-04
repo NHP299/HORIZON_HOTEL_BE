@@ -57,8 +57,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             STRING_AGG(DISTINCT m.path, ', ') AS paths
         FROM
             room r
-        LEFT JOIN
-            room_type rt ON r.room_type_id = rt.id
+        INNER JOIN
+            room_type rt ON r.room_type_id = rt.id AND rt.is_activated = true
         LEFT JOIN
             room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
         LEFT JOIN
@@ -92,8 +92,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             STRING_AGG(DISTINCT m.path, ', ') AS paths
         FROM
             room r
-        LEFT JOIN
-            room_type rt ON r.room_type_id = rt.id
+        INNER JOIN
+            room_type rt ON r.room_type_id = rt.id AND rt.is_activated = true
         LEFT JOIN
             room_type_services rts ON rt.id = rts.room_type_id AND rts.is_activated = true
         LEFT JOIN
