@@ -29,10 +29,12 @@ public class Account {
     @Email(message = "Email must be a valid email address")
     private String email;
 
-    private String firstName;
     @Size(max = 50, message = "First name must not exceed 50 characters")
-    private String lastName;
+    private String firstName;
+
     @Size(max = 50, message = "Last name must not exceed 50 characters")
+    private String lastName;
+
     private String password;
     @Pattern(regexp = "^\\+?[0-9]{10,12}$", message = "Phone must be a valid phone number")
     private String phone;
