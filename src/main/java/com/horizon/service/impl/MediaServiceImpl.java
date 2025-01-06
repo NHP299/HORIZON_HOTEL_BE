@@ -9,7 +9,8 @@ import com.horizon.repository.RoomTypeRepository;
 import com.horizon.service.CloudinaryService;
 import com.horizon.service.MediaService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,33 +74,31 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
+    public Page<MediaDto> getAll(Pageable pageable) {
+        return mediaRepository.findAll(pageable)
+                .map(mediaMapper::toDto);
+    }
+
+    @Override
+    public Page<MediaDto> getByRoomTypeId(Integer roomTypeId, Pageable pageable) {
+        RoomType roomType = getRoomType(roomTypeId);
+        Page<Media> mediaList = mediaRepository.findByRoomType(roomType, pageable);
+        return mediaList.map(mediaMapper::toDto);
+    }
+
+    @Override
+    public Page<MediaDto> getByRoomTypeName(String roomName, Pageable pageable) {
+        RoomType roomType = roomTypeRepository.findByName(roomName)
+                .orElseThrow(() -> new RuntimeException("RoomType with name " + roomName + " not found"));
+        Page<Media> mediaList = mediaRepository.findByRoomType(roomType, pageable);
+        return mediaList.map(mediaMapper::toDto);
+    }
+
+    @Override
     public MediaDto getById(Long id) {
         Media media = getMedia(id);
         return mediaMapper.toDto(media);
     }
-
-    @Override
-    public List<MediaDto> getByRoomTypeId(Integer roomTypeId) {
-        RoomType roomType = getRoomType(roomTypeId);
-        List<Media> mediaList = mediaRepository.findByRoomType(roomType);
-
-        return mediaList.stream()
-                .map(mediaMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<MediaDto> getByRoomName(String roomName) {
-        RoomType roomType = roomTypeRepository.findByName(roomName)
-                .orElseThrow(() -> new RuntimeException("RoomType with name " + roomName + " not found"));
-
-        List<Media> mediaList = mediaRepository.findByRoomType(roomType);
-
-        return mediaList.stream()
-                .map(mediaMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
 
     private RoomType getRoomType(Integer roomTypeId) {
         return roomTypeRepository.findById(roomTypeId)
