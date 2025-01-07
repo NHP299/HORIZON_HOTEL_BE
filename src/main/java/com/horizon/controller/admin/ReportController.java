@@ -10,30 +10,30 @@ import org.springframework.web.bind.annotation.*;
 
 
 @AllArgsConstructor
-@RestController
+@RestController("AdminReportController")
 @CrossOrigin
-@RequestMapping("/admin/reports")
+@RequestMapping("${spring.application.api-prefix-admin}/reports")
 public class ReportController {
     private final ReportService reportService;
 
 
-//    @GetMapping("/generateReport")
-//    public ReportResponse generateReport(@RequestParam int month, @RequestParam int year) {
-//        return reportService.getReports(month, year);
-//    }
-//
-//    @GetMapping("/reportUser")
-//    public ReportUserResponse reportUser() {
-//        return reportService.getReportUsers();
-//    }
-//
-//    @GetMapping("/reportRoom")
-//    public ReportRoomResponse reportRoom() {
-//        return reportService.getReportRooms();
-//    }
-//
-//    @GetMapping("/overview")
-//    public OverviewResponse overview() {
-//        return reportService.getOverview();
-//    }
+    @GetMapping("/generateReport")
+    public ReportResponse generateReport(@RequestParam int month, @RequestParam int year) {
+        return reportService.getReports(month, year);
+    }
+
+    @GetMapping("/reportUser")
+    public ReportUserResponse reportUser() {
+        return reportService.getReportUsers();
+    }
+
+    @GetMapping("/reportRoom")
+    public ReportRoomResponse reportRoom() {
+        return reportService.getReportRooms();
+    }
+
+    @GetMapping("/overview")
+    public OverviewResponse overview() {
+        return reportService.getOverview();
+    }
 }
