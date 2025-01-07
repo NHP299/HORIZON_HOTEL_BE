@@ -37,7 +37,7 @@ public class RoomController {
             Page<RoomDto> rooms = roomService.search(roomTypeName, checkInDate, checkOutDate, adult, child, baby,roomCount, pageable);
             return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
         } catch (Exception e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
       }
     }
 

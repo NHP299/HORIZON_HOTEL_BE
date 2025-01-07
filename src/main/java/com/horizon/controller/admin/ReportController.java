@@ -1,11 +1,9 @@
 package com.horizon.controller.admin;
 
-import com.horizon.response.OverviewResponse;
-import com.horizon.response.ReportResponse;
-import com.horizon.response.ReportRoomResponse;
-import com.horizon.response.ReportUserResponse;
+import com.horizon.response.*;
 import com.horizon.service.ReportService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,24 +14,23 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     private final ReportService reportService;
 
-
     @GetMapping("/generateReport")
-    public ReportResponse generateReport(@RequestParam int month, @RequestParam int year) {
-        return reportService.getReports(month, year);
+    public ResponseObject<?> generateReport(@RequestParam int month, @RequestParam int year) {
+        return new ResponseObject<>(HttpStatus.OK, "Success", reportService.getReports(month, year));
     }
 
     @GetMapping("/reportUser")
-    public ReportUserResponse reportUser() {
-        return reportService.getReportUsers();
+    public ResponseObject<?> reportUser() {
+        return new ResponseObject<>(HttpStatus.OK, "Success", reportService.getReportUsers());
     }
 
     @GetMapping("/reportRoom")
-    public ReportRoomResponse reportRoom() {
-        return reportService.getReportRooms();
+    public ResponseObject<?> reportRoom() {
+        return new ResponseObject<>(HttpStatus.OK, "Success", reportService.getReportRooms());
     }
 
     @GetMapping("/overview")
-    public OverviewResponse overview() {
-        return reportService.getOverview();
+    public ResponseObject<?> overview() {
+        return new ResponseObject<>(HttpStatus.OK, "Success", reportService.getOverview());
     }
 }
