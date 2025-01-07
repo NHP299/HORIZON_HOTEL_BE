@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
-@RestController("adminController")
+@RestController("AdminPromotionController")
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-admin}/promotion")
 public class PromotionController {
