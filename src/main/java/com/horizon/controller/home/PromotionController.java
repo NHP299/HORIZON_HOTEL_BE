@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @AllArgsConstructor
-@RestController("homeController")
+@RestController("HomePromotionController")
 @CrossOrigin
 @RequestMapping("${spring.application.api-prefix-home}/promotion")
 public class PromotionController {
