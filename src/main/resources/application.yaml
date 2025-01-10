@@ -20,3 +20,6 @@ payment:
     command: pay
     orderType: other
 
+jwt:
+  expiration: 2592000
+  keySecret: MYZLDD5Z0AvcvaA/p9autL/Oq2OBKoFh3VrISdiYuQc=
