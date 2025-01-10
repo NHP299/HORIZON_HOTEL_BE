@@ -101,7 +101,9 @@ public class AccountServiceImpl implements AccountService {
     public String login(String email, String rawPassword, HttpSession session) {
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found!"));
+        String token = jwtTokenUtil.generateToken(account);
         account.setLastLogin(new Timestamp(System.currentTimeMillis()));
+        account.setAccessToken(token);
         if (!passwordEncoder.matches(rawPassword, account.getPassword())) {
             throw new IllegalArgumentException("Invalid password!");
         }
@@ -114,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
 
         authenticationManager.authenticate((authentication));
 
-        return jwtTokenUtil.generateToken(account);
+        return token;
 //        return "Login successful!";
     }
 

@@ -2,6 +2,7 @@ package com.horizon.config;
 
 import com.horizon.filters.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,17 +15,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
     private final JwtTokenFilter jwtTokenFilter;
+
+    @Value("${spring.application.api-prefix-home}")
+    private String homeApiPrefix;
+
+    @Value("${spring.application.api-prefix-admin}")
+    private String adminApiPrefix;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> {
-                    request.requestMatchers("**")
-                            .permitAll();
-                })
-        ;
+                    request
+                            .requestMatchers(homeApiPrefix + "/accounts/login").permitAll()
+                            .requestMatchers(homeApiPrefix + "/accounts/register").permitAll()
+                            .requestMatchers(homeApiPrefix + "/accounts/current-user").permitAll()
+                            .requestMatchers(adminApiPrefix + "/**").hasRole("ADMIN")
+                            .requestMatchers(homeApiPrefix + "/**").hasRole("USER")
+                            .anyRequest().permitAll();
+                });
         return http.build();
     }
 }
