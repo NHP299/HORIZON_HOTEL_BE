@@ -97,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
                     .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getChildCapacity();
             int babyCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
                     .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getBabyCapacity();
-            if (adultCapacity <= adult && childCapacity <= child && babyCapacity <= baby) {
+            if (adultCapacity >= adult && childCapacity >= child && babyCapacity >= baby) {
                 return true;
             }
         }
