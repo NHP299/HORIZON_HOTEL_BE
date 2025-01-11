@@ -78,6 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final List<org.springframework.data.util.Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/accounts/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/accounts/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/accounts/logout", apiPrefix), "POST"),
                 Pair.of(String.format("%s/accounts/current-user", apiPrefix), "GET"),
                 Pair.of(String.format("%s/room-type", apiPrefix), "GET"),
                 Pair.of(String.format("%s/rooms", apiPrefix), "GET")
