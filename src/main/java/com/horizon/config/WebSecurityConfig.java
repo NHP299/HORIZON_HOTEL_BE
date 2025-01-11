@@ -1,5 +1,6 @@
 package com.horizon.config;
 
+import com.horizon.domain.Role;
 import com.horizon.filters.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +35,9 @@ public class WebSecurityConfig {
                             .requestMatchers(homeApiPrefix + "/accounts/login").permitAll()
                             .requestMatchers(homeApiPrefix + "/accounts/register").permitAll()
                             .requestMatchers(homeApiPrefix + "/accounts/current-user").permitAll()
-                            .requestMatchers(adminApiPrefix + "/**").hasRole("ADMIN")
-                            .requestMatchers(homeApiPrefix + "/**").hasRole("USER")
+                            .requestMatchers(homeApiPrefix + "/accounts/logout").permitAll()
+                            .requestMatchers(adminApiPrefix + "/**").hasRole(Role.ADMIN)
+                            .requestMatchers(homeApiPrefix + "/**").hasRole(Role.USER)
                             .anyRequest().permitAll();
                 });
         return http.build();
