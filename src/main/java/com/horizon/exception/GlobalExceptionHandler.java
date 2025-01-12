@@ -5,11 +5,12 @@ import com.horizon.response.ResponseObject;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.ErrorResponse;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +21,21 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseObject<>(HttpStatus.UNAUTHORIZED, "Unauthorized", ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCsrfTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenException(InvalidCsrfTokenException ex) {
+        return new ResponseObject<>(HttpStatus.UNAUTHORIZED, "Unauthorized", ex.getMessage());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        return new ResponseObject<>(HttpStatus.FORBIDDEN, "Forbidden", ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseObject<String> handleAllExceptions(Exception ex) {
