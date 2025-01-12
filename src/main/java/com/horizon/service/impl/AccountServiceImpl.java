@@ -10,10 +10,13 @@ import com.horizon.repository.AccountRepository;
 import com.horizon.repository.RoleRepository;
 import com.horizon.service.AccountService;
 import com.horizon.service.CloudinaryService;
+import com.horizon.util.JwtTokenUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +36,8 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
 
     public AccountDto parseAccountDto(String accountDtoJson) {
         try {
@@ -96,15 +101,23 @@ public class AccountServiceImpl implements AccountService {
     public String login(String email, String rawPassword, HttpSession session) {
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found!"));
+        String token = jwtTokenUtil.generateToken(account);
         account.setLastLogin(new Timestamp(System.currentTimeMillis()));
+        account.setAccessToken(token);
         if (!passwordEncoder.matches(rawPassword, account.getPassword())) {
             throw new IllegalArgumentException("Invalid password!");
         }
 
         session.setAttribute("userId", account.getId());
         session.setAttribute("email", account.getEmail());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
+                rawPassword,
+                account.getAuthorities());
 
-        return "Login successful!";
+        authenticationManager.authenticate((authentication));
+
+        return token;
+//        return "Login successful!";
     }
 
     @Override

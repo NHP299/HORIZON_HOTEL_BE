@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController("HomeAccountController")
 @AllArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping("${spring.application.api-prefix-home}/accounts")
 public class AccountController {
 
