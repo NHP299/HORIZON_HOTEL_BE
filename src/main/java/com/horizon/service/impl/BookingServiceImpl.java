@@ -75,8 +75,11 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto update(Integer id, BookingDto bookingDto) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
-        booking.setStatus(bookingDto.getStatus());
-        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        if (booking.getPayment().getPaymentMethod().equalsIgnoreCase("cash")) {
+            booking.setStatus(bookingDto.getStatus());
+            return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        }
+        return null;
     }
 
     public Boolean checkBooking(BookingDto bookingDto) {
