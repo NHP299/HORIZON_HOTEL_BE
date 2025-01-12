@@ -32,9 +32,4 @@ public interface BookingService {
 
     void confirmBooking(HttpServletRequest request);
 
-    @Scheduled(fixedRate = 3600000)
-    void completeBooking();
-
-    @Scheduled(fixedRate = 60000)
-    void cancelExpiredBookings();
 }

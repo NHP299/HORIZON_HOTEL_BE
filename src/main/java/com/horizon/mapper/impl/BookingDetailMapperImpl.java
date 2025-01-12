@@ -19,7 +19,7 @@ public class BookingDetailMapperImpl implements BookingDetailMapper {
         dto.setId(bookingDetail.getId());
         dto.setBookingId(bookingDetail.getBooking() != null ? bookingDetail.getBooking().getId() : null);
         dto.setRoomId(bookingDetail.getRoom() != null ? bookingDetail.getRoom().getId() : null);
-
+        dto.setPriceAtBooking(bookingDetail.getPriceAtBooking());
         return dto;
     }
 
@@ -43,6 +43,8 @@ public class BookingDetailMapperImpl implements BookingDetailMapper {
             room.setId(dto.getRoomId());
             bookingDetail.setRoom(room);
         }
+
+        bookingDetail.setPriceAtBooking(dto.getPriceAtBooking());
 
         return bookingDetail;
     }

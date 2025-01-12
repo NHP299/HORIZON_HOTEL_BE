@@ -148,40 +148,24 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
     }
 
-    @Override
     @Scheduled(fixedRate = 60000)
     public void completeBooking() {
         LocalDate currentDate = LocalDate.now();
 
         List<Booking> bookings = bookingRepository.findAllByStatusAndCheckOutBefore(Booking.Status.CONFIRMED, currentDate);
 
-        List<Payment> payment = bookings.stream().map(Booking::getPayment)
-                .filter(p -> p.getPaymentMethod() == null || p.getPaymentMethod().equalsIgnoreCase("pay"))
-                .toList();
-
-        List<Booking> expiredBookings = payment.stream().map(Payment::getBooking)
-                .toList();
-
-        expiredBookings.forEach(booking -> {
+        bookings.forEach(booking -> {
             booking.setStatus(Booking.Status.COMPLETED);
             bookingRepository.save(booking);
         });
         System.out.println("Updated expired bookings to Complete.");
     }
 
-    @Override
     @Scheduled(fixedRate = 60000)
     public void cancelExpiredBookings() {
         List<Booking> bookings = bookingRepository.findBookingByPaymentStatusFailed();
 
-        List<Payment> payment = bookings.stream().map(Booking::getPayment)
-                .filter(p -> p.getPaymentMethod() == null || p.getPaymentMethod().equalsIgnoreCase("pay"))
-                .toList();
-
-        List<Booking> expiredBookings = payment.stream().map(Payment::getBooking)
-                .toList();
-
-        expiredBookings.forEach(booking -> {
+        bookings.forEach(booking -> {
             booking.setStatus(Booking.Status.CANCELLED);
             bookingRepository.save(booking);
         });
