@@ -1,5 +1,7 @@
 package com.horizon.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.horizon.response.ResponseObject;
 import com.horizon.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,11 +33,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private String apiPrefix;
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws IOException {
 
         try {
             if (isByPassToken(request)) {
@@ -44,7 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             //request token
             final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Missing or invalid Authorization header");
                 return;
             }
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -67,8 +71,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response); // enable bypass
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-
+            writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "An error occurred during token validation");
         }
         //request non-token
 
@@ -81,15 +84,30 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/accounts/logout", apiPrefix), "POST"),
                 Pair.of(String.format("%s/accounts/current-user", apiPrefix), "GET"),
                 Pair.of(String.format("%s/room-type", apiPrefix), "GET"),
-                Pair.of(String.format("%s/rooms", apiPrefix), "GET")
+                Pair.of(String.format("%s/rooms", apiPrefix), "GET"),
+                Pair.of(String.format("%s/payment/vn-pay-callback", apiPrefix), "GET")
         );
+        String requestURI = request.getRequestURI();
         for (Pair<String, String> bypassToken : bypassTokens) {
-            if (request.getServletPath().contains(bypassToken.getFirst()) &&
-                    request.getMethod().equals(bypassToken.getSecond())) {
+            if (requestURI.startsWith(bypassToken.getFirst()) && request.getMethod().equals(bypassToken.getSecond())) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, HttpStatus status, String message, String data) throws IOException {
+        ResponseObject<?> responseObject = new ResponseObject<>(
+                status,
+                message,
+                data
+        );
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(responseObject);
+        response.getWriter().write(jsonResponse);
     }
 
 
