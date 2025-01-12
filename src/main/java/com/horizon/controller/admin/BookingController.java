@@ -28,7 +28,7 @@ public class BookingController {
                         bookingService.getAll(pageable));
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update-status")
     private ResponseObject<?> update(@RequestParam Integer id, @RequestBody BookingDto bookingDto) {
         return new ResponseObject<>
                 (HttpStatus.OK, "Success",

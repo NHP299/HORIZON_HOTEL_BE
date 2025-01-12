@@ -6,6 +6,7 @@ import com.horizon.domain.Payment;
 import com.horizon.dto.PaymentDTO;
 import com.horizon.dto.PaymentTransactionDto;
 import com.horizon.mapper.PaymentMapper;
+import com.horizon.repository.BookingRepository;
 import com.horizon.repository.PaymentRepository;
 import com.horizon.service.PaymentService;
 import com.horizon.util.VNPayUtil;
@@ -31,6 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final VNPAYConfig vnPayConfig;
     private final PaymentMapper paymentMapper;
+    private final BookingRepository bookingRepository;
 
     @Override
     public PaymentDTO.VNPayResponse createVnPayPayment(HttpServletRequest request, Double bookingPrice) {
@@ -39,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_BankCode", "NCB");
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
-        vnpParamsMap.put("vnp_TxnRef",  VNPayUtil.getRandomNumber(8));
+        vnpParamsMap.put("vnp_TxnRef", VNPayUtil.getRandomNumber(8));
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang: " + VNPayUtil.getRandomNumber(8));
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
@@ -119,7 +121,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setCardType(request.getParameter("vnp_CardType"));
         payment.setExtraData("BankTranNo: " + request.getParameter("vnp_BankTranNo")
                 + " - TransactionNo: " + request.getParameter("vnp_TransactionNo")
-                +" - TransactionStatus: " + request.getParameter("vnp_TransactionStatus"));
+                + " - TransactionStatus: " + request.getParameter("vnp_TransactionStatus"));
         paymentRepository.save(payment);
     }
 
@@ -141,8 +143,6 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
     }
 
-
-    @Override
     @Scheduled(fixedRate = 60000)
     public void updateFailPayment() {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -156,6 +156,21 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("Expired payments updated.");
     }
 
+
+    @Scheduled(fixedRate = 60000)
+    public void updateFailPaymentByBooking() {
+        List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(booking -> booking.getPayment().getStatus().equals(Payment.Status.FAILED)).toList();
+
+        List<Payment> payment = bookings.stream().map(Booking::getPayment).toList();
+
+        payment.forEach(p -> {
+            p.setStatus(Payment.Status.FAILED);
+            paymentRepository.save(p);
+        });
+
+        System.out.println("Expired payments updated.");
+    }
 
 
 }

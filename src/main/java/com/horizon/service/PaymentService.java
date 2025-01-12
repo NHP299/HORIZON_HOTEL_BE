@@ -28,6 +28,4 @@ public interface PaymentService {
 
     void updateFailPayment(HttpServletRequest request);
 
-    @Scheduled(fixedRate = 60000)
-    void updateFailPayment();
 }
