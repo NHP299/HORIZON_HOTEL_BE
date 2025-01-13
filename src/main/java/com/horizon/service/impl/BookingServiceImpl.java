@@ -12,13 +12,14 @@ import com.horizon.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -137,9 +138,49 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<BookingDto> getByAccountId(Integer accountId, Pageable pageable) {
-        Page<Booking> bookings = bookingRepository.getByAccountId(accountId, pageable);
-        return bookings.map(bookingMapper::toBookingDto);
+    public Page<Map<String, Object>> getByAccountId(Integer accountId, Pageable pageable) {
+        Page<Map<String, Object>> rawData = bookingRepository.findBookingsByAccountId(accountId, pageable);
+
+        Map<Integer, List<Map<String, Object>>> groupedRooms = new HashMap<>();
+
+        rawData.forEach(record -> {
+            Integer bookingId = (Integer) record.get("bookingId");
+
+            Integer roomId = (Integer) record.get("roomId");
+            String roomName = (String) record.get("roomName");
+            Integer floor = (Integer) record.get("floor");
+            String description = (String) record.get("description");
+            Double priceAtBooking = (Double) record.get("priceAtBooking");
+
+            Map<String, Object> room = Map.of(
+                    "roomId", roomId,
+                    "roomName", roomName,
+                    "floor", floor,
+                    "description", description,
+                    "priceAtBooking", priceAtBooking
+            );
+
+            groupedRooms.computeIfAbsent(bookingId, k -> new ArrayList<>()).add(room);
+        });
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        groupedRooms.forEach((bookingId, rooms) -> {
+            Map<String, Object> booking = new HashMap<>();
+            booking.put("bookingId", bookingId);
+            booking.put("checkIn", rawData.getContent().get(0).get("checkIn"));
+            booking.put("checkOut", rawData.getContent().get(0).get("checkOut"));
+            booking.put("totalPrice", rawData.getContent().get(0).get("totalPrice"));
+            booking.put("bookingDate", rawData.getContent().get(0).get("bookingDate"));
+            booking.put("adult", rawData.getContent().get(0).get("adult"));
+            booking.put("child", rawData.getContent().get(0).get("child"));
+            booking.put("baby", rawData.getContent().get(0).get("baby"));
+            booking.put("promotion", rawData.getContent().get(0).get("promotion"));
+            booking.put("status", rawData.getContent().get(0).get("status"));
+            booking.put("rooms", rooms);
+            result.add(booking);
+        });
+
+        return new PageImpl<>(result, pageable, rawData.getTotalElements());
     }
 
     @Override

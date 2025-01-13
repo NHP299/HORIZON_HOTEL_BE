@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController("HomeBookingController")
@@ -21,11 +22,7 @@ public class BookingController {
 
     @GetMapping("/get-by-account-id/{accountId}")
     private ResponseObject<?> getByAccountId(@PathVariable Integer accountId, Pageable pageable) {
-        try {
-            Page<BookingDto> bookings = bookingService.getByAccountId(accountId, pageable);
-            return new ResponseObject<>(HttpStatus.OK,"success",bookings);
-        } catch (Exception e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST,"Failed",e.getMessage());
-        }
+        Page<Map<String, Object>> bookings = bookingService.getByAccountId(accountId, pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", bookings);
     }
 }

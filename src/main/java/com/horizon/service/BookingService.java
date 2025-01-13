@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface BookingService {
 
@@ -28,7 +29,7 @@ public interface BookingService {
 
     Page<BookingDto> getAll(Pageable pageable);
 
-    Page<BookingDto> getByAccountId(Integer accountId, Pageable pageable);
+    Page<Map<String, Object>> getByAccountId(Integer accountId, Pageable pageable);
 
     void confirmBooking(HttpServletRequest request);
 
