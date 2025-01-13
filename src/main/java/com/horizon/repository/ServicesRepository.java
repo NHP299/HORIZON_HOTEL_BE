@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ServicesRepository extends JpaRepository<Services, Integer> {
 
-    Page<Services> findByNameContainingIgnoreCaseAndIsActivatedTrue(String name, Pageable pageable);
+    Page<Services> findByNameAndIsActivatedTrue(String name, Pageable pageable);
 
     Page<Services> findAllByIsActivatedTrue(Pageable pageable);
 

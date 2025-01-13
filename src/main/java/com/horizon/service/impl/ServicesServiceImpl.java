@@ -77,7 +77,7 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Override
     public Page<ServicesDto> getByName(String name, Pageable pageable) {
-        Page<Services> servicesPage = servicesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        Page<Services> servicesPage = servicesRepository.findByNameAndIsActivatedTrue(name, pageable);
         return servicesPage.map(servicesMapper::mapToServicesDto);
     }
 

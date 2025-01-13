@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,8 +34,8 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
-    public RoomTypeDto update(Integer roomId, RoomTypeDto roomTypeDto) {
-        RoomType roomType = roomTypeRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
+    public RoomTypeDto update(Integer id, RoomTypeDto roomTypeDto) {
+        RoomType roomType = roomTypeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room type not found"));
         roomType.setName(roomTypeDto.getName());
         roomType.setDescription(roomTypeDto.getDescription());
         roomType.setAdultCapacity(roomTypeDto.getAdultCapacity());
@@ -67,6 +66,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     @Override
     public Page<Map<String, Object>> getAllDetail(Pageable pageable) {
         return roomTypeRepository.findAllRoomTypeService(pageable);
+    }
+
+    @Override
+    public Page<Map<String, Object>> getDetailById(Integer id, Pageable pageable) {
+        return roomTypeRepository.findRoomTypeServiceById(id,pageable);
     }
 
 }

@@ -33,13 +33,13 @@ public class RoomController {
         return new ResponseObject<>(HttpStatus.OK, "Success", room);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseObject<?> getAll(Pageable pageable) {
         Page<RoomDto> rooms = roomService.getAll(pageable);
         return new ResponseObject<>(HttpStatus.OK, "Success", rooms);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseObject<?> getAllIsActivated(Pageable pageable) {
         Page<RoomDto> rooms = roomService.getAllIsActivated(pageable);
         return new ResponseObject<>(HttpStatus.OK, "Success", rooms);

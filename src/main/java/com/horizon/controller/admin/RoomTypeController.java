@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController("AdminRoomTypeController")
 @AllArgsConstructor
@@ -57,6 +55,15 @@ public class RoomTypeController {
     public ResponseObject<?> getAllDetail(Pageable pageable) {
         try {
             return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getAllDetail(pageable));
+        }catch (IllegalArgumentException e) {
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+        }
+    }
+
+    @GetMapping("/DetailBy/{id}")
+    public ResponseObject<?> getDetailById(@PathVariable("id") Integer roomTypeId, Pageable pageable) {
+        try {
+            return new ResponseObject<>(HttpStatus.OK,"Success", roomTypeService.getDetailById(roomTypeId,pageable));
         }catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
         }

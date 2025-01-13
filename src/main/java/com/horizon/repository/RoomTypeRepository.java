@@ -60,6 +60,33 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Integer> {
     """, nativeQuery = true)
     Page<Map<String, Object>> findAllRoomTypeService(Pageable pageable);
 
+    @Query(value = """
+            SELECT 
+                rt.id, 
+                rt.name, 
+                rt.description, 
+                rt.adult_capacity , 
+                rt.child_capacity , 
+                rt.baby_capacity , 
+                STRING_AGG(DISTINCT s.name, ', ') AS services, 
+                STRING_AGG(DISTINCT u.name, ', ') AS utilities 
+            FROM room_type rt 
+            LEFT JOIN room_type_services rts 
+                ON rt.id = rts.room_type_id AND rts.is_activated = true 
+            LEFT JOIN services s 
+                ON rts.service_id = s.id AND s.is_activated = true 
+            LEFT JOIN room_type_utilities rtu 
+                ON rt.id = rtu.room_type_id AND rtu.is_activated = true 
+            LEFT JOIN utilities u 
+                ON rtu.utility_id = u.id AND u.is_activated = true 
+            WHERE rt.is_activated = true
+            AND rt.id = :id
+            GROUP BY 
+                rt.id, rt.name, rt.description, rt.adult_capacity ,rt.child_capacity ,rt.baby_capacity
+    """, nativeQuery = true)
+    Page<Map<String, Object>> findRoomTypeServiceById(@Param("id") Integer id, Pageable pageable);
+
+
     @Query("SELECT r.id FROM RoomType r WHERE r.isActivated = false")
     List<Integer> findInactiveRoomTypeIds();
 }

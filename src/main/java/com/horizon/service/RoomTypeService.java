@@ -4,7 +4,6 @@ import com.horizon.dto.RoomTypeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Map;
 
 public interface RoomTypeService {
@@ -13,11 +12,12 @@ public interface RoomTypeService {
 
     RoomTypeDto getById(Integer id);
 
-    RoomTypeDto update(Integer roomId, RoomTypeDto roomDto);
+    RoomTypeDto update(Integer id, RoomTypeDto roomDto);
 
     void delete(Integer id);
 
     Page<RoomTypeDto> getAll(Pageable pageable);
     Page<Map<String, Object>> getRoomTypeMedia(Pageable pageable);
     Page<Map<String, Object>> getAllDetail(Pageable pageable);
+    Page<Map<String, Object>> getDetailById(Integer id, Pageable pageable);
 }
