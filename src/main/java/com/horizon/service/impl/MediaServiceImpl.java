@@ -75,7 +75,7 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public Page<MediaDto> getAll(Pageable pageable) {
-        return mediaRepository.findAll(pageable)
+        return mediaRepository.findAllByRoomTypeIsActivated(pageable)
                 .map(mediaMapper::toDto);
     }
 

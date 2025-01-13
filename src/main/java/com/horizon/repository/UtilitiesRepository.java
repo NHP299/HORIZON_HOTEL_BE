@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UtilitiesRepository extends JpaRepository<Utilities, Integer> {
 
-    Page<Utilities> findByNameContainingIgnoreCaseAndIsActivatedTrue(String name, Pageable pageable);
+    Page<Utilities> findByNameAndIsActivatedTrue(String name, Pageable pageable);
 
     Page<Utilities> findAllByIsActivatedTrue(Pageable pageable);
 

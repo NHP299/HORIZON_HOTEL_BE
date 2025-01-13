@@ -72,7 +72,7 @@ public class UtilitiesServiceImpl implements UtilitiesService {
 
     @Override
     public Page<UtilitiesDto> getByName(String name, Pageable pageable) {
-        Page<Utilities> utilitiesPage = utilitiesRepository.findByNameContainingIgnoreCaseAndIsActivatedTrue(name, pageable);
+        Page<Utilities> utilitiesPage = utilitiesRepository.findByNameAndIsActivatedTrue(name, pageable);
         return utilitiesPage.map(utilitiesMapper::mapToUtilitiesDto);
     }
 
