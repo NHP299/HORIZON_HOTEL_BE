@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 })
                 .authorizeHttpRequests(request -> {
                     request
-                            .requestMatchers(homeApiPrefix + "/payment/vn-pay-callback").permitAll()
+                            .requestMatchers(homeApiPrefix + "/payment/**").permitAll()
                             .requestMatchers(homeApiPrefix + "/accounts/login").permitAll()
                             .requestMatchers(homeApiPrefix + "/accounts/register").permitAll()
                             .requestMatchers(homeApiPrefix + "/accounts/current-user").permitAll()
