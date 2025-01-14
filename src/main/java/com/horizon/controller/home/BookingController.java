@@ -25,4 +25,10 @@ public class BookingController {
         Page<Map<String, Object>> bookings = bookingService.getByAccountId(accountId, pageable);
         return new ResponseObject<>(HttpStatus.OK, "Success", bookings);
     }
+
+    @PostMapping("/cancel")
+    private ResponseObject<?> cancelBooking(@RequestParam Integer accountId, @RequestParam Integer bookingId) {
+        bookingService.cancelBooking(accountId, bookingId);
+        return new ResponseObject<>(HttpStatus.OK, "Success", null);
+    }
 }

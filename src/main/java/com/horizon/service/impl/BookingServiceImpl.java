@@ -207,6 +207,18 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
     }
 
+    @Override
+    public void cancelBooking(Integer accountId, Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+        if (booking.getAccount().getId().equals(accountId)) {
+            booking.setStatus(Booking.Status.CANCELLED);
+            bookingRepository.save(booking);
+        } else {
+            throw new IllegalStateException("Unauthorized action.");
+        }
+    }
+
     @Scheduled(fixedRate = 60000)
     public void completeBooking() {
         LocalDate currentDate = LocalDate.now();

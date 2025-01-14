@@ -33,4 +33,6 @@ public interface BookingService {
 
     void confirmBooking(HttpServletRequest request);
 
+    void cancelBooking(Integer accountId, Integer bookingId);
+
 }
