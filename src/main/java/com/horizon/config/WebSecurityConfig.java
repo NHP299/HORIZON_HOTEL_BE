@@ -66,10 +66,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(request -> {
                     request
                             .requestMatchers(homeApiPrefix + "/payment/**").permitAll()
-                            .requestMatchers(homeApiPrefix + "/accounts/login").permitAll()
-                            .requestMatchers(homeApiPrefix + "/accounts/register").permitAll()
-                            .requestMatchers(homeApiPrefix + "/accounts/current-user").permitAll()
-                            .requestMatchers(homeApiPrefix + "/accounts/logout").permitAll()
+                            .requestMatchers(homeApiPrefix + "/accounts/**").permitAll()
                             .requestMatchers(homeApiPrefix + "/room-type/**").permitAll()
                             .requestMatchers(homeApiPrefix + "/rooms/**").permitAll()
                             .requestMatchers(homeApiPrefix + "/promotion/**").permitAll()
