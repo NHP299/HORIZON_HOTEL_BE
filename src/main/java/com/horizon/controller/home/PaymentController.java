@@ -50,11 +50,11 @@ public class PaymentController {
         if (status.equals("00")) {
             paymentService.updateSuccessPayment(request);
             bookingService.confirmBooking(request);
-            response.sendRedirect("http://localhost:3000/comfirm");
+            response.sendRedirect("http://localhost:3000/confirm");
             return new ResponseObject<>(HttpStatus.OK, "Success", null);
         } else {
             paymentService.updateFailPayment(request);
-            response.sendRedirect("http://localhost:3000/comfirm/fail");
+            response.sendRedirect("http://localhost:3000/confirm/fail");
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", null);
         }
     }

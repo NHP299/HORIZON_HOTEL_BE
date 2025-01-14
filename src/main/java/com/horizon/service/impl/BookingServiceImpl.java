@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -163,22 +164,32 @@ public class BookingServiceImpl implements BookingService {
             groupedRooms.computeIfAbsent(bookingId, k -> new ArrayList<>()).add(room);
         });
 
-        List<Map<String, Object>> result = new ArrayList<>();
-        groupedRooms.forEach((bookingId, rooms) -> {
-            Map<String, Object> booking = new HashMap<>();
-            booking.put("bookingId", bookingId);
-            booking.put("checkIn", rawData.getContent().get(0).get("checkIn"));
-            booking.put("checkOut", rawData.getContent().get(0).get("checkOut"));
-            booking.put("totalPrice", rawData.getContent().get(0).get("totalPrice"));
-            booking.put("bookingDate", rawData.getContent().get(0).get("bookingDate"));
-            booking.put("adult", rawData.getContent().get(0).get("adult"));
-            booking.put("child", rawData.getContent().get(0).get("child"));
-            booking.put("baby", rawData.getContent().get(0).get("baby"));
-            booking.put("promotion", rawData.getContent().get(0).get("promotion"));
-            booking.put("status", rawData.getContent().get(0).get("status"));
-            booking.put("rooms", rooms);
-            result.add(booking);
-        });
+        List<Map<String, Object>> result = groupedRooms.entrySet().stream()
+                .map(entry -> {
+                    Integer bookingId = entry.getKey();
+                    List<Map<String, Object>> rooms = entry.getValue();
+
+                    Map<String, Object> rawBookingData = rawData.getContent().stream()
+                            .filter(record -> record.get("bookingId").equals(bookingId))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Booking ID not found in raw data"));
+
+                    Map<String, Object> booking = new HashMap<>();
+                    booking.put("bookingId", bookingId);
+                    booking.put("status", rawBookingData.get("status"));
+                    booking.put("checkIn", rawBookingData.get("checkIn"));
+                    booking.put("checkOut", rawBookingData.get("checkOut"));
+                    booking.put("totalPrice", rawBookingData.get("totalPrice"));
+                    booking.put("bookingDate", rawBookingData.get("bookingDate"));
+                    booking.put("adult", rawBookingData.get("adult"));
+                    booking.put("child", rawBookingData.get("child"));
+                    booking.put("baby", rawBookingData.get("baby"));
+                    booking.put("promotion", rawBookingData.get("promotion"));
+                    booking.put("rooms", rooms);
+
+                    return booking;
+                })
+                .collect(Collectors.toList());
 
         return new PageImpl<>(result, pageable, rawData.getTotalElements());
     }
