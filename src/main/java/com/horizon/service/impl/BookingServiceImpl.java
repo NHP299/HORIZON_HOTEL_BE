@@ -95,20 +95,24 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Boolean checkValidCapacity(List<Integer> roomIds, int adult, int child, int baby) {
-        for (int roomId : roomIds) {
-            int adultCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
-                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getAdultCapacity();
-            int childCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
-                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getChildCapacity();
-            int babyCapacity = roomRepository.findByIsActivatedTrueAndId(roomId)
-                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found.")).getRoomType().getBabyCapacity();
-            if (adultCapacity >= adult && childCapacity >= child && babyCapacity >= baby) {
-                return true;
-            }
-        }
-        return false;
-    }
+        int totalAdultCapacity = 0;
+        int totalChildCapacity = 0;
+        int totalBabyCapacity = 0;
 
+        for (int roomId : roomIds) {
+            Room room = roomRepository.findByIsActivatedTrueAndId(roomId)
+                    .orElseThrow(() -> new IllegalStateException("Room " + roomId + " not found or not activated."));
+
+            RoomType roomType = room.getRoomType();
+            totalAdultCapacity += roomType.getAdultCapacity();
+            totalChildCapacity += roomType.getChildCapacity();
+            totalBabyCapacity += roomType.getBabyCapacity();
+        }
+
+        return totalAdultCapacity >= adult &&
+                totalChildCapacity >= child &&
+                totalBabyCapacity >= baby;
+    }
 
     @Override
     public void checkRoomAvailable(List<Integer> roomIds, LocalDate checkIn, LocalDate checkOut) {
