@@ -43,13 +43,16 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
         r.name AS roomName,
         r.floor AS floor,
         r.description AS description,
-        bd.price_at_booking AS priceAtBooking
+        bd.price_at_booking AS priceAtBooking,
+        p.payment_method AS paymentMethod
     FROM 
         booking b
     JOIN 
         booking_detail bd ON b.id = bd.booking_id
     JOIN 
         room r ON bd.room_id = r.id
+    JOIN 
+        payment p ON b.payment_id = p.id
     WHERE 
         b.account_id = :accountId
 """, nativeQuery = true)
