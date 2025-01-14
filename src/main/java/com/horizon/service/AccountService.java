@@ -6,12 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface AccountService {
     void register(String email, String password, String firstName, String lastName);
 
-    String login(String email, String rawPassword, HttpSession session);
+    HashMap<String, String> login(String email, String rawPassword, HttpSession session);
 
     void logout(HttpSession session);
 

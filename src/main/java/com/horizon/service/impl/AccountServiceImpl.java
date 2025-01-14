@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -98,7 +100,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String login(String email, String rawPassword, HttpSession session) {
+    public HashMap<String, String> login(String email, String rawPassword, HttpSession session) {
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found!"));
         String token = jwtTokenUtil.generateToken(account);
@@ -115,9 +117,10 @@ public class AccountServiceImpl implements AccountService {
                 account.getAuthorities());
 
         authenticationManager.authenticate((authentication));
-
-        return token;
-//        return "Login successful!";
+        HashMap<String,String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("role", account.getRole().getRoleName().toUpperCase());
+        return response;
     }
 
     @Override

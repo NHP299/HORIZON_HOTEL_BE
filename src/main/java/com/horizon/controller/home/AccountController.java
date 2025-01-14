@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController("HomeAccountController")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
@@ -34,7 +36,7 @@ public class AccountController {
     @PostMapping("/login")
     public ResponseObject<?> login(@RequestBody AccountDto accountDto, HttpSession session) {
         try {
-            String response = accountService.login(accountDto.getEmail(), accountDto.getPassword(), session);
+            HashMap<String, String> response = accountService.login(accountDto.getEmail(), accountDto.getPassword(), session);
             return new ResponseObject<>(HttpStatus.OK, "Success", response);
         } catch (IllegalArgumentException e) {
             return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
