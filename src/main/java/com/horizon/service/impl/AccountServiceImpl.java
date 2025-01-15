@@ -129,48 +129,38 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto create(AccountDto accountDto, MultipartFile profilePicture) {
-        if (profilePicture != null) {
-            String profilePictureUrl = cloudinaryService.upload(profilePicture);
-            accountDto.setProfilePicture(profilePictureUrl);
+    public AccountDto create(AccountDto accountDto) {
+        String email = accountDto.getEmail();
+        if (accountRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists!");
         }
 
         Account account = accountMapper.toAccount(accountDto);
+        account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        account.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         Account savedAccount = accountRepository.save(account);
-
-        Role role = roleRepository.findById(accountDto.getRoleId()).orElse(null);
-        if (role != null) {
-            accountDto.setRoleName(role.getRoleName());
-        }
 
         return accountMapper.toAccountDto(savedAccount);
     }
 
     @Override
-    public AccountDto update(Integer id, AccountDto accountDto, MultipartFile profilePicture) {
-        Optional<Account> existingAccountOpt = accountRepository.findById(id);
-        if (existingAccountOpt.isPresent()) {
-            Account existingAccount = existingAccountOpt.get();
-
-            if (profilePicture != null) {
-                cloudinaryService.delete(cloudinaryService.getPublicId(existingAccount.getProfilePicture()));
-                String newProfilePictureUrl = cloudinaryService.upload(profilePicture);
-                accountDto.setProfilePicture(newProfilePictureUrl);
-            }
-
-            existingAccount = accountMapper.toAccount(accountDto);
-            existingAccount.setId(id);
-
-            Account updatedAccount = accountRepository.save(existingAccount);
-
-            Role role = roleRepository.findById(accountDto.getRoleId()).orElse(null);
-            if (role != null) {
-                accountDto.setRoleName(role.getRoleName());
-            }
-
-            return accountMapper.toAccountDto(updatedAccount);
+    public AccountDto update(Integer id, AccountDto accountDto) {
+        Optional<Account> accountOpt = accountRepository.findById(id);
+        if (accountOpt.isEmpty()) {
+            throw new IllegalArgumentException("Account not found!");
         }
-        return null;
+
+        Account account = accountOpt.get();
+        account.setFirstName(accountDto.getFirstName());
+        account.setLastName(accountDto.getLastName());
+        account.setPhone(accountDto.getPhone());
+        account.setGender(accountDto.getGender());
+        account.setIsActivated(accountDto.getIsActivated());
+        account.setRole(roleRepository.findById(accountDto.getRoleId()).orElse(null));
+        account.setDateOfBirth(accountDto.getDateOfBirth());
+
+        Account savedAccount = accountRepository.save(account);
+        return accountMapper.toAccountDto(savedAccount);
     }
 
     @Override
