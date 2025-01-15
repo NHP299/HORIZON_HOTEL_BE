@@ -25,22 +25,17 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    @PostMapping
-    public ResponseObject<?> create(
-            @RequestParam("accountDto") String accountDtoJson,
-            @RequestParam("profilePicture") MultipartFile profilePicture) {
-        AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
-        AccountDto createdAccount = accountService.create(accountDto, profilePicture);
+    @PostMapping("/create")
+    public ResponseObject<?> create(@RequestBody AccountDto accountDto) {
+        AccountDto createdAccount = accountService.create(accountDto);
         return new ResponseObject<>(HttpStatus.OK, "Success", createdAccount);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseObject<?> update(
             @PathVariable Integer id,
-            @RequestPart("accountDto") String accountDtoJson,
-            @RequestPart("profilePicture") MultipartFile profilePicture) {
-        AccountDto accountDto = accountService.parseAccountDto(accountDtoJson);
-        AccountDto updatedAccount = accountService.update(id, accountDto, profilePicture);
+            @RequestBody AccountDto accountDto) {
+        AccountDto updatedAccount = accountService.update(id, accountDto);
         return new ResponseObject<>(HttpStatus.OK, "Success", updatedAccount);
     }
 
