@@ -190,6 +190,7 @@ public class BookingServiceImpl implements BookingService {
                     booking.put("child", rawBookingData.get("child"));
                     booking.put("baby", rawBookingData.get("baby"));
                     booking.put("promotion", rawBookingData.get("promotion"));
+                    booking.put("note", rawBookingData.get("note"));
                     booking.put("rooms", rooms);
 
                     return booking;
@@ -249,6 +250,7 @@ public class BookingServiceImpl implements BookingService {
                     booking.put("baby", rawBookingData.get("baby"));
                     booking.put("promotionId", rawBookingData.get("promotionId"));
                     booking.put("email", rawBookingData.get("email"));
+                    booking.put("note", rawBookingData.get("note"));
                     booking.put("rooms", rooms);
 
                     return booking;
