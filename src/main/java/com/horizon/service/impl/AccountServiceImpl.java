@@ -136,6 +136,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         Account account = accountMapper.toAccount(accountDto);
+        account.setIsActivated(true);
         account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         account.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         Account savedAccount = accountRepository.save(account);
@@ -155,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
         account.setLastName(accountDto.getLastName());
         account.setPhone(accountDto.getPhone());
         account.setGender(accountDto.getGender());
-        account.setIsActivated(accountDto.getIsActivated());
+        account.setIsActivated(true);
         account.setRole(roleRepository.findById(accountDto.getRoleId()).orElse(null));
         account.setDateOfBirth(accountDto.getDateOfBirth());
 
@@ -174,7 +175,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Page<AccountDto> getAll(Pageable pageable) {
-        Page<Account> accounts = accountRepository.findAll(pageable);
+        Page<Account> accounts = accountRepository.findAllByIsActivatedTrue(pageable);
         return accounts.map(accountMapper::toAccountDto);
     }
 }

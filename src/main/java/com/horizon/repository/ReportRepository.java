@@ -93,16 +93,16 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT ROUND(COUNT(a) FILTER (WHERE a.isActivated = true) * 100.0 / COUNT(a), 2) FROM Account a")
     double calculateActivatedPercentage();
 
-    @Query("SELECT COUNT(r) FROM Room r")
+    @Query("SELECT COUNT(r) FROM Room r WHERE r.isActivated = true")
     long countTotalRooms();
 
-    @Query("SELECT COUNT(r) FROM Room r WHERE r.status = 'AVAILABLE'")
+    @Query("SELECT COUNT(r) FROM Room r WHERE r.status = 'AVAILABLE' AND r.isActivated = true")
     long countActiveRooms();
 
     @Query("SELECT COUNT(r) FROM Room r WHERE r.status = 'MAINTENANCE'")
     long countMaintenanceRooms();
 
-    @Query("SELECT ROUND(COUNT(r) FILTER (WHERE r.status = 'RESERVED') * 100.0 / COUNT(r), 2) FROM Room r")
+    @Query("SELECT ROUND(COUNT(r) FILTER (WHERE r.status = 'RESERVED' AND r.isActivated = true) * 100.0 / COUNT(r) FILTER (WHERE r.isActivated = true), 2) FROM Room r")
     double calculateActiveRoomPercentage();
 
 
@@ -112,7 +112,7 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT COUNT(b) FROM Booking b WHERE EXTRACT(MONTH FROM b.checkIn) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM b.checkIn) = EXTRACT(YEAR FROM CURRENT_DATE)")
     long countTotalBookingsCurrentMonth();
 
-    @Query("SELECT rt.name AS roomType, COUNT(r.id) AS roomCount FROM Room r JOIN RoomType rt ON r.roomType.id = rt.id GROUP BY rt.name")
+    @Query("SELECT rt.name AS roomType, COUNT(r.id) AS roomCount FROM Room r JOIN RoomType rt ON r.roomType.id = rt.id WHERE r.isActivated = true GROUP BY rt.name")
     List<Map<String, Object>> countRoomsByRoomType();
 
     @Query(value = "SELECT EXTRACT(MONTH FROM b.check_in) AS month, " +
