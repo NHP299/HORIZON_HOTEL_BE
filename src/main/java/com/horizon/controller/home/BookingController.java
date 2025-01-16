@@ -31,4 +31,6 @@ public class BookingController {
         bookingService.cancelBooking(accountId, bookingId);
         return new ResponseObject<>(HttpStatus.OK, "Success", null);
     }
+
+
 }

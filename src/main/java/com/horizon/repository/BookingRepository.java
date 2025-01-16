@@ -57,4 +57,38 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
         b.account_id = :accountId
 """, nativeQuery = true)
     Page<Map<String, Object>> findBookingsByAccountId(@Param("accountId") Integer accountId, Pageable pageable);
+
+    @Query(value = """
+    SELECT
+            b.id AS bookingId,
+            b.check_in AS checkIn,
+            b.check_out AS checkOut,
+            b.total_price AS totalPrice,
+            b.booking_date AS bookingDate,
+            b.adult AS adult,
+            b.child AS child,
+            b.baby AS baby,
+            b.promotion_id AS promotionId,
+            b.status AS status,
+            r.id AS roomId,
+            r.name AS roomName,
+            r.floor AS floor,
+            r.description AS description,
+            bd.price_at_booking AS priceAtBooking,
+            p.transaction_id AS transactionId,
+            a.email AS email
+        FROM   
+            booking b
+        JOIN
+            booking_detail bd ON b.id = bd.booking_id
+        JOIN
+            room r ON bd.room_id = r.id
+        JOIN
+            payment p ON b.payment_id = p.id
+        JOIN  
+            account a ON b.account_id = a.id
+        WHERE
+            a.is_activated = true
+            """, nativeQuery = true)
+    Page<Map<String, Object>> getAll(Pageable pageable);
 }

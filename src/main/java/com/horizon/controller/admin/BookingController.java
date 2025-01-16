@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController("AdminBookingController")
@@ -23,9 +24,8 @@ public class BookingController {
 
     @GetMapping("/all")
     private ResponseObject<?> getAll(Pageable pageable) {
-        return new ResponseObject<>
-                (HttpStatus.OK, "Success",
-                        bookingService.getAll(pageable));
+        Page<Map<String,Object>> bookings = bookingService.getAllBookings(pageable);
+        return new ResponseObject<>(HttpStatus.OK, "Success", bookings);
     }
 
     @PostMapping("/update-status")

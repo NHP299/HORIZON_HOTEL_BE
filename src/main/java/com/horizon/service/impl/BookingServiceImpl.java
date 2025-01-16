@@ -199,6 +199,65 @@ public class BookingServiceImpl implements BookingService {
         return new PageImpl<>(result, pageable, rawData.getTotalElements());
     }
 
+
+    @Override
+    public Page<Map<String, Object>> getAllBookings(Pageable pageable) {
+        Page<Map<String, Object>> rawData = bookingRepository.getAll(pageable);
+
+        Map<Integer, List<Map<String, Object>>> groupedRooms = new HashMap<>();
+
+        rawData.forEach(record -> {
+            Integer bookingId = (Integer) record.get("bookingId");
+
+            Integer roomId = (Integer) record.get("roomId");
+            String roomName = (String) record.get("roomName");
+            Integer floor = (Integer) record.get("floor");
+            String description = (String) record.get("description");
+            Double priceAtBooking = (Double) record.get("priceAtBooking");
+
+            Map<String, Object> room = Map.of(
+                    "roomId", roomId,
+                    "roomName", roomName,
+                    "floor", floor,
+                    "description", description,
+                    "priceAtBooking", priceAtBooking
+            );
+
+            groupedRooms.computeIfAbsent(bookingId, k -> new ArrayList<>()).add(room);
+        });
+
+        List<Map<String, Object>> result = groupedRooms.entrySet().stream()
+                .map(entry -> {
+                    Integer bookingId = entry.getKey();
+                    List<Map<String, Object>> rooms = entry.getValue();
+
+                    Map<String, Object> rawBookingData = rawData.getContent().stream()
+                            .filter(record -> record.get("bookingId").equals(bookingId))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Booking ID not found in raw data"));
+
+                    Map<String, Object> booking = new HashMap<>();
+                    booking.put("bookingId", bookingId);
+                    booking.put("transactionId", rawBookingData.get("transactionId"));
+                    booking.put("status", rawBookingData.get("status"));
+                    booking.put("checkIn", rawBookingData.get("checkIn"));
+                    booking.put("checkOut", rawBookingData.get("checkOut"));
+                    booking.put("totalPrice", rawBookingData.get("totalPrice"));
+                    booking.put("bookingDate", rawBookingData.get("bookingDate"));
+                    booking.put("adult", rawBookingData.get("adult"));
+                    booking.put("child", rawBookingData.get("child"));
+                    booking.put("baby", rawBookingData.get("baby"));
+                    booking.put("promotionId", rawBookingData.get("promotionId"));
+                    booking.put("email", rawBookingData.get("email"));
+                    booking.put("rooms", rooms);
+
+                    return booking;
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(result, pageable, rawData.getTotalElements());
+    }
+
     @Override
     public void confirmBooking(HttpServletRequest request) {
         Payment payment = paymentRepository.findByTransactionId(request.getParameter("vnp_TxnRef"));

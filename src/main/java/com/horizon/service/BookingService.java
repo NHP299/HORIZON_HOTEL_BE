@@ -31,6 +31,8 @@ public interface BookingService {
 
     Page<Map<String, Object>> getByAccountId(Integer accountId, Pageable pageable);
 
+    Page<Map<String, Object>> getAllBookings(Pageable pageable);
+
     void confirmBooking(HttpServletRequest request);
 
     void cancelBooking(Integer accountId, Integer bookingId);
