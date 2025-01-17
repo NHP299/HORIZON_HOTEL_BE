@@ -240,6 +240,7 @@ public class BookingServiceImpl implements BookingService {
                     Map<String, Object> booking = new HashMap<>();
                     booking.put("bookingId", bookingId);
                     booking.put("transactionId", rawBookingData.get("transactionId"));
+                    booking.put("paymentMethod", rawBookingData.get("paymentMethod"));
                     booking.put("status", rawBookingData.get("status"));
                     booking.put("checkIn", rawBookingData.get("checkIn"));
                     booking.put("checkOut", rawBookingData.get("checkOut"));

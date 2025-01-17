@@ -78,6 +78,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             r.description AS description,
             bd.price_at_booking AS priceAtBooking,
             p.transaction_id AS transactionId,
+            p.payment_method AS paymentMethod,
             a.email AS email
         FROM   
             booking b
