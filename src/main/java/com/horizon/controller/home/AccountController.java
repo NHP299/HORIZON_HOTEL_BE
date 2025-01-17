@@ -29,7 +29,7 @@ public class AccountController {
             accountService.register(accountDto.getEmail(), accountDto.getPassword(), accountDto.getFirstName(), accountDto.getLastName());
             return new ResponseObject<>(HttpStatus.OK, "Success", "User registered successfully!");
         } catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Email is already exists!!", e.getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ public class AccountController {
             HashMap<String, String> response = accountService.login(accountDto.getEmail(), accountDto.getPassword(), session);
             return new ResponseObject<>(HttpStatus.OK, "Success", response);
         } catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Incorrect Email or Password!!", e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class AccountController {
     public ResponseObject<?> getCurrentUser(HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return new ResponseObject<>(HttpStatus.UNAUTHORIZED, "Failed", "No user logged in");
+            return new ResponseObject<>(HttpStatus.UNAUTHORIZED, "No user logged in", "Failed");
         }
         Account account = accountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return new ResponseObject<>(HttpStatus.OK, "Success", account);
@@ -59,7 +59,7 @@ public class AccountController {
             accountService.logout(session);
             return new ResponseObject<>(HttpStatus.OK, "Success", "Logged out successfully!");
         } catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed to logout!!", e.getMessage());
         }
 
     }
@@ -70,7 +70,7 @@ public class AccountController {
             accountService.changePassword(changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword(), session);
             return new ResponseObject<>(HttpStatus.OK, "Success", "Changed password successfully");
         } catch (IllegalArgumentException e) {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", e.getMessage());
+            return new ResponseObject<>(HttpStatus.BAD_REQUEST, "Failed", "Old Password Incorrect!!");
         }
     }
 
